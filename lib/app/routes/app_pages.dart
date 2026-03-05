@@ -8,6 +8,10 @@ import '../modules/auth/register/bindings/auth_register_binding.dart';
 import '../modules/auth/register/views/auth_register_view.dart';
 import '../modules/auth/role_selector/bindings/auth_role_selector_binding.dart';
 import '../modules/auth/role_selector/views/auth_role_selector_view.dart';
+import '../modules/auth/select_user/bindings/auth_select_user_binding.dart';
+import '../modules/auth/select_user/views/auth_select_user_view.dart';
+import '../modules/auth/splash/bindings/auth_splash_binding.dart';
+import '../modules/auth/splash/views/auth_splash_view.dart';
 import '../modules/company/applicants/bindings/company_applicants_binding.dart';
 import '../modules/company/applicants/views/company_applicants_view.dart';
 import '../modules/company/dashboard/bindings/company_dashboard_binding.dart';
@@ -99,6 +103,16 @@ class AppPages {
       name: Routes.COMPANY_APPLICANTS,
       page: () => const CompanyApplicantsView(),
       binding: CompanyApplicantsBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_SPLASH,
+      page: () => const AuthSplashView(),
+      binding: AuthSplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_SELECT_USER,
+      page: () => const AuthSelectUserView(),
+      binding: AuthSelectUserBinding(),
     ),
   ];
 }
