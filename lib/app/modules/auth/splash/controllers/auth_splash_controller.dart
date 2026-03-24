@@ -1,23 +1,17 @@
 import 'package:get/get.dart';
 
 class AuthSplashController extends GetxController {
-  //TODO: Implement AuthSplashController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    _navigate();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  void _navigate() async {
+    await Future.delayed(const Duration(seconds: 3));
 
-  @override
-  void onClose() {
-    super.onClose();
+    if (!isClosed) {
+      Get.offAllNamed('/select-user');
+    }
   }
-
-  void increment() => count.value++;
 }

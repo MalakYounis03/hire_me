@@ -1,23 +1,12 @@
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_routes.dart';
 
 class AuthSelectUserController extends GetxController {
-  //TODO: Implement AuthSelectUserController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.offNamed(Routes.AUTH_SELECT_USER);
+    });
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }

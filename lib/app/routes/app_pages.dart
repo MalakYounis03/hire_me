@@ -30,89 +30,40 @@ import '../modules/job_seeker/profile/bindings/job_seeker_profile_binding.dart';
 import '../modules/job_seeker/profile/views/job_seeker_profile_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
-
-part 'app_routes.dart';
+import 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.ONBOARDING;
+  static final INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
-      name: Routes.AUTH_LOGIN,
-      page: () => const AuthLoginView(),
-      binding: AuthLoginBinding(),
-    ),
-    GetPage(
-      name: Routes.AUTH_REGISTER,
-      page: () => const AuthRegisterView(),
-      binding: AuthRegisterBinding(),
-    ),
-    GetPage(
-      name: Routes.AUTH_FORGOT_PASSWORD,
-      page: () => const AuthForgotPasswordView(),
-      binding: AuthForgotPasswordBinding(),
-    ),
-    GetPage(
-      name: Routes.AUTH_ROLE_SELECTOR,
-      page: () => const AuthRoleSelectorView(),
-      binding: AuthRoleSelectorBinding(),
-    ),
-    GetPage(
-      name: Routes.ONBOARDING,
-      page: () => const OnboardingView(),
-      binding: OnboardingBinding(),
-    ),
-    GetPage(
-      name: Routes.JOB_SEEKER_DASHBOARD,
-      page: () => const JobSeekerDashboardView(),
-      binding: JobSeekerDashboardBinding(),
-    ),
-    GetPage(
-      name: Routes.JOB_SEEKER_JOB_DETAILS,
-      page: () => const JobSeekerJobDetailsView(),
-      binding: JobSeekerJobDetailsBinding(),
-    ),
-    GetPage(
-      name: Routes.JOB_SEEKER_APPLY_JOB,
-      page: () => const JobSeekerApplyJobView(),
-      binding: JobSeekerApplyJobBinding(),
-    ),
-    GetPage(
-      name: Routes.JOB_SEEKER_PROFILE,
-      page: () => const JobSeekerProfileView(),
-      binding: JobSeekerProfileBinding(),
-    ),
-    GetPage(
-      name: Routes.JOB_SEEKER_MY_APPLICATIONS,
-      page: () => const JobSeekerMyApplicationsView(),
-      binding: JobSeekerMyApplicationsBinding(),
-    ),
-    GetPage(
-      name: Routes.COMPANY_DASHBOARD,
-      page: () => const CompanyDashboardView(),
-      binding: CompanyDashboardBinding(),
-    ),
-    GetPage(
-      name: Routes.COMPANY_POST_JOB,
-      page: () => const CompanyPostJobView(),
-      binding: CompanyPostJobBinding(),
-    ),
-    GetPage(
-      name: Routes.COMPANY_APPLICANTS,
-      page: () => const CompanyApplicantsView(),
-      binding: CompanyApplicantsBinding(),
-    ),
-    GetPage(
-      name: _Paths.AUTH_SPLASH,
+      name: Routes.SPLASH,
       page: () => const AuthSplashView(),
       binding: AuthSplashBinding(),
     ),
     GetPage(
-      name: _Paths.AUTH_SELECT_USER,
+      name: Routes.AUTH_SELECT_USER,
       page: () => const AuthSelectUserView(),
+
       binding: AuthSelectUserBinding(),
+    ),
+    GetPage(
+      name: Routes.ONBOARDING,
+      page: () => OnboardingView(),
+      binding: OnboardingBinding(),
+    ),
+    GetPage(
+      name: Routes.LOGIN,
+      page: () => const AuthLoginView(),
+      binding: AuthLoginBinding(),
+    ),
+
+    GetPage(
+      name: Routes.FORGOT_PASSWORD,
+      page: () => const AuthForgotPasswordView(),
+      binding: AuthForgotPasswordBinding(),
     ),
   ];
 }
