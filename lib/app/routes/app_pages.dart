@@ -46,7 +46,6 @@ class AppPages {
     GetPage(
       name: Routes.AUTH_SELECT_USER,
       page: () => const AuthSelectUserView(),
-
       binding: AuthSelectUserBinding(),
     ),
     GetPage(

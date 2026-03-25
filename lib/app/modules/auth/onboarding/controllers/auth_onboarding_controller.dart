@@ -10,17 +10,6 @@ class AuthOnboardingController extends GetxController {
     currentPage.value = index;
   }
 
-  void next() {
-    if (currentPage.value < 3) {
-      pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
-      );
-    } else {
-      Get.offNamed('/select-user');
-    }
-  }
-
   @override
   void onInit() {
     super.onInit();
