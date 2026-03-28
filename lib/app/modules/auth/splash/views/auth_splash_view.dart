@@ -19,7 +19,7 @@ class AuthSplashView extends GetView<AuthSplashController> {
             left: -155,
             child: SvgPicture.asset(Assets.imagesObjects, width: 450.0),
           ),
-          Center(child: Image.asset(Assets.imagesLogo, width: 450.0)),
+          Center(child: Image.asset(Assets.imagesLogo, width: 500.0)),
         ],
       ),
     );

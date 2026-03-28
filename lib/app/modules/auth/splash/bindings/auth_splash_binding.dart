@@ -5,6 +5,6 @@ import '../controllers/auth_splash_controller.dart';
 class AuthSplashBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(AuthSplashBinding());
+    Get.put(AuthSplashController());
   }
 }
