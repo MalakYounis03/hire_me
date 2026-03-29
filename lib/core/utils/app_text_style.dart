@@ -87,4 +87,10 @@ abstract class CustomTextstyle {
     color: Color(0xffF16E12),
     fontFamily: " Inter",
   );
+  static final Poppinssemibold500 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColor.Eblack,
+    fontFamily: " Poppins",
+  );
 }

@@ -29,13 +29,12 @@ class AuthRegisterController extends GetxController {
 
     isLoading.value = true;
     try {
-      final credential = await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      await _saveUserToFirestore(credential.user!.uid);
-
+      // ← احذفي _saveUserToFirestore مؤقتاً
       _navigateAfterRegister();
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
@@ -44,7 +43,7 @@ class AuthRegisterController extends GetxController {
     }
   }
 
-  void onLoginPressed() => Get.back();
+  void onLoginPressed() => Get.offAllNamed(Routes.AUTH_LOGIN);
 
   bool _isValid() {
     if (emailController.text.trim().isEmpty ||

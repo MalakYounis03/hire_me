@@ -82,7 +82,7 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 42),
               ],
             ),
           ),

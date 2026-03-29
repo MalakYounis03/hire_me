@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/auth/otp/controllers/otp_controller.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 
 class AuthOtpView extends GetView<AuthOtpController> {
   const AuthOtpView({super.key});
@@ -23,6 +25,7 @@ class AuthOtpView extends GetView<AuthOtpController> {
               _buildOtpFields(),
               const SizedBox(height: 28),
               _buildResendRow(),
+              const Spacer(),
               _buildConfirmButton(),
               const SizedBox(height: 40),
             ],
@@ -35,23 +38,12 @@ class AuthOtpView extends GetView<AuthOtpController> {
   Widget _buildTitle() {
     return Column(
       children: [
-        const Text(
-          'Enter OTP',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1A3794),
-          ),
-        ),
+        Text('Enter OTP', style: CustomTextstyle.Poppinsbold2),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           'An 4 digit code has been sent to your\nemail',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A2E),
-          ),
+          style: CustomTextstyle.Poppinssemibold500,
         ),
       ],
     );
@@ -59,13 +51,16 @@ class AuthOtpView extends GetView<AuthOtpController> {
 
   Widget _buildOtpFields() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: List.generate(4, (index) {
-        return _OtpBox(
-          controller: controller.otpControllers[index],
-          focusNode: controller.focusNodes[index],
-          onChanged: (val) => controller.onOtpChanged(index, val),
-          isFirst: index == 0,
+        return Padding(
+          padding: EdgeInsets.only(right: index < 3 ? 12 : 0),
+          child: _OtpBox(
+            controller: controller.otpControllers[index],
+            focusNode: controller.focusNodes[index],
+            onChanged: (val) => controller.onOtpChanged(index, val),
+            isFirst: index == 0,
+          ),
         );
       }),
     );
@@ -86,9 +81,7 @@ class AuthOtpView extends GetView<AuthOtpController> {
             child: Text(
               cooldown > 0 ? 'Resend OTP (${cooldown}s)' : 'Resend OTP',
               style: TextStyle(
-                color: cooldown > 0
-                    ? const Color(0xFFB0B0C0)
-                    : const Color(0xFF1A3794),
+                color: cooldown > 0 ? const Color(0xFFB0B0C0) : AppColor.kblue,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -109,7 +102,7 @@ class AuthOtpView extends GetView<AuthOtpController> {
               ? null
               : controller.onConfirmPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1A3794),
+            backgroundColor: AppColor.kblue,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),
@@ -117,14 +110,7 @@ class AuthOtpView extends GetView<AuthOtpController> {
           ),
           child: controller.isLoading.value
               ? const CircularProgressIndicator(color: Colors.white)
-              : const Text(
-                  'Confirm',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              : Text('Confirm', style: CustomTextstyle.Poppinssemiboldwhite),
         ),
       ),
     );
@@ -168,8 +154,8 @@ class _OtpBoxState extends State<_OtpBox> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: 76,
-      height: 76,
+      width: 65,
+      height: 65,
       decoration: BoxDecoration(
         color: const Color(0xFFF0F3FF),
         borderRadius: BorderRadius.circular(14),

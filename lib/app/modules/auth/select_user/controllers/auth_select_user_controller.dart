@@ -24,6 +24,6 @@ class AuthSelectUserController extends GetxController {
       return;
     }
 
-    Get.toNamed(Routes.AUTH_LOGIN, arguments: {'role': selectedRole.value});
+    Get.toNamed(Routes.AUTH_REGISTER, arguments: {'role': selectedRole.value});
   }
 }
