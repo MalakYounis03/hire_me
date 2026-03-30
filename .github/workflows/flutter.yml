@@ -72,7 +72,7 @@ jobs:
               run: flutter build apk --release
 
             # ───────────────────────────────────────────
-            # 9. رفع الـ APK كـ artifact على GitHub
+            # 9. رفع الـ APK كـ artifact على Git Hub
             # ───────────────────────────────────────────
             - name: Upload APK
               uses: actions/upload-artifact@v4
