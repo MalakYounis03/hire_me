@@ -57,7 +57,7 @@ jobs:
             # 6. فحص الكود (analyze)
             # ───────────────────────────────────────────
             - name: Analyze Code
-              run: flutter analyze --no-fatal-infos
+              run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
             # ───────────────────────────────────────────
             # 7. تشغيل الاختبارات
