@@ -13,10 +13,14 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
         title: const Text('JobSeekerDashboardView'),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          'JobSeekerDashboardView is working',
-          style: TextStyle(fontSize: 20),
+      body: Center(
+        child: GestureDetector(
+          onTap: controller.logout,
+          child: const Icon(
+            Icons.logout_rounded,
+            color: Color(0xFF1A3794),
+            size: 26,
+          ),
         ),
       ),
     );

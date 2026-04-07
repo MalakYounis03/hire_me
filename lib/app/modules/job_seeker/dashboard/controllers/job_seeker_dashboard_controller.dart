@@ -1,23 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 
 class JobSeekerDashboardController extends GetxController {
-  //TODO: Implement JobSeekerDashboardController
-
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    Get.offAllNamed(Routes.SPLASH);
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }
