@@ -20,10 +20,16 @@ import '../modules/job_seeker/dashboard/bindings/job_seeker_dashboard_binding.da
 import '../modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import '../modules/job_seeker/job_details/bindings/job_seeker_job_details_binding.dart';
 import '../modules/job_seeker/job_details/views/job_seeker_job_details_view.dart';
+import '../modules/job_seeker/main_fields/bindings/job_seeker_main_fields_binding.dart';
+import '../modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
 import '../modules/job_seeker/my_applications/bindings/job_seeker_my_applications_binding.dart';
 import '../modules/job_seeker/my_applications/views/job_seeker_my_applications_view.dart';
 import '../modules/job_seeker/profile/bindings/job_seeker_profile_binding.dart';
 import '../modules/job_seeker/profile/views/job_seeker_profile_view.dart';
+import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
+import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
+import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
+import '../modules/main_wrapper/views/main_wrapper_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 
@@ -99,6 +105,22 @@ class AppPages {
       name: Routes.COMPANY_APPLICANTS,
       page: () => const CompanyApplicantsView(),
       binding: CompanyApplicantsBinding(),
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_MAIN_FIELDS,
+      page: () => const JobSeekerMainFieldsView(),
+      binding: JobSeekerMainFieldsBinding(),
+    ),
+
+    GetPage(
+      name: Routes.JOB_SEEKER_SAVED_JOBS,
+      page: () => const JobSeekerSavedJobsView(),
+      binding: JobSeekerSavedJobsBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAIN_WRAPPER,
+      page: () => const MainWrapperView(),
+      binding: MainWrapperBinding(),
     ),
   ];
 }

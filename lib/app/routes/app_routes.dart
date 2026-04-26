@@ -17,6 +17,9 @@ abstract class Routes {
   static const COMPANY_DASHBOARD = _Paths.COMPANY + _Paths.DASHBOARD;
   static const COMPANY_POST_JOB = _Paths.COMPANY + _Paths.POST_JOB;
   static const COMPANY_APPLICANTS = _Paths.COMPANY + _Paths.APPLICANTS;
+  static const JOB_SEEKER_MAIN_FIELDS = _Paths.JOB_SEEKER + _Paths.MAIN_FIELDS;
+  static const JOB_SEEKER_SAVED_JOBS = _Paths.JOB_SEEKER + _Paths.SAVED_JOBS;
+  static const MAIN_WRAPPER = _Paths.MAIN_WRAPPER;
 }
 
 abstract class _Paths {
@@ -37,4 +40,7 @@ abstract class _Paths {
   static const MY_APPLICATIONS = '/my-applications';
   static const POST_JOB = '/post-job';
   static const APPLICANTS = '/applicants';
+  static const MAIN_FIELDS = '/main-fields';
+  static const SAVED_JOBS = '/saved-jobs';
+  static const MAIN_WRAPPER = '/main-wrapper';
 }
