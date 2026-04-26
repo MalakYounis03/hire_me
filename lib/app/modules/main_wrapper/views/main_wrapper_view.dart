@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/core/utils/app_color.dart';
+import 'package:hire_me/app/modules/job_seeker/chat/views/chat_view.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import 'package:hire_me/app/modules/main_wrapper/controllers/main_wrapper_controller.dart';
 
@@ -16,7 +17,7 @@ class MainWrapperView extends GetView<MainWrapperController> {
           index: controller.currentIndex.value,
           children: [
             const JobSeekerDashboardView(),
-            const Center(child: Text("Chat Page")),
+            const ChatView(),
             const Center(child: Text("Portfolio Page")),
             const Center(child: Text("Profile Page")),
           ],
