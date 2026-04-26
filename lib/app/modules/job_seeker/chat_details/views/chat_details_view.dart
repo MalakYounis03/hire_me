@@ -20,8 +20,13 @@ class ChatDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///todo
     final controller = Get.put(
-      ChatDetailsController(chatName: chatName),
+      ChatDetailsController(
+        chatName: chatName,
+        chatAvatarUrl: avatarUrl,
+        chatId: Get.arguments?['chatId'] ?? '', // ✅ null check
+      ),
       tag: chatName,
     );
 

@@ -9,6 +9,7 @@ class ChatDetailsBinding extends Bindings {
       () => ChatDetailsController(
         chatName: Get.parameters['chatName'] ?? 'Chat',
         chatAvatarUrl: Get.parameters['chatAvatarUrl'] ?? '',
+        chatId: Get.parameters['chatId'] ?? '',
       ),
     );
   }

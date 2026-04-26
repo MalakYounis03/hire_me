@@ -23,6 +23,7 @@ class ChatTile extends StatelessWidget {
                 chatName: chat.name,
                 avatarUrl: chat.avatarUrl,
               ),
+              arguments: {'chatId': chat.id},
               transition: Transition.rightToLeft,
             );
           },

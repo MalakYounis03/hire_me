@@ -34,7 +34,7 @@ class SearchBarWidget extends StatelessWidget {
         child: TextField(
           controller: searchController,
           onChanged: onChanged,
-          style: TextStyle(fontSize: 15, color: AppColor.kwhite),
+          style: TextStyle(fontSize: 15, color: AppColor.kblack),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: AppColor.greyLight, fontSize: 14),
