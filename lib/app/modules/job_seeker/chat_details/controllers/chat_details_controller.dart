@@ -13,8 +13,7 @@ class ChatDetailsController extends GetxController {
   final messageController = TextEditingController();
   final scrollController = ScrollController();
   final RxBool hasText = false.obs;
-
-  final RxList<ChatDetailsModel> messages = <ChatDetailsModel>[
+  late final RxList<ChatDetailsModel> messages = <ChatDetailsModel>[
     ChatDetailsModel(
       id: '1',
       text: 'Looking forward to the trip.',
@@ -24,7 +23,7 @@ class ChatDetailsController extends GetxController {
     ChatDetailsModel(
       id: '2',
       text: "Same! Can't wait.",
-      senderId: 'my_user_id',
+      senderId: currentUserId,
       time: DateTime.now().subtract(const Duration(minutes: 9)),
     ),
     ChatDetailsModel(
@@ -36,7 +35,7 @@ class ChatDetailsController extends GetxController {
     ChatDetailsModel(
       id: '4',
       text: 'Oh yes this looks great!',
-      senderId: 'my_user_id',
+      senderId: currentUserId,
       time: DateTime.now().subtract(const Duration(minutes: 1)),
     ),
   ].obs;
