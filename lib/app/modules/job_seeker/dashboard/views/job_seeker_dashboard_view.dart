@@ -28,8 +28,13 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                 const HeaderWidget(),
 
                 // 2. شريط البحث (المتداخل مع الهيدر)
-                const SearchWidget(),
-
+                Transform.translate(
+                  offset: const Offset(0, -28), // ✅ ارفعيها فوق
+                  child: SearchBarWidget(
+                    searchController: TextEditingController(),
+                    onChanged: (value) => controller.onSearch(value),
+                  ),
+                ),
                 // 3. قسم التصنيفات (Categories)
                 _buildCategorySection(),
 

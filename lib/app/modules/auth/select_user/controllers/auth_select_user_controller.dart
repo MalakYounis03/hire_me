@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 
 class AuthSelectUserController extends GetxController {
-  @override
   final selectedRole = ''.obs;
 
   void selectRole(String role) {

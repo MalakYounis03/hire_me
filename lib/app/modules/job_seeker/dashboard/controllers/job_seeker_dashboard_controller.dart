@@ -53,7 +53,7 @@ class JobSeekerDashboardController extends GetxController {
           .get();
 
       allJobs.value = snapshot.docs
-          .map((doc) => Job.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+          .map((doc) => Job.fromMap(doc.id, doc.data()))
           .toList();
 
       // تطبيق الفلترة الأولية بعد تحميل البيانات
