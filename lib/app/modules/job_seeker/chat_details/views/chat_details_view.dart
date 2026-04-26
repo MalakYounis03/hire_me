@@ -28,13 +28,11 @@ class ChatDetailsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: ChatDetailsAppbar(name: chatName, avatarUrl: avatarUrl),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(child: MessagesList(controller: controller)),
-            MessageInput(controller: controller),
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(child: MessagesList(controller: controller)),
+          MessageInput(controller: controller),
+        ],
       ),
     );
   }

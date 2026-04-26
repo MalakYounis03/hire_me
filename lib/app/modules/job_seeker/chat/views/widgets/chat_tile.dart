@@ -39,7 +39,10 @@ class ChatTile extends StatelessWidget {
                     lastMessage: chat.lastMessage,
                   ),
                 ),
-                ChatMeta(time: chat.time, unreadCount: chat.unreadCount),
+                ChatMeta(
+                  time: chat.lastMessageTime,
+                  unreadCount: chat.unreadCount,
+                ),
               ],
             ),
           ),

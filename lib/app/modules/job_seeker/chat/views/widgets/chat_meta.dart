@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
+import 'package:hire_me/app/core/helper/data_helper.dart';
 import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/unread_badge.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 
 class ChatMeta extends StatelessWidget {
-  final String time;
+  final DateTime time;
   final int unreadCount;
   const ChatMeta({required this.time, required this.unreadCount, super.key});
 
@@ -13,7 +14,7 @@ class ChatMeta extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          time,
+          formatTime(time),
           style: TextStyle(fontSize: 12, color: AppColor.textSecondary),
         ),
         const SizedBox(height: 6),

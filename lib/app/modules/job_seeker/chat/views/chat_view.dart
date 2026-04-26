@@ -16,7 +16,7 @@ class ChatView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColor.background,
+        //  backgroundColor: AppColor.background,
         body: Column(
           children: [
             Container(

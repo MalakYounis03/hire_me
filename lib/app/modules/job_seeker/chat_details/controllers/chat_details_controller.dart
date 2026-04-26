@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/job_seeker/chat_details/model/chat_details_model.dart';
 
@@ -8,37 +9,40 @@ class ChatDetailsController extends GetxController {
 
   ChatDetailsController({required this.chatName, this.chatAvatarUrl = ''});
 
+  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
   final messageController = TextEditingController();
   final scrollController = ScrollController();
+  final RxBool hasText = false.obs;
 
   final RxList<ChatDetailsModel> messages = <ChatDetailsModel>[
     ChatDetailsModel(
       id: '1',
       text: 'Looking forward to the trip.',
-      isMe: false,
+      senderId: 'other_user_id',
       time: DateTime.now().subtract(const Duration(minutes: 10)),
     ),
     ChatDetailsModel(
       id: '2',
       text: "Same! Can't wait.",
-      isMe: true,
+      senderId: 'my_user_id',
       time: DateTime.now().subtract(const Duration(minutes: 9)),
     ),
     ChatDetailsModel(
       id: '3',
       text: 'What do you think?',
-      isMe: false,
+      senderId: 'other_user_id',
       time: DateTime.now().subtract(const Duration(minutes: 2)),
     ),
     ChatDetailsModel(
       id: '4',
       text: 'Oh yes this looks great!',
-      isMe: true,
+      senderId: 'my_user_id',
       time: DateTime.now().subtract(const Duration(minutes: 1)),
     ),
   ].obs;
 
-  final RxBool hasText = false.obs;
+  // ✅ هون بتعرف إذا الرسالة تبعك أو لأ
+  bool isMe(String senderId) => senderId == currentUserId;
 
   void onTextChanged(String value) {
     hasText.value = value.trim().isNotEmpty;
@@ -52,7 +56,7 @@ class ChatDetailsController extends GetxController {
       ChatDetailsModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         text: text,
-        isMe: true,
+        senderId: currentUserId, // ✅ بدل isMe: true
         time: DateTime.now(),
       ),
     );
@@ -71,24 +75,11 @@ class ChatDetailsController extends GetxController {
     });
   }
 
-  String formatTime(DateTime time) {
-    final h = time.hour % 12 == 0 ? 12 : time.hour % 12;
-    final m = time.minute.toString().padLeft(2, '0');
-    final period = time.hour >= 12 ? 'PM' : 'AM';
-    return '$h:$m $period';
-  }
-
   bool showDateDivider(int index) {
     if (index == 0) return true;
     final prev = messages[index - 1].time;
     final curr = messages[index].time;
     return prev.day != curr.day;
-  }
-
-  String formatDate(DateTime time) {
-    final now = DateTime.now();
-    if (time.day == now.day) return 'Today ${formatTime(time)}';
-    return '${time.day}/${time.month}/${time.year}';
   }
 
   @override
