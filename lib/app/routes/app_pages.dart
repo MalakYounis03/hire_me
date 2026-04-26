@@ -1,6 +1,12 @@
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/auth/otp/bindings/otp_binding.dart';
 import 'package:hire_me/app/modules/auth/otp/views/otp_view.dart';
+import 'package:hire_me/app/modules/job_seeker/main_fields/bindings/job_seeker_main_fields_binding.dart';
+import 'package:hire_me/app/modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
+import 'package:hire_me/app/modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
+import 'package:hire_me/app/modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
+import 'package:hire_me/app/modules/main_wrapper/bindings/main_wrapper_binding.dart';
+import 'package:hire_me/app/modules/main_wrapper/views/main_wrapper_view.dart';
 
 import '../modules/auth/splash/bindings/auth_splash_binding.dart';
 import '../modules/auth/splash/views/auth_splash_view.dart';
@@ -120,6 +126,22 @@ class AppPages {
       name: Routes.COMPANY_APPLICANTS,
       page: () => const CompanyApplicantsView(),
       binding: CompanyApplicantsBinding(),
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_MAIN_FIELDS,
+      page: () => const JobSeekerMainFieldsView(),
+      binding: JobSeekerMainFieldsBinding(),
+    ),
+
+    GetPage(
+      name: Routes.JOB_SEEKER_SAVED_JOBS,
+      page: () => const JobSeekerSavedJobsView(),
+      binding: JobSeekerSavedJobsBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAIN_WRAPPER,
+      page: () => const MainWrapperView(),
+      binding: MainWrapperBinding(),
     ),
   ];
 }
