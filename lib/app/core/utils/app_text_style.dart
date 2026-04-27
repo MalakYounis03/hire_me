@@ -5,7 +5,7 @@ abstract class CustomTextstyle {
   static final Poppinsbold = TextStyle(
     fontSize: 26,
     fontWeight: FontWeight.bold,
-    color: AppColor.Kblack,
+    color: AppColor.kblack,
     fontFamily: " Poppins",
   );
 

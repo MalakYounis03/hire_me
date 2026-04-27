@@ -118,7 +118,7 @@ class _RoleCard extends StatelessWidget {
           color: const Color(0xFFEAEFF9),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColor.kblue : AppColor.Ewhite,
+            color: isSelected ? AppColor.kblue : AppColor.ewhite,
             width: 2,
           ),
           boxShadow: isSelected

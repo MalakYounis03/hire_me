@@ -20,21 +20,24 @@ class ChatDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///todo
     final controller = Get.put(
-      ChatDetailsController(chatName: chatName),
+      ChatDetailsController(
+        chatName: chatName,
+        chatAvatarUrl: avatarUrl,
+        chatId: Get.arguments?['chatId'] ?? '', // ✅ null check
+      ),
       tag: chatName,
     );
 
     return Scaffold(
       backgroundColor: AppColor.background,
       appBar: ChatDetailsAppbar(name: chatName, avatarUrl: avatarUrl),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(child: MessagesList(controller: controller)),
-            MessageInput(controller: controller),
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(child: MessagesList(controller: controller)),
+          MessageInput(controller: controller),
+        ],
       ),
     );
   }

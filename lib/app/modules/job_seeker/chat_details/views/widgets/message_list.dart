@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
+import 'package:hire_me/app/core/helper/data_helper.dart';
 import 'package:hire_me/app/modules/job_seeker/chat_details/controllers/chat_details_controller.dart';
 import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/data_divider.dart';
 import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_bubble.dart';
@@ -20,10 +21,11 @@ class MessagesList extends StatelessWidget {
           return Column(
             children: [
               if (controller.showDateDivider(index))
-                DateDivider(label: controller.formatDate(msg.time)),
+                DateDivider(label: formatDate(msg.time)),
               MessageBubble(
+                isMe: controller.isMe(msg.senderId), // ✅
                 message: msg,
-                time: controller.formatTime(msg.time),
+                time: formatTime(msg.time),
                 senderName: controller.chatName, // اسم الشخص الثاني
                 senderAvatarUrl: controller.chatAvatarUrl,
               ),

@@ -23,6 +23,7 @@ class ChatTile extends StatelessWidget {
                 chatName: chat.name,
                 avatarUrl: chat.avatarUrl,
               ),
+              arguments: {'chatId': chat.id},
               transition: Transition.rightToLeft,
             );
           },
@@ -39,7 +40,10 @@ class ChatTile extends StatelessWidget {
                     lastMessage: chat.lastMessage,
                   ),
                 ),
-                ChatMeta(time: chat.time, unreadCount: chat.unreadCount),
+                ChatMeta(
+                  time: chat.lastMessageTime,
+                  unreadCount: chat.unreadCount,
+                ),
               ],
             ),
           ),

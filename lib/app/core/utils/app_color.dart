@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 abstract class AppColor {
-  static Color Kblack = const Color(0xff16182C);
+  static Color kblack = const Color(0xff16182C);
   static Color kblue = const Color(0xff0D47A1);
   static Color greydark = const Color(0xff626262);
   static Color greyLight = const Color(0xffA6A6A6);

@@ -5,7 +5,7 @@ abstract class CustomTextstyle {
   static final Poppinsbold = TextStyle(
     fontSize: 26,
     fontWeight: FontWeight.bold,
-    color: AppColor.Kblack,
+    color: AppColor.kblack,
     fontFamily: " Poppins",
   );
 
@@ -42,7 +42,7 @@ abstract class CustomTextstyle {
   static final Poppinssemibold = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Poppins",
   );
   static final Poppins500 = TextStyle(
@@ -66,7 +66,7 @@ abstract class CustomTextstyle {
   static final Interregularblack = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
   static final Interregularblue = TextStyle(
@@ -78,7 +78,7 @@ abstract class CustomTextstyle {
   static final Poppins500or = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Poppins",
   );
   static final InterregularOrange = TextStyle(
@@ -90,7 +90,7 @@ abstract class CustomTextstyle {
   static final Poppinssemibold500 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Poppins",
   );
 }

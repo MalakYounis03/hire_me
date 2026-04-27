@@ -1,53 +1,31 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/job_seeker/chat/model/chat_model.dart';
+import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
 
 class ChatController extends GetxController {
+  final ChatService _chatService = ChatService();
+  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
   final searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
+  final RxList<ChatModel> allChats = <ChatModel>[].obs;
+  final RxBool isLoading = true.obs;
 
-  final RxList<ChatModel> allChats = <ChatModel>[
-    ChatModel(
-      id: '1',
-      name: 'Bryan',
-      lastMessage: 'What do you think?',
-      time: '4:30 PM',
-      avatarUrl: '',
-      unreadCount: 2,
-    ),
-    ChatModel(
-      id: '2',
-      name: 'Kari',
-      lastMessage: 'Looks great!',
-      time: '4:23 PM',
-      avatarUrl: '',
-      unreadCount: 1,
-    ),
-    ChatModel(
-      id: '3',
-      name: 'Diana',
-      lastMessage: 'Lunch on Monday?',
-      time: '4:12 PM',
-      avatarUrl: '',
-      unreadCount: 0,
-    ),
-    ChatModel(
-      id: '4',
-      name: 'Ben',
-      lastMessage: 'You sent a photo.',
-      time: '3:58 PM',
-      avatarUrl: '',
-      unreadCount: 0,
-    ),
-    ChatModel(
-      id: '5',
-      name: 'Alicia',
-      lastMessage: 'See you at 8.',
-      time: '3:30 PM',
-      avatarUrl: '',
-      unreadCount: 0,
-    ),
-  ].obs;
+  @override
+  void onInit() {
+    super.onInit();
+    _listenToChats();
+    print('ChatController initialized with userId: $currentUserId');
+  }
+
+  void _listenToChats() {
+    _chatService.getChats(currentUserId).listen((chats) {
+      allChats.value = chats;
+      isLoading.value = false;
+    });
+  }
 
   List<ChatModel> get filteredChats {
     if (searchQuery.value.isEmpty) return allChats;
