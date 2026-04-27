@@ -17,6 +17,7 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     _listenToChats();
+    print('ChatController initialized with userId: $currentUserId');
   }
 
   void _listenToChats() {
