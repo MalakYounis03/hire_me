@@ -6,6 +6,8 @@ import 'package:hire_me/app/modules/job_seeker/dashboard/controllers/job_seeker_
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/header_widget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
+// ✅ تأكدي من استيراد الـ Widget الجديد هنا
+import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/categories_widget.dart';
 
 class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
   const JobSeekerDashboardView({super.key});
@@ -13,7 +15,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // لون الخلفية المريح من الفيجما
       backgroundColor: const Color(0xffF5F7FA),
       body: SafeArea(
         child: RefreshIndicator(
@@ -24,21 +25,19 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. الهيدر الأزرق المنحني (يحتوي على اسم المستخدم الحقيقي)
                 const HeaderWidget(),
 
-                // 2. شريط البحث (المتداخل مع الهيدر)
                 Transform.translate(
-                  offset: const Offset(0, -28), // ✅ ارفعيها فوق
+                  offset: const Offset(0, -28),
                   child: SearchBarWidget(
                     searchController: TextEditingController(),
                     onChanged: (value) => controller.onSearch(value),
                   ),
                 ),
-                // 3. قسم التصنيفات (Categories)
-                _buildCategorySection(),
 
-                // 4. عنوان قسم الوظائف
+                // ✅ التعديل هنا: استخدام الـ Widget الجديد بدلاً من الدالة القديمة
+                const CategoriesWidget(),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 25,
@@ -67,7 +66,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                   ),
                 ),
 
-                // 5. قائمة الوظائف (تتحدث تلقائياً مع الفلترة والفايربيز)
                 Obx(() {
                   if (controller.isLoading.value) {
                     return const Padding(
@@ -99,64 +97,8 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
     );
   }
 
-  // ويلجت عرض الفئات بشكل أفقي
-  Widget _buildCategorySection() {
-    final categories = ['الكل', 'Mobile', 'Web', 'Design', 'Backend'];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          child: Text(
-            "Categories",
-            style: CustomTextstyle.Poppinssemibold.copyWith(fontSize: 16),
-          ),
-        ),
-        SizedBox(
-          height: 45,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              return Obx(() {
-                bool isSelected =
-                    controller.selectedCategory.value == categories[index];
-                return GestureDetector(
-                  onTap: () => controller.selectCategory(categories[index]),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColor.kblue : AppColor.kwhite,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected
-                            ? AppColor.kblue
-                            : AppColor.greyVeryLight,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      categories[index],
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : AppColor.greydark,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                );
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ يمكنكِ الآن حذف دالة _buildCategorySection القديمة تماماً لتنظيف الكود
 
-  // واجهة تظهر عند عدم وجود نتائج
   Widget _buildEmptyState() {
     return Center(
       child: Padding(

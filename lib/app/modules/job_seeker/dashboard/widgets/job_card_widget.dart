@@ -10,47 +10,40 @@ class JobCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      // ✅ الأبعاد الثابتة من فيجما لضمان عدم الانضغاط
+      width: 391,
+      height: 256,
+      margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
+      padding: const EdgeInsets.all(20), // Padding متناسق
       decoration: BoxDecoration(
         color: AppColor.kwhite,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppColor.Eblack.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 1. الجزء العلوي (Logo + Info + Bookmark)
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // تعديل: استخدام Image.network بدلاً من Image.asset لعرض رابط سوبابيز
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: job.logoUrl.isNotEmpty
-                    ? Image.network(
-                        job.logoUrl,
-                        width: 45,
-                        height: 45,
-                        fit: BoxFit.cover,
-                        // في حال كان الرابط خطأ أو لا يوجد إنترنت تظهر أيقونة افتراضية
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 45,
-                          height: 45,
-                          color: AppColor.greyVeryLight,
-                          child: const Icon(Icons.business, color: Colors.grey),
-                        ),
-                      )
-                    : Container(
-                        width: 45,
-                        height: 45,
-                        color: AppColor.greyVeryLight,
-                        child: const Icon(Icons.business, color: Colors.grey),
-                      ),
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppColor.Ewhite,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(job.logoUrl, fit: BoxFit.contain),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -59,87 +52,85 @@ class JobCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       job.title,
-                      maxLines: 1, // منع النص من النزول لسطر جديد
-                      overflow: TextOverflow
-                          .ellipsis, // وضع نقاط (...) إذا كان النص طويلاً
                       style: CustomTextstyle.Poppinssemibold.copyWith(
-                        fontSize: 15,
+                        fontSize: 16,
                       ),
                     ),
+                    const SizedBox(
+                      height: 2,
+                    ), // مسافة بسيطة جداً بين العنوان والشركة
                     Text(
                       job.companyName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: CustomTextstyle.Poppins500grey.copyWith(
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppColor.greydark, fontSize: 13),
                     ),
                   ],
                 ),
               ),
               Icon(
                 Icons.bookmark_border_rounded,
-                color: AppColor.kblue.withOpacity(0.5),
+                color: AppColor.kblue,
+                size: 26,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+
+          // ✅ الخط الفاصل الأزرق كما في الفيجما
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Divider(
+              color: AppColor.kblue, // أزرق شفاف جداً
+              thickness: 1,
+            ),
+          ),
+
+          // 2. الموقع والسعر (بدون كونتينر للسعر وبمسافات متناسقة)
           Row(
             children: [
-              const Icon(
-                Icons.location_on_outlined,
-                size: 14,
-                color: Colors.green,
-              ),
-              const SizedBox(width: 4),
-              // تعديل: تغليف النص بـ Expanded لمنع الـ Overflow في الرواتب الطويلة أو العناوين
-              Expanded(
-                child: Text(
-                  job.location,
-                  style: CustomTextstyle.Poppins500grey,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+              Icon(Icons.location_on_outlined, size: 16, color: AppColor.kblue),
+              const SizedBox(width: 6),
               Text(
-                "\$${job.salary}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
+                job.location,
+                style: TextStyle(color: AppColor.greydark, fontSize: 12),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // الـ Chips يفضل تغليفها بـ Wrap إذا كان عددها كبيراً، لكن هنا ستبقى Row
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildChip(job.type),
-                const SizedBox(width: 8),
-                _buildChip(job.category, isType: false),
-              ],
+
+          const SizedBox(height: 8), // مسافة محددة بين الموقع والسعر
+          // ✅ السعر كنص حر بارز بلون أزرق
+          Text(
+            job.salary,
+            style: TextStyle(
+              color: AppColor.kblue,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
             ),
+          ),
+          const SizedBox(height: 5),
+          // 3. أزرار الحالة (Pill Shape)
+          Row(
+            children: [
+              _buildBadge(job.type, true),
+              const SizedBox(width: 8),
+              _buildBadge("Remote", false),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildChip(String label, {bool isType = true}) {
+  // ويجت البادج مع إمكانية تغيير اللون إذا لزم الأمر
+  Widget _buildBadge(String text, bool isPrimary) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: isType
-            ? AppColor.kblue.withOpacity(0.1)
-            : AppColor.greyVeryLight.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
+        color: AppColor.kblue, // لون موحد حسب لقطة المحاكي الأخيرة
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        label,
+        text,
         style: TextStyle(
-          color: isType ? AppColor.kblue : AppColor.greydark,
+          color: AppColor.kwhite,
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),

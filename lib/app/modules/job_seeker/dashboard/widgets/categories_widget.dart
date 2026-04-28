@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 import '../controllers/job_seeker_dashboard_controller.dart';
 
 class CategoriesWidget extends GetView<JobSeekerDashboardController> {
@@ -7,100 +8,109 @@ class CategoriesWidget extends GetView<JobSeekerDashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    // الأيقونات والألوان بناءً على تصميم Figma الخاص بكِ
-    final List<Map<String, dynamic>> categoriesData = [
-      {
-        'name': 'Design',
-        'icon': Icons.palette_outlined,
-        'color': Colors.orange,
-      },
-      {'name': 'Programming', 'icon': Icons.code, 'color': Colors.blue},
-      {'name': 'Data Entry', 'icon': Icons.storage, 'color': Colors.teal},
-      {'name': 'Cyber', 'icon': Icons.security, 'color': Colors.red},
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
           child: Text(
             "Discover jobs by category",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(
+              fontWeight: FontWeight.w700, // جعل الخط أسمك كما في فيجما
+              fontSize: 18, // تكبير الخط قليلاً
+              color: Colors.black.withOpacity(0.8),
+            ),
           ),
         ),
-        SizedBox(
-          height: 110, // زيادة الطول قليلاً لاستيعاب النص والأيقونة بشكل مريح
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: categoriesData.length,
-            itemBuilder: (context, index) {
-              final cat = categoriesData[index];
+        Obx(() {
+          if (controller.isCategoriesLoading.value) {
+            return const SizedBox(
+              height: 140,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-              return GestureDetector(
-                onTap: () => controller.selectCategory(cat['name']),
-                child: Obx(() {
-                  // التحقق إذا كانت هذه الفئة هي المختارة حالياً
-                  bool isSelected =
-                      controller.selectedCategory.value == cat['name'];
+          return SizedBox(
+            height: 150, // زيادة الارتفاع الكلي لاستيعاب المربعات الكبيرة والنص
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: controller.categories.length,
+              itemBuilder: (context, index) {
+                final category = controller.categories[index];
+                bool isSelected =
+                    controller.selectedCategory.value == category.name;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
+                return GestureDetector(
+                  onTap: () => controller.selectCategory(category.name),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: 18,
+                    ), // مسافة جانبية مريحة
                     child: Column(
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          padding: const EdgeInsets.all(15),
+                          width: 105, // ✅ مطابقة لقياس فيجما (109)
+                          height: 95, // ✅ مطابقة لقياس فيجما (96)
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            // إضافة حدود ملونة وظل خفيف عند الاختيار لتعزيز تجربة المستخدم
+                            // في فيجما يظهر لون خلفية فاتح جداً عند الاختيار
+                            color: isSelected
+                                ? const Color(0xFFDEE8F8)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(
+                              20,
+                            ), // زوايا دائرية أكثر احترافية
                             border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFF1546A0)
+                                  ? AppColor.kblue
                                   : Colors.grey.shade100,
-                              width: isSelected ? 2 : 1,
+                              width: isSelected ? 1.5 : 1,
                             ),
-                            boxShadow: isSelected
-                                ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ]
-                                : [],
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
                           ),
-                          child: Icon(
-                            cat['icon'],
-                            color: isSelected
-                                ? const Color(0xFF1546A0)
-                                : cat['color'],
-                            size: 28,
-                          ),
+                          child: category.iconUrl.isNotEmpty
+                              ? Image.network(
+                                  category.iconUrl,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
+                                        Icons.category_outlined,
+                                        color: AppColor.kblue,
+                                      ),
+                                )
+                              : Icon(
+                                  Icons.category_outlined,
+                                  color: AppColor.kblue,
+                                  size: 35,
+                                ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
-                          cat['name'],
+                          category.name,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14, // خط أوضح
                             fontWeight: isSelected
                                 ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? const Color(0xFF1546A0)
-                                : Colors.black87,
+                                : FontWeight.w500,
+                            color: isSelected ? AppColor.kblue : Colors.black54,
                           ),
                         ),
                       ],
                     ),
-                  );
-                }),
-              );
-            },
-          ),
-        ),
+                  ),
+                );
+              },
+            ),
+          );
+        }),
       ],
     );
   }

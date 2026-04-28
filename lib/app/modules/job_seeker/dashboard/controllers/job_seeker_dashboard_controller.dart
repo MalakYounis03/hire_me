@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hire_me/app/data/models/job_model.dart';
+// تأكدي من إنشاء ملف الموديل هذا كما اقترحنا سابقاً
+import 'package:hire_me/app/data/models/category_model.dart';
 
 class JobSeekerDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -15,22 +17,25 @@ class JobSeekerDashboardController extends GetxController {
   var searchQuery = "".obs;
   var selectedCategory = "الكل".obs;
 
+  // إضافات جديدة للتصنيفات الديناميكية
+  var categories = <CategoryModel>[].obs;
+  var isCategoriesLoading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // استدعاء البيانات عند بدء تشغيل الصفحة
     fetchUserData();
+    fetchCategories(); // جلب التصنيفات من Firestore
     loadRecentJobs();
   }
 
-  // --- 1. جلب بيانات المستخدم (الاسم) ---
+  // --- 1. جلب بيانات المستخدم ---
   void fetchUserData() async {
     try {
       final uid = _auth.currentUser?.uid;
       if (uid != null) {
         final doc = await _firestore.collection('jobSeekers').doc(uid).get();
         if (doc.exists) {
-          // جلب fullName كما هو مخزن في Firestore
           userName.value = doc.data()?['fullName'] ?? "User";
         }
       }
@@ -39,56 +44,66 @@ class JobSeekerDashboardController extends GetxController {
     }
   }
 
-  // --- 2. جلب الوظائف من Firebase ---
+  // --- 2. جلب التصنيفات ديناميكياً (الجديد) ---
+  void fetchCategories() async {
+    try {
+      isCategoriesLoading.value = true;
+      // جلب كولكشن categories الذي أنشأتِه في Firestore
+      var snapshot = await _firestore.collection('categories').get();
+
+      var fetchedCategories = snapshot.docs
+          .map((doc) => CategoryModel.fromMap(doc.id, doc.data()))
+          .toList();
+
+      categories.value = fetchedCategories;
+    } catch (e) {
+      print("Error fetching categories: $e");
+    } finally {
+      isCategoriesLoading.value = false;
+    }
+  }
+
+  // --- 3. جلب الوظائف من Firebase ---
   Future<void> loadRecentJobs() async {
     try {
       isLoading.value = true;
-
-      // جلب الوظائف النشطة فقط
-      // ملاحظة: إذا فعلتي orderBy('postedDate')، يجب الضغط على الرابط في Console لإنشاء Index
       final snapshot = await _firestore
           .collection('jobs')
           .where('isActive', isEqualTo: true)
-          // .orderBy('postedDate', descending: true) // فاعليها بعد إنشاء الـ Index
           .get();
 
       allJobs.value = snapshot.docs
           .map((doc) => Job.fromMap(doc.id, doc.data()))
           .toList();
 
-      // تطبيق الفلترة الأولية بعد تحميل البيانات
       applyFilters();
     } catch (e) {
       print("Error loading jobs: $e");
-      Get.snackbar("Error", "فشل في تحميل الوظائف، تأكد من اتصال الإنترنت");
+      Get.snackbar("Error", "فشل في تحميل الوظائف");
     } finally {
       isLoading.value = false;
     }
   }
 
-  // --- 3. منطق البحث والفلترة ---
+  // --- 4. منطق البحث والفلترة ---
 
-  // عند الكتابة في حقل البحث
   void onSearch(String query) {
     searchQuery.value = query;
     applyFilters();
   }
 
-  // عند اختيار فئة معينة (Category)
   void selectCategory(String category) {
     if (selectedCategory.value == category) {
-      selectedCategory.value = 'الكل'; // إلغاء التحديد إذا ضغط مرة ثانية
+      selectedCategory.value = 'الكل';
     } else {
       selectedCategory.value = category;
     }
     applyFilters();
   }
 
-  // دالة الفلترة الشاملة
   void applyFilters() {
     Iterable<Job> results = allJobs;
 
-    // أولاً: فلترة حسب الفئة المختارة
     if (selectedCategory.value != 'الكل') {
       results = results.where(
         (job) =>
@@ -96,7 +111,6 @@ class JobSeekerDashboardController extends GetxController {
       );
     }
 
-    // ثانياً: فلترة حسب نص البحث (العنوان أو اسم الشركة)
     if (searchQuery.value.isNotEmpty) {
       results = results.where(
         (job) =>
@@ -107,13 +121,12 @@ class JobSeekerDashboardController extends GetxController {
       );
     }
 
-    // تحديث القائمة التي يراقبها الـ UI
     filteredJobs.value = results.toList();
   }
 
-  // دالة لعمل Refresh يدوي من قبل المستخدم
   Future<void> refreshDashboard() async {
-    await loadRecentJobs();
     fetchUserData();
+    fetchCategories();
+    await loadRecentJobs();
   }
 }
