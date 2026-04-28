@@ -16,22 +16,32 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     _listenToChats();
-    print('ChatController initialized with userId: $currentUserId');
   }
 
   void _listenToChats() {
-    _chatService.getChats(currentUserId).listen((chats) {
-      allChats.value = chats;
-      isLoading.value = false;
-    });
+    _chatService
+        .getChats(currentUserId)
+        .listen(
+          (chats) {
+            allChats.value = chats;
+            isLoading.value = false;
+          },
+          onError: (e) {
+            print('Error: $e'); // ✅
+          },
+        );
   }
 
   List<ChatModel> get filteredChats {
     if (searchQuery.value.isEmpty) return allChats;
     return allChats
         .where(
-          (c) => c.name.toLowerCase().contains(searchQuery.value.toLowerCase()),
+          (c) => c
+              .otherName(currentUserId)
+              .toLowerCase()
+              .contains(searchQuery.value.toLowerCase()),
         )
         .toList();
   }

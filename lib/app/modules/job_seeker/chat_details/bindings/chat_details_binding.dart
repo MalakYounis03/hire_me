@@ -10,6 +10,8 @@ class ChatDetailsBinding extends Bindings {
         chatName: Get.parameters['chatName'] ?? 'Chat',
         chatAvatarUrl: Get.parameters['chatAvatarUrl'] ?? '',
         chatId: Get.parameters['chatId'] ?? '',
+        seekerId: Get.parameters['seekerId'] ?? '',
+        companyId: Get.parameters['companyId'] ?? '',
       ),
     );
   }

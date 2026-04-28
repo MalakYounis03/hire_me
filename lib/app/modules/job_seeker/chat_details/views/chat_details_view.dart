@@ -11,10 +11,14 @@ import '../controllers/chat_details_controller.dart';
 class ChatDetailsView extends StatelessWidget {
   final String chatName;
   final String avatarUrl;
+  final String seekerId;
+  final String companyId;
 
   const ChatDetailsView({
     super.key,
     required this.chatName,
+    required this.seekerId,
+    required this.companyId,
     this.avatarUrl = '',
   });
 
@@ -26,6 +30,8 @@ class ChatDetailsView extends StatelessWidget {
         chatName: chatName,
         chatAvatarUrl: avatarUrl,
         chatId: Get.arguments?['chatId'] ?? '', // ✅ null check
+        seekerId: seekerId,
+        companyId: companyId,
       ),
       tag: chatName,
     );
@@ -35,7 +41,16 @@ class ChatDetailsView extends StatelessWidget {
       appBar: ChatDetailsAppbar(name: chatName, avatarUrl: avatarUrl),
       body: Column(
         children: [
-          Expanded(child: MessagesList(controller: controller)),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(), // ✅
+                );
+              }
+              return MessagesList(controller: controller);
+            }),
+          ),
           MessageInput(controller: controller),
         ],
       ),

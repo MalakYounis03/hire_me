@@ -4,7 +4,15 @@ import 'package:hire_me/core/utils/app_color.dart';
 class ChatInfo extends StatelessWidget {
   final String name;
   final String lastMessage;
-  const ChatInfo({required this.name, required this.lastMessage, super.key});
+  final String lastMessageAuthor;
+  final String currentUserId;
+  const ChatInfo({
+    required this.name,
+    required this.lastMessage,
+    required this.lastMessageAuthor,
+    required this.currentUserId,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +28,17 @@ class ChatInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          lastMessage,
-          style: const TextStyle(fontSize: 13, color: AppColor.textSecondary),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          children: [
+            Text(
+              lastMessageAuthor == currentUserId
+                  ? 'You: $lastMessage'
+                  : '$name: $lastMessage', // ✅ اسم الشخص الثاني بدل بس الرسالة
+              style: TextStyle(fontSize: 13, color: AppColor.greyLight),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ],
     );
