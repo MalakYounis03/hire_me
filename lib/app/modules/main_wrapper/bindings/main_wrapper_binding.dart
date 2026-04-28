@@ -8,10 +8,9 @@ class MainWrapperBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<MainWrapperController>(() => MainWrapperController());
-    // إضافة هذا السطر لحل مشكلة الخطأ الأحمر في الصورة الأخيرة
     Get.lazyPut<JobSeekerDashboardController>(
       () => JobSeekerDashboardController(),
     );
-    Get.lazyPut<ChatController>(() => ChatController());
+    Get.put<ChatController>(ChatController());
   }
 }

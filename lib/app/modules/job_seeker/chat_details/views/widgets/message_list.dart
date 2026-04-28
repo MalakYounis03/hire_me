@@ -8,11 +8,17 @@ import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/messag
 class MessagesList extends StatelessWidget {
   final ChatDetailsController controller;
   const MessagesList({required this.controller, super.key});
-
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => ListView.builder(
+    return Obx(() {
+      final lastSentIndex = controller.messages.lastIndexWhere(
+        (m) => controller.isMe(m.senderId),
+      );
+
+      // ✅ اقري selectedMessageId هون عشان الـ Obx يتابعها
+      final selectedId = controller.selectedMessageId.value;
+
+      return ListView.builder(
         controller: controller.scrollController,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: controller.messages.length,
@@ -23,16 +29,25 @@ class MessagesList extends StatelessWidget {
               if (controller.showDateDivider(index))
                 DateDivider(label: formatDate(msg.time)),
               MessageBubble(
-                isMe: controller.isMe(msg.senderId), // ✅
                 message: msg,
                 time: formatTime(msg.time),
-                senderName: controller.chatName, // اسم الشخص الثاني
+                isMe: controller.isMe(msg.senderId),
+                isSeen:
+                    controller.isMe(msg.senderId) &&
+                    index == lastSentIndex &&
+                    controller.otherLastSeen.value >=
+                        msg.time.millisecondsSinceEpoch,
+                senderName: controller.chatName,
                 senderAvatarUrl: controller.chatAvatarUrl,
+                showTime:
+                    selectedId ==
+                    msg.id, // ✅ من selectedId مش من controller مباشرة
+                onTap: () => controller.toggleMessageTime(msg.id),
               ),
             ],
           );
         },
-      ),
-    );
+      );
+    });
   }
 }

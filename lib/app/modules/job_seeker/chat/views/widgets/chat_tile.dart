@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,9 @@ import 'package:hire_me/core/utils/app_color.dart';
 
 class ChatTile extends StatelessWidget {
   final ChatModel chat;
-  const ChatTile({super.key, required this.chat});
+  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+  ChatTile({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +23,10 @@ class ChatTile extends StatelessWidget {
           onTap: () {
             Get.to(
               () => ChatDetailsView(
-                chatName: chat.name,
+                chatName: chat.otherName(currentUserId),
                 avatarUrl: chat.avatarUrl,
+                seekerId: chat.seekerId,
+                companyId: chat.companyId,
               ),
               arguments: {'chatId': chat.id},
               transition: Transition.rightToLeft,
@@ -32,17 +37,25 @@ class ChatTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
               children: [
-                Avatar(name: chat.name, avatarUrl: chat.avatarUrl),
+                Avatar(
+                  name: chat.otherName(currentUserId),
+                  avatarUrl: chat.avatarUrl,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ChatInfo(
-                    name: chat.name,
+                    name: chat.otherName(currentUserId), // ✅
                     lastMessage: chat.lastMessage,
+                    lastMessageAuthor: chat.lastMessageAuthor,
+
+                    currentUserId: currentUserId,
                   ),
                 ),
                 ChatMeta(
                   time: chat.lastMessageTime,
-                  unreadCount: chat.unreadCount,
+                  unreadCount: chat.unreadFor(
+                    FirebaseAuth.instance.currentUser!.uid,
+                  ),
                 ),
               ],
             ),
