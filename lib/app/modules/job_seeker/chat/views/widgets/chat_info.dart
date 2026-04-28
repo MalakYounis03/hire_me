@@ -33,7 +33,7 @@ class ChatInfo extends StatelessWidget {
             Text(
               lastMessageAuthor == currentUserId
                   ? 'You: $lastMessage'
-                  : '$name: $lastMessage', // ✅ اسم الشخص الثاني بدل بس الرسالة
+                  : '$name: $lastMessage',
               style: TextStyle(fontSize: 13, color: AppColor.greyLight),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
