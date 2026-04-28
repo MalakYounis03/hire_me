@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class CompanyApplicantsController extends GetxController {
-  //TODO: Implement CompanyApplicantsController
+class ApplicationListController extends GetxController {
+  //TODO: Implement ApplicationListController
 
   final count = 0.obs;
   @override

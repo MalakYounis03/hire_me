@@ -84,7 +84,7 @@ class AuthRegisterController extends GetxController {
 
   void _navigateAfterRegister() {
     if (_role == 'company') {
-      Get.offAllNamed(Routes.COMPANY_DASHBOARD);
+      Get.offAllNamed(Routes.APPLICATION_LIST);
     } else {
       Get.offAllNamed(Routes.JOB_SEEKER_DASHBOARD);
     }
