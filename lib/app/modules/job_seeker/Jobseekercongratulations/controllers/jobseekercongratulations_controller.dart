@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-class JobSeekerProfileController extends GetxController {
-  //TODO: Implement JobSeekerProfileController
+class JobseekercongratulationsController extends GetxController {
+  //TODO: Implement JobseekercongratulationsController
 
   final count = 0.obs;
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/core/utils/app_color.dart';
 
 class AuthSelectUserController extends GetxController {
   @override
@@ -16,7 +17,7 @@ class AuthSelectUserController extends GetxController {
         'تنبيه',
         'الرجاء اختيار نوع المستخدم أولاً',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF1A3794),
+        backgroundColor: AppColor.kblue,
         colorText: const Color(0xFFFFFFFF),
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
