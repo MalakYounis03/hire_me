@@ -51,23 +51,13 @@ class ProfileView extends GetView<ProfileController> {
               const SizedBox(height: 10),
               _buildAboutCard(),
               const SizedBox(height: 10),
-              _buildSectionCard(
-                title: 'Experience',
-                buttonLabel: 'Add experience',
-                onAdd: () {},
-              ),
+              _buildEducationCard(),
               const SizedBox(height: 10),
-              _buildSectionCard(
-                title: 'Education',
-                buttonLabel: 'Add Education',
-                onAdd: () {},
-              ),
+              _buildExperienceCard(),
               const SizedBox(height: 10),
-              _buildSectionCard(
-                title: 'Skills',
-                buttonLabel: 'Add Skills',
-                onAdd: () {},
-              ),
+              _buildSkillsCard(),
+              const SizedBox(height: 10),
+              _buildLogoutButton(),
               const SizedBox(height: 20),
             ],
           ),
@@ -83,14 +73,11 @@ class ProfileView extends GetView<ProfileController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover + Avatar
           Stack(
             clipBehavior: Clip.none,
             children: [
-              // Cover
               Container(height: 100, color: const Color(0xFFB0BEC5)),
 
-              // Avatar
               Positioned(
                 bottom: -40,
                 left: 16,
@@ -119,18 +106,23 @@ class ProfileView extends GetView<ProfileController> {
                     Positioned(
                       bottom: 0,
                       right: 0,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: AppColor.kblue,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 14,
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.pickAndUploadImage;
+                        },
+                        child: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: AppColor.kblue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 14,
+                          ),
                         ),
                       ),
                     ),
@@ -140,7 +132,7 @@ class ProfileView extends GetView<ProfileController> {
             ],
           ),
 
-          const SizedBox(height: 48),
+          const SizedBox(height: 52),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -157,95 +149,94 @@ class ProfileView extends GetView<ProfileController> {
                         style: CustomTextstyle.Intermeduim,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Text('· 3rd', style: CustomTextstyle.Roboto),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'UX/UI Design _flutter',
-                  style: CustomTextstyle.Interregular400,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'AL_Azhar University (AUG)',
-                  style: CustomTextstyle.Interregular400,
-                ),
-                const SizedBox(height: 2),
-                Obx(
-                  () => Text(
-                    controller.userLocation.value.isEmpty
-                        ? 'Palestine_Gaza'
-                        : controller.userLocation.value,
-                    style: CustomTextstyle.Roboto300,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '2,900 followers • 1,300 connections',
-                  style: CustomTextstyle.Interregular700,
-                ),
-                const SizedBox(height: 14),
+                    Obx(
+                      () => controller.userTitle.isEmpty
+                          ? const SizedBox.shrink()
+                          : Text(
+                              controller.userTitle,
+                              style: CustomTextstyle.Interregular400,
+                            ),
+                    ),
+                    const SizedBox(height: 2),
+                    Obx(
+                      () => controller.userUniversity.isEmpty
+                          ? const SizedBox.shrink()
+                          : Text(
+                              controller.userUniversity,
+                              style: CustomTextstyle.Interregular400,
+                            ),
+                    ),
+                    const SizedBox(height: 2),
+                    Obx(
+                      () => controller.userLocation.isEmpty
+                          ? const SizedBox.shrink()
+                          : Text(
+                              controller.userLocation,
+                              style: CustomTextstyle.Roboto300,
+                            ),
+                    ),
+                    const SizedBox(height: 14),
 
-                // Buttons
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.light_themeBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.light_themeBlue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            'Open to',
+                            style: CustomTextstyle.Interregular500,
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 8,
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            side: BorderSide(color: AppColor.light_themeGrey),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: Text(
+                            'Add section',
+                            style: CustomTextstyle.Interregular500grey,
+                          ),
                         ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Open to',
-                        style: CustomTextstyle.Interregular500,
-                      ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            side: BorderSide(color: AppColor.light_themeGrey),
+                            minimumSize: const Size(36, 36),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Icon(
+                            Icons.more_horiz,
+                            color: AppColor.light_themeGrey,
+                            size: 20,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                      child: Text(
-                        'Add section',
-                        style: CustomTextstyle.Interregular500grey,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
-                        minimumSize: const Size(36, 36),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Icon(
-                        Icons.more_horiz,
-                        color: AppColor.light_themeGrey,
-                        size: 20,
-                      ),
-                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
-                const SizedBox(height: 16),
               ],
             ),
           ),

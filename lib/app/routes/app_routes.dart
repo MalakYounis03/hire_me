@@ -9,7 +9,6 @@ abstract class Routes {
   static const AUTH_LOGIN = _Paths.AUTH_LOGIN;
   static const AUTH_REGISTER = _Paths.AUTH_REGISTER;
   static const AUTH_FORGOT_PASSWORD = _Paths.AUTH_FORGOT_PASSWORD;
-  static const AUTH_OTP = _Paths.AUTH_OTP;
 
   static const PROFILE = _Paths.PROFILE;
 
