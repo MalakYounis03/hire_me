@@ -31,10 +31,9 @@ class AuthForgotPasswordController extends GetxController {
     try {
       await _auth.sendPasswordResetEmail(email: emailController.text.trim());
       _showSuccess('Reset link sent! Check your email');
-      Get.toNamed(
-        Routes.AUTH_OTP,
-        arguments: {'email': emailController.text.trim()},
-      );
+
+      await Future.delayed(const Duration(seconds: 2));
+      Get.offAllNamed(Routes.AUTH_LOGIN);
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
     } finally {

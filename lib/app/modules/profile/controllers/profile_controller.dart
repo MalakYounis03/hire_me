@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/models/user_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
   final userModel = Rxn<UserModel>();
@@ -14,7 +15,7 @@ class ProfileController extends GetxController {
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
-  final _storage = FirebaseStorage.instance;
+  final _supabase = Supabase.instance.client;
 
   String get userName => userModel.value?.name ?? '';
   String get userTitle => userModel.value?.title ?? '';
@@ -68,16 +69,26 @@ class ProfileController extends GetxController {
     try {
       final uid = _auth.currentUser!.uid;
       final file = File(picked.path);
+      final fileName = '$uid.jpg';
 
-      final ref = _storage.ref().child('profile_images/$uid.jpg');
-      await ref.putFile(file);
-      final imageUrl = await ref.getDownloadURL();
+      await _supabase.storage
+          .from('profile-images')
+          .upload(
+            fileName,
+            file,
+            fileOptions: const FileOptions(upsert: true), // ← يحدّث لو موجودة
+          );
+
+      final imageUrl = _supabase.storage
+          .from('profile-images')
+          .getPublicUrl(fileName);
 
       await _updateField('profileImage', imageUrl);
-
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
+
+      _showSuccess('Profile image updated!');
     } catch (e) {
-      _showError('Failed to upload image');
+      _showError('Failed to upload image: $e');
     } finally {
       isUploadingImage.value = false;
     }
@@ -256,15 +267,23 @@ class ProfileController extends GetxController {
     );
   }
 
-  void _showError(String message) {
-    Get.snackbar(
-      'Error',
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFFEF4444),
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-    );
-  }
+  void _showError(String msg) => Get.snackbar(
+    'Error',
+    msg,
+    snackPosition: SnackPosition.BOTTOM,
+    backgroundColor: const Color(0xFFEF4444),
+    colorText: Colors.white,
+    margin: const EdgeInsets.all(16),
+    borderRadius: 12,
+  );
+
+  void _showSuccess(String msg) => Get.snackbar(
+    'Success',
+    msg,
+    snackPosition: SnackPosition.BOTTOM,
+    backgroundColor: const Color(0xFF22C55E),
+    colorText: Colors.white,
+    margin: const EdgeInsets.all(16),
+    borderRadius: 12,
+  );
 }

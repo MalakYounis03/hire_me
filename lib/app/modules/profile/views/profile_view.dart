@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/core/models/user_model.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
@@ -81,52 +82,54 @@ class ProfileView extends GetView<ProfileController> {
               Positioned(
                 bottom: -40,
                 left: 16,
-                child: Stack(
-                  children: [
-                    Obx(
-                      () => CircleAvatar(
+                child: Obx(
+                  () => Stack(
+                    children: [
+                      CircleAvatar(
                         radius: 44,
                         backgroundColor: Colors.white,
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: const Color(0xFFE8EDF9),
-                          backgroundImage: controller.userImage.value.isNotEmpty
-                              ? NetworkImage(controller.userImage.value)
-                              : null,
-                          child: controller.userImage.value.isEmpty
-                              ? Icon(
-                                  Icons.person_rounded,
-                                  size: 40,
-                                  color: AppColor.kblue,
-                                )
-                              : null,
+                        child: controller.isUploadingImage.value
+                            ? CircularProgressIndicator(color: AppColor.kblue)
+                            : CircleAvatar(
+                                radius: 40,
+                                backgroundColor: const Color(0xFFE8EDF9),
+                                backgroundImage: controller.userImage.isNotEmpty
+                                    ? NetworkImage(controller.userImage)
+                                    : null,
+                                child: controller.userImage.isEmpty
+                                    ? Icon(
+                                        Icons.person_rounded,
+                                        size: 40,
+                                        color: AppColor.kblue,
+                                      )
+                                    : null,
+                              ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            controller.pickAndUploadImage;
+                          },
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: AppColor.kblue,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.pickAndUploadImage;
-                        },
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          decoration: BoxDecoration(
-                            color: AppColor.kblue,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -143,9 +146,9 @@ class ProfileView extends GetView<ProfileController> {
                   children: [
                     Obx(
                       () => Text(
-                        controller.userName.value.isEmpty
+                        controller.userName.isEmpty
                             ? 'Your Name'
-                            : controller.userName.value.toUpperCase(),
+                            : controller.userName.toUpperCase(),
                         style: CustomTextstyle.Intermeduim,
                       ),
                     ),
@@ -157,7 +160,7 @@ class ProfileView extends GetView<ProfileController> {
                               style: CustomTextstyle.Interregular400,
                             ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Obx(
                       () => controller.userUniversity.isEmpty
                           ? const SizedBox.shrink()
@@ -234,7 +237,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    // const SizedBox(height: 16),
                   ],
                 ),
               ],
@@ -298,11 +301,11 @@ class ProfileView extends GetView<ProfileController> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'About',
                   style: TextStyle(
                     fontSize: 16,
@@ -310,10 +313,23 @@ class ProfileView extends GetView<ProfileController> {
                     color: Color(0xFF1A1A2E),
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'AUG_Softwer Engineering || UX/UI & Flutter',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF1A1A2E)),
+                const SizedBox(height: 8),
+                Obx(
+                  () => controller.userAbout.isEmpty
+                      ? const Text(
+                          'Add about yourself...',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF8A8A9A),
+                          ),
+                        )
+                      : Text(
+                          controller.userAbout,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF1A1A2E),
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -331,11 +347,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildSectionCard({
-    required String title,
-    required String buttonLabel,
-    required VoidCallback onAdd,
-  }) {
+  Widget _buildEducationCard() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(16),
@@ -345,9 +357,9 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
+              const Text(
+                'Education',
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1A1A2E),
@@ -364,22 +376,292 @@ class ProfileView extends GetView<ProfileController> {
             ],
           ),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: onAdd,
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              side: const BorderSide(color: Color(0xFF8A8A9A)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          Obx(() {
+            if (controller.education.isEmpty) {
+              return _addButton(
+                'Add Education',
+                controller.showAddEducationDialog,
+              );
+            }
+            return Column(
+              children: [
+                ...controller.education.map((e) => _educationItem(e)),
+                const SizedBox(height: 8),
+                _addButton('Add Education', controller.showAddEducationDialog),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _educationItem(EducationModel e) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EDF9),
+              borderRadius: BorderRadius.circular(8),
             ),
-            icon: const Icon(Icons.add, size: 18, color: Color(0xFF1A1A2E)),
-            label: Text(
-              buttonLabel,
-              style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13),
+            child: Icon(Icons.school_outlined, color: AppColor.kblue, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  e.school,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  '${e.degree} · ${e.field}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+                Text(
+                  '${e.startYear} - ${e.endYear}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildExperienceCard() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Experience',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A2E),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.edit_outlined,
+                  color: Color(0xFF8A8A9A),
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Obx(() {
+            if (controller.experience.isEmpty) {
+              return _addButton(
+                'Add experience',
+                controller.showAddExperienceDialog,
+              );
+            }
+            return Column(
+              children: [
+                ...controller.experience.map((e) => _experienceItem(e)),
+                const SizedBox(height: 8),
+                _addButton(
+                  'Add experience',
+                  controller.showAddExperienceDialog,
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _experienceItem(ExperienceModel e) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EDF9),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.work_outline_rounded,
+              color: AppColor.kblue,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  e.position,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  e.company,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+                Text(
+                  '${e.startDate} - ${e.endDate}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkillsCard() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Skills',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A2E),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: const Icon(
+                  Icons.edit_outlined,
+                  color: Color(0xFF8A8A9A),
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Obx(() {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (controller.skills.isNotEmpty)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: controller.skills
+                        .asMap()
+                        .entries
+                        .map((e) => _skillChip(e.value, e.key))
+                        .toList(),
+                  ),
+                if (controller.skills.isNotEmpty) const SizedBox(height: 10),
+                _addButton('Add Skills', controller.showAddSkillDialog),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _skillChip(String skill, int index) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8EDF9),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            skill,
+            style: TextStyle(
+              fontSize: 13,
+              color: AppColor.kblue,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 6),
+          GestureDetector(
+            onTap: () => controller.removeSkill(index),
+            child: Icon(Icons.close, size: 14, color: AppColor.kblue),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return Container(
+      color: Colors.white,
+      child: ListTile(
+        leading: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
+        title: const Text(
+          'Log Out',
+          style: TextStyle(
+            color: Color(0xFFEF4444),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        onTap: controller.logout,
+      ),
+    );
+  }
+
+  Widget _addButton(String label, VoidCallback onTap) {
+    return OutlinedButton.icon(
+      onPressed: onTap,
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        side: const BorderSide(color: Color(0xFF8A8A9A)),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      icon: const Icon(Icons.add, size: 18, color: Color(0xFF1A1A2E)),
+      label: Text(
+        label,
+        style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13),
       ),
     );
   }

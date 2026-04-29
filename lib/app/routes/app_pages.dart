@@ -6,8 +6,6 @@ import '../modules/auth/login/bindings/auth_login_binding.dart';
 import '../modules/auth/login/views/auth_login_view.dart';
 import '../modules/auth/onboarding/bindings/onboarding_binding.dart';
 import '../modules/auth/onboarding/views/onboarding_view.dart';
-import '../modules/auth/otp/bindings/otp_binding.dart';
-import '../modules/auth/otp/views/otp_view.dart';
 import '../modules/auth/register/bindings/auth_register_binding.dart';
 import '../modules/auth/register/views/auth_register_view.dart';
 import '../modules/auth/select_user/bindings/auth_select_user_binding.dart';
@@ -36,7 +34,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.PROFILE;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -69,11 +67,7 @@ class AppPages {
       page: () => const AuthForgotPasswordView(),
       binding: AuthForgotPasswordBinding(),
     ),
-    GetPage(
-      name: Routes.AUTH_OTP,
-      page: () => const AuthOtpView(),
-      binding: AuthOtpBinding(),
-    ),
+
     GetPage(
       name: Routes.JOB_SEEKER_DASHBOARD,
       page: () => const JobSeekerDashboardView(),
