@@ -32,6 +32,7 @@ abstract class Routes {
   static const COMPANY_MAIN_WRAPPER = _Paths.COMPANY_MAIN_WRAPPER;
   static const COMPANY_CHAT = _Paths.COMPANY_CHAT;
   static const COMPANY_PROFILE = _Paths.COMPANY_PROFILE;
+  static const COMPANY_CHAT_DETAILS = _Paths.COMPANY_CHAT_DETAILS;
 }
 
 abstract class _Paths {
@@ -62,4 +63,5 @@ abstract class _Paths {
   static const COMPANY_MAIN_WRAPPER = '/company-main-wrapper';
   static const COMPANY_CHAT = '/company-chat';
   static const COMPANY_PROFILE = '/company-profile';
+  static const COMPANY_CHAT_DETAILS = '/company-chat-details';
 }
