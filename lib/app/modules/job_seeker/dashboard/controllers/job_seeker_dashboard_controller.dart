@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hire_me/app/data/models/job_model.dart';
 // تأكدي من إنشاء ملف الموديل هذا كما اقترحنا سابقاً
 import 'package:hire_me/app/data/models/category_model.dart';

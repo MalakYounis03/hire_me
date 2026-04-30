@@ -93,4 +93,76 @@ abstract class CustomTextstyle {
     color: AppColor.eblack,
     fontFamily: " Poppins",
   );
+  static final Intersemiboldwhite = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    color: AppColor.kwhite,
+    fontFamily: " Inter",
+  );
+  static final Intermeduim = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w500,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final Roboto = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w500,
+    color: AppColor.Eblack,
+    fontFamily: "Roboto",
+  );
+  static final Interregular400 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final Roboto300 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w300,
+    color: AppColor.light_themeGrey,
+    fontFamily: "Roboto",
+  );
+  static final Interregular700 = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+    color: AppColor.light_themeBlue,
+    fontFamily: " Inter",
+  );
+  static final Interregular500 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColor.kwhite,
+    fontFamily: " Inter",
+  );
+  static final Interregular500grey = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    color: AppColor.light_themeGrey,
+    fontFamily: " Inter",
+  );
+  static final Interregularblackbold = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final Interregular18 = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final Intersemiboldblackk = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final SegoeUI = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColor.Eblack,
+    fontFamily: " Segoe.UI",
+  );
 }

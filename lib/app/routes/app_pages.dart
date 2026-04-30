@@ -1,4 +1,10 @@
 import 'package:get/get.dart';
+import 'package:hire_me/app/modules/job_seeker/main_fields/bindings/job_seeker_main_fields_binding.dart';
+import 'package:hire_me/app/modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
+import 'package:hire_me/app/modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
+import 'package:hire_me/app/modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
+import 'package:hire_me/app/modules/main_wrapper/bindings/main_wrapper_binding.dart';
+import 'package:hire_me/app/modules/main_wrapper/views/main_wrapper_view.dart';
 
 import '../modules/company/application_list/bindings/application_list_binding.dart';
 import '../modules/company/application_list/views/application_list_view.dart';
@@ -10,8 +16,7 @@ import '../modules/auth/login/bindings/auth_login_binding.dart';
 import '../modules/auth/login/views/auth_login_view.dart';
 import '../modules/auth/onboarding/bindings/onboarding_binding.dart';
 import '../modules/auth/onboarding/views/onboarding_view.dart';
-import '../modules/auth/otp/bindings/otp_binding.dart';
-import '../modules/auth/otp/views/otp_view.dart';
+
 import '../modules/auth/register/bindings/auth_register_binding.dart';
 import '../modules/auth/register/views/auth_register_view.dart';
 import '../modules/auth/select_user/bindings/auth_select_user_binding.dart';
@@ -28,16 +33,10 @@ import '../modules/job_seeker/dashboard/bindings/job_seeker_dashboard_binding.da
 import '../modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import '../modules/job_seeker/job_details/bindings/job_seeker_job_details_binding.dart';
 import '../modules/job_seeker/job_details/views/job_seeker_job_details_view.dart';
-import '../modules/job_seeker/main_fields/bindings/job_seeker_main_fields_binding.dart';
-import '../modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
 import '../modules/job_seeker/my_applications/bindings/job_seeker_my_applications_binding.dart';
 import '../modules/job_seeker/my_applications/views/job_seeker_my_applications_view.dart';
-import '../modules/job_seeker/profile/bindings/job_seeker_profile_binding.dart';
-import '../modules/job_seeker/profile/views/job_seeker_profile_view.dart';
-import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
-import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
-import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
-import '../modules/main_wrapper/views/main_wrapper_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 
 part 'app_routes.dart';
 
@@ -78,14 +77,14 @@ class AppPages {
       binding: AuthForgotPasswordBinding(),
     ),
     GetPage(
-      name: Routes.AUTH_OTP,
-      page: () => const AuthOtpView(),
-      binding: AuthOtpBinding(),
-    ),
-    GetPage(
       name: Routes.JOB_SEEKER_DASHBOARD,
       page: () => const JobSeekerDashboardView(),
       binding: JobSeekerDashboardBinding(),
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_CONGRATULATIONS,
+      page: () => const JobSeekerApplyJobView(),
+      binding: JobSeekerApplyJobBinding(),
     ),
     GetPage(
       name: Routes.JOB_SEEKER_JOB_DETAILS,
@@ -98,9 +97,9 @@ class AppPages {
       binding: JobSeekerApplyJobBinding(),
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_PROFILE,
-      page: () => const JobSeekerProfileView(),
-      binding: JobSeekerProfileBinding(),
+      name: Routes.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
     GetPage(
       name: Routes.JOB_SEEKER_MY_APPLICATIONS,
