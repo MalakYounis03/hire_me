@@ -28,54 +28,58 @@ class ApplicationListView extends GetView<ApplicationListController> {
               applicantsCount: totalApplicants,
             ),
             Expanded(
-              child: jobs.isEmpty
-                  ? Center(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 24),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.kwhite,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColor.greyVeryLight),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColor.kblack.withOpacity(0.04),
-                              blurRadius: 18,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 32,
-                              color: AppColor.kblue,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'No applications yet',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppColor.kblack,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'New applications will appear here.',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppColor.greyLight,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+              child: controller.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
                     )
-                  : ListView.builder(
+                  : jobs.isEmpty
+                      ? Center(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 24,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColor.kwhite,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColor.greyVeryLight),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColor.kblack.withOpacity(0.04),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.inbox_outlined,
+                                  size: 32,
+                                  color: AppColor.kblue,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No applications yet',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: AppColor.kblack,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'New applications will appear here.',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColor.greyLight,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
                       itemCount: jobs.length,
                       itemBuilder: (_, jobIndex) {

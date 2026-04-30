@@ -1,5 +1,6 @@
 class ApplicationReviewModel {
   final String id;
+  final String jobSeekerId;
   final String name;
   final String jobTitle;
   final String location;
@@ -14,6 +15,7 @@ class ApplicationReviewModel {
 
   ApplicationReviewModel({
     required this.id,
+    required this.jobSeekerId,
     required this.name,
     required this.jobTitle,
     required this.location,
