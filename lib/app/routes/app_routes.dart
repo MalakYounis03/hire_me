@@ -31,6 +31,9 @@ abstract class Routes {
 
   static const APPLICATION_REVIEW = _Paths.APPLICATION_REVIEW;
   static const APPLICATION_LIST = _Paths.APPLICATION_LIST;
+  static const COMPANY_MAIN_WRAPPER = _Paths.COMPANY_MAIN_WRAPPER;
+  static const COMPANY_CHAT = _Paths.COMPANY_CHAT;
+  static const COMPANY_PROFILE = _Paths.COMPANY_PROFILE;
 }
 
 abstract class _Paths {
@@ -60,4 +63,7 @@ abstract class _Paths {
   static const MAIN_WRAPPER = '/main-wrapper';
   static const APPLICATION_REVIEW = '/application-review';
   static const APPLICATION_LIST = '/application-list';
+  static const COMPANY_MAIN_WRAPPER = '/company-main-wrapper';
+  static const COMPANY_CHAT = '/company-chat';
+  static const COMPANY_PROFILE = '/company-profile';
 }

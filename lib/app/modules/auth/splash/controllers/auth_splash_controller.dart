@@ -26,7 +26,7 @@ class AuthSplashController extends GetxController {
       final role = doc.data()?['role'] as String? ?? 'jobseeker';
 
       if (role == 'company') {
-        Get.offAllNamed(Routes.COMPANY_DASHBOARD);
+        Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
       } else {
         Get.offAllNamed(Routes.JOB_SEEKER_DASHBOARD);
       }

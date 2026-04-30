@@ -43,11 +43,7 @@ class ApplicantInfo extends StatelessWidget {
         const SizedBox(height: 2),
         Row(
           children: [
-            Icon(
-              Icons.location_on_outlined,
-              size: 12,
-              color: AppColor.greyLight,
-            ),
+            Icon(Icons.location_on_outlined, size: 12, color: AppColor.kblue),
             const SizedBox(width: 4),
             Text(
               location,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 
 class DividerWidget extends StatelessWidget {
   const DividerWidget({super.key});
@@ -32,17 +32,21 @@ class ActionButtons extends StatelessWidget {
               onPressed: () {
                 // TODO: Reject logic
               },
-              icon: Icon(Icons.cancel_outlined, color: Colors.red, size: 18),
+              icon: Icon(
+                Icons.cancel_outlined,
+                color: AppColor.kdanger,
+                size: 18,
+              ),
               label: Text(
                 'Reject',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: AppColor.kdanger,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                side: const BorderSide(color: Colors.red),
+                side: BorderSide(color: AppColor.kdanger),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -57,13 +61,13 @@ class ActionButtons extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.check_circle_outline,
-                color: Colors.white,
+                color: AppColor.kwhite,
                 size: 18,
               ),
               label: const Text(
                 'Accept',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColor.kwhite,
                   fontWeight: FontWeight.w600,
                 ),
               ),

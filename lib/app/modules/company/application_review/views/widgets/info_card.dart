@@ -1,87 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
-import 'package:hire_me/app/modules/company/application_review/views/widgets/divider_widget.dart';
-import 'package:hire_me/app/modules/company/application_review/views/widgets/info_row.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 
 class InfoCard extends StatelessWidget {
-  final ApplicationReviewModel applicant;
-  const InfoCard({required this.applicant, super.key});
+  final String title;
+  final String content;
+  final IconData icon;
+  final Color iconColor;
+
+  const InfoCard({
+    Key? key,
+    required this.title,
+    required this.content,
+    required this.icon,
+    this.iconColor = const Color(0xff0D47A1),
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.kwhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColor.greyVeryLight),
-      ),
-      child: Column(
-        children: [
-          InfoRow(
-            icon: Icons.email_outlined,
-            label: 'Email',
-            value: applicant.email,
-            trailing: Icon(
-              Icons.mail_outline_rounded,
-              size: 18,
-              color: AppColor.kblue,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppColor.kblack,
           ),
-          DividerWidget(),
-          InfoRow(
-            icon: Icons.psychology_outlined,
-            label: 'Skills',
-            value: applicant.skills,
-            trailing: Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: AppColor.greyLight,
-            ),
-          ),
-          DividerWidget(),
-          InfoRow(
-            icon: Icons.work_history_outlined,
-            label: 'Experience',
-            value: applicant.experience,
-          ),
-          DividerWidget(),
-          InfoRow(
-            icon: Icons.school_outlined,
-            label: 'Education',
-            value: applicant.education,
-          ),
-          DividerWidget(),
-          InfoRow(
-            icon: Icons.insert_drive_file_outlined,
-            label: 'Resume',
-            value: '',
-            trailing: GestureDetector(
-              onTap: () {
-                // فتح الـ CV
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'View CV',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColor.kblue,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.open_in_new_rounded,
-                    size: 14,
-                    color: AppColor.kblue,
-                  ),
-                ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColor.kwhite,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppColor.kblack.withOpacity(0.08),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            ),
+            ],
+            border: Border.all(color: AppColor.greyVeryLight),
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 20),
+              const SizedBox(width: 12),
+              Text(
+                content,
+                style: TextStyle(fontSize: 14, color: AppColor.kblack),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

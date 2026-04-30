@@ -6,7 +6,6 @@ import 'package:hire_me/app/modules/job_seeker/dashboard/controllers/job_seeker_
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/header_widget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
-// ✅ تأكدي من استيراد الـ Widget الجديد هنا
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/categories_widget.dart';
 
 class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
