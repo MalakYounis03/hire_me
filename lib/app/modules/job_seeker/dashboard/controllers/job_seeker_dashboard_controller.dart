@@ -1,16 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-<<<<<<< HEAD
-import 'package:hire_me/app/routes/app_pages.dart';
-
-class JobSeekerDashboardController extends GetxController {
-  Future<void> logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offAllNamed(Routes.SPLASH);
-  }
-=======
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hire_me/app/data/models/job_model.dart';
 // تأكدي من إنشاء ملف الموديل هذا كما اقترحنا سابقاً
 import 'package:hire_me/app/data/models/category_model.dart';
@@ -139,5 +129,4 @@ class JobSeekerDashboardController extends GetxController {
     fetchCategories();
     await loadRecentJobs();
   }
->>>>>>> main
 }

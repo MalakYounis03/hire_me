@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-<<<<<<< HEAD
 class JobSeekerMyApplicationsController extends GetxController {
   final applications = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
@@ -82,6 +81,3 @@ class JobSeekerMyApplicationsController extends GetxController {
     }
   }
 }
-=======
-class JobSeekerMyApplicationsController extends GetxController {}
->>>>>>> main

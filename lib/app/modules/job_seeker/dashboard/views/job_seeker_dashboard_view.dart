@@ -94,16 +94,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
           ),
         ),
       ),
-<<<<<<< HEAD
-      body: Center(
-        child: GestureDetector(
-          onTap: controller.logout,
-          child: const Icon(
-            Icons.logout_rounded,
-            color: Color(0xFF1A3794),
-            size: 26,
-          ),
-=======
     );
   }
 
@@ -122,7 +112,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
               style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 16),
             ),
           ],
->>>>>>> main
         ),
       ),
     );
