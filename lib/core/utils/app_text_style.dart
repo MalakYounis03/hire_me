@@ -153,4 +153,16 @@ abstract class CustomTextstyle {
     color: AppColor.Eblack,
     fontFamily: " Inter",
   );
+  static final Intersemiboldblackk = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: AppColor.Eblack,
+    fontFamily: " Inter",
+  );
+  static final SegoeUI = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColor.Eblack,
+    fontFamily: " Segoe.UI",
+  );
 }

@@ -104,6 +104,10 @@ flutter:
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
 
+    - family: Segoe.UI
+      fonts:
+        - asset: assets/fonts/Segoe.UI.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

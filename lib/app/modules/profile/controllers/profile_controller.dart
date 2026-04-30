@@ -238,11 +238,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  Future<void> logout() async {
-    await _auth.signOut();
-    Get.offAllNamed(Routes.SPLASH);
-  }
-
   Future<void> _updateField(String field, dynamic value) async {
     final uid = _auth.currentUser!.uid;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});

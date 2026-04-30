@@ -57,8 +57,6 @@ class ProfileView extends GetView<ProfileController> {
               _buildExperienceCard(),
               const SizedBox(height: 10),
               _buildSkillsCard(),
-              const SizedBox(height: 10),
-              _buildLogoutButton(),
               const SizedBox(height: 20),
             ],
           ),
@@ -68,6 +66,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+  // ── Profile Card ──────────────────────────────────────
   Widget _buildProfileCard() {
     return Container(
       color: AppColor.kwhite,
@@ -78,7 +77,6 @@ class ProfileView extends GetView<ProfileController> {
             clipBehavior: Clip.none,
             children: [
               Container(height: 100, color: const Color(0xFFB0BEC5)),
-
               Positioned(
                 bottom: -40,
                 left: 16,
@@ -109,9 +107,7 @@ class ProfileView extends GetView<ProfileController> {
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: () {
-                            controller.pickAndUploadImage;
-                          },
+                          onTap: controller.pickAndUploadImage, // ← صلّحنا هاد
                           child: Container(
                             width: 26,
                             height: 26,
@@ -138,106 +134,111 @@ class ProfileView extends GetView<ProfileController> {
           const SizedBox(height: 52),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Column(
+              // ← Column بدل Row
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // الاسم
+                Obx(
+                  () => Text(
+                    controller.userName.isEmpty
+                        ? 'Your Name'
+                        : controller.userName.toUpperCase(),
+                    style: CustomTextstyle.Intermeduim,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Obx(
+                  () => controller.userTitle.isEmpty
+                      ? const SizedBox.shrink()
+                      : Text(
+                          controller.userTitle,
+                          style: CustomTextstyle.Interregular400,
+                        ),
+                ),
+
+                const SizedBox(height: 2),
+
+                Obx(
+                  () => controller.userUniversity.isEmpty
+                      ? const SizedBox.shrink()
+                      : Text(
+                          controller.userUniversity,
+                          style: CustomTextstyle.Interregular400,
+                        ),
+                ),
+
+                const SizedBox(height: 2),
+
+                Obx(
+                  () => controller.userLocation.isEmpty
+                      ? const SizedBox.shrink()
+                      : Text(
+                          controller.userLocation,
+                          style: CustomTextstyle.Roboto300,
+                        ),
+                ),
+
+                const SizedBox(height: 14),
+
                 Row(
                   children: [
-                    Obx(
-                      () => Text(
-                        controller.userName.isEmpty
-                            ? 'Your Name'
-                            : controller.userName.toUpperCase(),
-                        style: CustomTextstyle.Intermeduim,
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.light_themeBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        'Open to',
+                        style: CustomTextstyle.Interregular500,
                       ),
                     ),
-                    Obx(
-                      () => controller.userTitle.isEmpty
-                          ? const SizedBox.shrink()
-                          : Text(
-                              controller.userTitle,
-                              style: CustomTextstyle.Interregular400,
-                            ),
-                    ),
-                    const SizedBox(height: 4),
-                    Obx(
-                      () => controller.userUniversity.isEmpty
-                          ? const SizedBox.shrink()
-                          : Text(
-                              controller.userUniversity,
-                              style: CustomTextstyle.Interregular400,
-                            ),
-                    ),
-                    const SizedBox(height: 2),
-                    Obx(
-                      () => controller.userLocation.isEmpty
-                          ? const SizedBox.shrink()
-                          : Text(
-                              controller.userLocation,
-                              style: CustomTextstyle.Roboto300,
-                            ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.light_themeBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 8,
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            'Open to',
-                            style: CustomTextstyle.Interregular500,
-                          ),
+                    const SizedBox(width: 8),
+                    OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            side: BorderSide(color: AppColor.light_themeGrey),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                          ),
-                          child: Text(
-                            'Add section',
-                            style: CustomTextstyle.Interregular500grey,
-                          ),
+                        side: BorderSide(color: AppColor.light_themeGrey),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            side: BorderSide(color: AppColor.light_themeGrey),
-                            minimumSize: const Size(36, 36),
-                            padding: EdgeInsets.zero,
-                          ),
-                          child: Icon(
-                            Icons.more_horiz,
-                            color: AppColor.light_themeGrey,
-                            size: 20,
-                          ),
-                        ),
-                      ],
+                      ),
+                      child: Text(
+                        'Add section',
+                        style: CustomTextstyle.Interregular500grey,
+                      ),
                     ),
-                    // const SizedBox(height: 16),
+                    const SizedBox(width: 8),
+                    OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        side: BorderSide(color: AppColor.light_themeGrey),
+                        minimumSize: const Size(36, 36),
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Icon(
+                        Icons.more_horiz,
+                        color: AppColor.light_themeGrey,
+                        size: 20,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -251,11 +252,10 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildOpenToWorkCard() {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xffE9E5DF),
+        color: const Color(0xffE9E5DF),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(18),
-
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -269,7 +269,6 @@ class ProfileView extends GetView<ProfileController> {
                 ),
                 const SizedBox(height: 4),
                 Text('UX/UI Design', style: CustomTextstyle.Interregular18),
-
                 const SizedBox(height: 4),
                 GestureDetector(
                   onTap: () {},
@@ -305,14 +304,7 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'About',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
+                Text('About', style: CustomTextstyle.Intersemiboldblackk),
                 const SizedBox(height: 8),
                 Obx(
                   () => controller.userAbout.isEmpty
@@ -336,9 +328,9 @@ class ProfileView extends GetView<ProfileController> {
           ),
           GestureDetector(
             onTap: () {},
-            child: const Icon(
+            child: Icon(
               Icons.edit_outlined,
-              color: Color(0xFF8A8A9A),
+              color: AppColor.light_themeGrey,
               size: 20,
             ),
           ),
@@ -357,19 +349,12 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Education',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A2E),
-                ),
-              ),
+              Text('Education', style: CustomTextstyle.Intersemiboldblackk),
               GestureDetector(
                 onTap: () {},
-                child: const Icon(
+                child: Icon(
                   Icons.edit_outlined,
-                  color: Color(0xFF8A8A9A),
+                  color: AppColor.light_themeGrey,
                   size: 20,
                 ),
               ),
@@ -416,27 +401,14 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.school,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
+                Text(e.school, style: CustomTextstyle.SegoeUI),
                 Text(
                   '${e.degree} · ${e.field}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF8A8A9A),
-                  ),
+                  style: CustomTextstyle.SegoeUI,
                 ),
                 Text(
                   '${e.startYear} - ${e.endYear}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8A8A9A),
-                  ),
+                  style: CustomTextstyle.SegoeUI,
                 ),
               ],
             ),
@@ -456,19 +428,12 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Experience',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A2E),
-                ),
-              ),
+              Text('Experience', style: CustomTextstyle.Intersemiboldblackk),
               GestureDetector(
                 onTap: () {},
-                child: const Icon(
+                child: Icon(
                   Icons.edit_outlined,
-                  color: Color(0xFF8A8A9A),
+                  color: AppColor.light_themeGrey,
                   size: 20,
                 ),
               ),
@@ -522,27 +487,11 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.position,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  e.company,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
+                Text(e.position, style: CustomTextstyle.SegoeUI),
+                Text(e.company, style: CustomTextstyle.SegoeUI),
                 Text(
                   '${e.startDate} - ${e.endDate}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8A8A9A),
-                  ),
+                  style: CustomTextstyle.SegoeUI,
                 ),
               ],
             ),
@@ -562,19 +511,12 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Skills',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A2E),
-                ),
-              ),
+              Text('Skills', style: CustomTextstyle.Intersemiboldblackk),
               GestureDetector(
                 onTap: () {},
-                child: const Icon(
+                child: Icon(
                   Icons.edit_outlined,
-                  color: Color(0xFF8A8A9A),
+                  color: AppColor.light_themeGrey,
                   size: 20,
                 ),
               ),
@@ -629,23 +571,6 @@ class ProfileView extends GetView<ProfileController> {
             child: Icon(Icons.close, size: 14, color: AppColor.kblue),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return Container(
-      color: Colors.white,
-      child: ListTile(
-        leading: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
-        title: const Text(
-          'Log Out',
-          style: TextStyle(
-            color: Color(0xFFEF4444),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        onTap: controller.logout,
       ),
     );
   }

@@ -61,7 +61,7 @@ class AuthLoginController extends GetxController {
     if (role == 'company') {
       Get.offAllNamed(Routes.COMPANY_DASHBOARD);
     } else {
-      Get.offAllNamed(Routes.JOB_SEEKER_DASHBOARD);
+      Get.offAllNamed(Routes.PROFILE);
     }
   }
 
