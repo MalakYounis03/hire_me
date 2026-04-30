@@ -12,6 +12,8 @@ import '../modules/auth/select_user/bindings/auth_select_user_binding.dart';
 import '../modules/auth/select_user/views/auth_select_user_view.dart';
 import '../modules/auth/splash/bindings/auth_splash_binding.dart';
 import '../modules/auth/splash/views/auth_splash_view.dart';
+import '../middleware/role_guard_middleware.dart';
+import '../services/storage_service.dart';
 import '../modules/company/application_list/bindings/application_list_binding.dart';
 import '../modules/company/application_list/views/application_list_view.dart';
 import '../modules/company/application_review/bindings/application_review_binding.dart';
@@ -85,81 +87,129 @@ class AppPages {
       name: Routes.JOB_SEEKER_DASHBOARD,
       page: () => const JobSeekerDashboardView(),
       binding: JobSeekerDashboardBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_CONGRATULATIONS,
       page: () => const JobSeekerApplyJobView(),
       binding: JobSeekerApplyJobBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_JOB_DETAILS,
       page: () => const JobSeekerJobDetailsView(),
       binding: JobSeekerJobDetailsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_APPLY_JOB,
       page: () => const JobSeekerApplyJobView(),
       binding: JobSeekerApplyJobBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.PROFILE,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_MY_APPLICATIONS,
       page: () => const JobSeekerMyApplicationsView(),
       binding: JobSeekerMyApplicationsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.COMPANY_DASHBOARD,
       page: () => const CompanyDashboardView(),
       binding: CompanyDashboardBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: Routes.COMPANY_POST_JOB,
       page: () => const CompanyPostJobView(),
       binding: CompanyPostJobBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_MAIN_FIELDS,
       page: () => const JobSeekerMainFieldsView(),
       binding: JobSeekerMainFieldsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: Routes.JOB_SEEKER_SAVED_JOBS,
       page: () => const JobSeekerSavedJobsView(),
       binding: JobSeekerSavedJobsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: _Paths.MAIN_WRAPPER,
       page: () => const MainWrapperView(),
       binding: MainWrapperBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
     ),
     GetPage(
       name: _Paths.APPLICATION_REVIEW,
       page: () => const ApplicationReviewView(),
       binding: ApplicationReviewBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: _Paths.APPLICATION_LIST,
       page: () => const ApplicationListView(),
       binding: ApplicationListBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: _Paths.COMPANY_MAIN_WRAPPER,
       page: () => const CompanyMainWrapperView(),
       binding: CompanyMainWrapperBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: _Paths.COMPANY_CHAT,
       page: () => const CompanyChatView(),
       binding: CompanyChatBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
     GetPage(
       name: _Paths.COMPANY_PROFILE,
       page: () => const CompanyProfileView(),
       binding: CompanyProfileBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
   ];
 }

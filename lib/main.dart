@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:get/get.dart';
+import 'package:hire_me/app/services/storage_service.dart';
 import 'package:hire_me/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -28,6 +29,11 @@ void main() async {
       ),
     ),
   ]);
+
+  await Get.putAsync<StorageService>(
+    () => StorageService().init(),
+    permanent: true,
+  );
 
   runApp(const MyApp());
 }

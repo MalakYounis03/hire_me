@@ -56,8 +56,8 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                   () => _RoleCard(
                     title: AppString.user,
                     image: Assets.imagesUser,
-                    isSelected: controller.selectedRole.value == 'jobseeker',
-                    onTap: () => controller.selectRole('jobseeker'),
+                    isSelected: controller.selectedRole.value == 'job_seeker',
+                    onTap: () => controller.selectRole('job_seeker'),
                   ),
                 ),
 

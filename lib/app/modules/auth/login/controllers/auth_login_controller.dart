@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/app/services/storage_service.dart';
 
 class AuthLoginController extends GetxController {
   final emailController = TextEditingController();
@@ -13,6 +14,8 @@ class AuthLoginController extends GetxController {
   final rememberMe = false.obs;
 
   final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+  final _storage = StorageService.to;
 
   void toggleObscure() => obscurePassword.toggle();
   void toggleRememberMe() => rememberMe.toggle();
@@ -26,9 +29,13 @@ class AuthLoginController extends GetxController {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      _navigateAfterLogin();
+      await _navigateAfterLogin();
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
+    } catch (_) {
+      await _auth.signOut();
+      await _storage.clearAuthSession();
+      _showError('Unable to complete sign in');
     } finally {
       isLoading.value = false;
     }
@@ -39,7 +46,7 @@ class AuthLoginController extends GetxController {
   }
 
   void onCreateAccountPressed() {
-    Get.toNamed(Routes.AUTH_REGISTER);
+    Get.toNamed(Routes.AUTH_SELECT_USER);
   }
 
   bool _isValid() {
@@ -55,19 +62,34 @@ class AuthLoginController extends GetxController {
     return true;
   }
 
-  void _navigateAfterLogin() async {
-    final user = FirebaseAuth.instance.currentUser!;
+  Future<void> _navigateAfterLogin() async {
+    final user = _auth.currentUser;
 
-    // اقرأ الـ role من Firestore مش من arguments
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    if (user == null) {
+      _showError('Unable to complete sign in');
+      return;
+    }
 
-    final role = doc.data()?['role'] as String? ?? 'jobseeker';
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final role = StorageService.normalizeRole(doc.data()?['role'] as String?);
 
-    if (role == 'company') {
-      Get.offAllNamed(Routes.COMPANY_DASHBOARD);
+    if (role == null) {
+      await _auth.signOut();
+      await _storage.clearAuthSession();
+      _showError('No valid role was found for this account');
+      return;
+    }
+
+    await _storage.saveAuthSession(
+      userId: user.uid,
+      role: role,
+      accessToken: await user.getIdToken(),
+      companyId: role == AppUserRole.company.value ? user.uid : null,
+      jobSeekerId: role == AppUserRole.job_seeker.value ? user.uid : null,
+    );
+
+    if (role == AppUserRole.company.value) {
+      Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
     } else {
       Get.offAllNamed(Routes.MAIN_WRAPPER);
     }
