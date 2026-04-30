@@ -60,7 +60,11 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: () => controller.rejectApplicant(),
+                          onPressed: controller.isProcessing.value
+                              ? null
+                              : () => controller.rejectApplication(
+                                    applicant.id,
+                                  ),
                           icon: const Icon(Icons.cancel_outlined, size: 18),
                           label: const Text(
                             'Reject',
@@ -85,7 +89,15 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => controller.acceptApplicant(),
+                          onPressed: controller.isProcessing.value
+                              ? null
+                              : () => controller.acceptApplication(
+                                    applicant.id,
+                                    applicant.jobSeekerId,
+                                    applicant.name,
+                                    controller.companyId,
+                                    controller.companyName.value,
+                                  ),
                           icon: const Icon(
                             Icons.check_circle_outline,
                             size: 18,
@@ -170,6 +182,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
             title: 'Resume',
             content: 'View CV',
             icon: Icons.assignment_outlined,
+            onTap: () => controller.viewApplicantCV(applicant.cvUrl),
           ),
         ],
       ),
@@ -187,8 +200,9 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
     required String title,
     required String content,
     required IconData icon,
+    VoidCallback? onTap,
   }) {
-    return Row(
+    final row = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, color: AppColor.kblue, size: 20),
@@ -220,6 +234,17 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
           ),
         ),
       ],
+    );
+
+    if (onTap == null) return row;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: row,
+      ),
     );
   }
 }

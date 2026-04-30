@@ -1,96 +1,89 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
 import 'package:hire_me/app/modules/company/application_review/model/job_with_application.dart';
 
 class ApplicationListController extends GetxController {
   final jobs = <JobWithApplicants>[].obs;
+  final isLoading = true.obs;
+
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
 
   @override
   void onInit() {
     super.onInit();
-    _loadDummyData();
+    _listenToApplications();
   }
 
-  void _loadDummyData() {
-    jobs.value = [
-      JobWithApplicants(
-        jobId: 'j1',
-        jobTitle: 'Graphic Designer',
-        applicants: [
-          ApplicationReviewModel(
-            id: '1',
-            name: 'Shoroq Hamad',
-            jobTitle: 'Graphic Designer',
-            location: 'Palestine, Gaza',
-            appliedAt: '2d ago',
-            email: 'shoroq@example.com',
-            skills: 'Adobe Photoshop, Illustrator',
-            experience: '3 years',
-            education: 'Bachelor of Fine Arts',
-            cvUrl: 'https://example.com/cv/shoroq.pdf',
-          ),
-          ApplicationReviewModel(
-            id: '2',
-            name: 'Lina Abo Shaker',
-            jobTitle: 'Graphic Designer',
-            location: 'Palestine, Gaza',
-            appliedAt: '3d ago',
-            email: 'lina@example.com',
-            skills: 'Adobe Photoshop, Illustrator',
-            experience: '2 years',
-            education: 'Bachelor of Fine Arts',
-            cvUrl: 'https://example.com/cv/lina.pdf',
-          ),
-        ],
-      ),
-      JobWithApplicants(
-        jobId: 'j2',
-        jobTitle: 'UX/UI Designer',
-        applicants: [
-          ApplicationReviewModel(
-            id: '3',
-            name: 'Sara Ahmad',
-            jobTitle: 'UX/UI Designer',
-            location: 'Palestine, Gaza',
-            appliedAt: '5d ago',
-            email: 'sara@example.com',
-            skills: 'Figma, Adobe XD, Prototyping',
-            experience: '4 years',
-            education: 'B.Sc Computer Science',
-            cvUrl: 'https://example.com/cv/sara.pdf',
-          ),
-          ApplicationReviewModel(
-            id: '4',
-            name: 'Ahmad Ali',
-            jobTitle: 'UX/UI Designer',
-            location: 'Palestine, Gaza',
-            appliedAt: '5d ago',
-            email: 'ahmad@example.com',
-            skills: 'Figma, Sketch',
-            experience: '1 year',
-            education: 'Bachelor of Visual Arts',
-            cvUrl: 'https://example.com/cv/ahmad.pdf',
-          ),
-        ],
-      ),
-      JobWithApplicants(
-        jobId: 'j3',
-        jobTitle: 'Flutter Developer',
-        applicants: [
-          ApplicationReviewModel(
-            id: '5',
-            name: 'Mohammed Nasser',
-            jobTitle: 'Flutter Developer',
-            location: 'Palestine, Ramallah',
-            appliedAt: '1d ago',
-            email: 'mohammed@example.com',
-            skills: 'Flutter, Dart, Firebase',
-            experience: '2 years',
-            education: 'B.Sc Software Engineering',
-            cvUrl: 'https://example.com/cv/mohammed.pdf',
-          ),
-        ],
-      ),
-    ];
+  /// Streams pending applications for the current company from Firestore,
+  /// grouped by job.
+  void _listenToApplications() {
+    final companyId = _auth.currentUser?.uid;
+    if (companyId == null) {
+      isLoading.value = false;
+      return;
+    }
+
+    _firestore
+        .collection('applications')
+        .where('companyId', isEqualTo: companyId)
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .listen(
+      (snapshot) {
+        if (isClosed) return;
+
+        final docs = snapshot.docs;
+
+        // Group applications by jobId
+        final grouped = <String, List<ApplicationReviewModel>>{};
+        final jobTitles = <String, String>{};
+
+        for (final doc in docs) {
+          final data = doc.data();
+          final jobId = data['jobId'] as String? ?? '';
+          final jobTitle = data['jobTitle'] as String? ?? 'Unknown Job';
+
+          jobTitles[jobId] = jobTitle;
+
+          grouped.putIfAbsent(jobId, () => []).add(
+            ApplicationReviewModel(
+              id: doc.id,
+              jobSeekerId: data['seekerId'] as String? ?? '',
+              name: data['seekerName'] as String? ?? 'Unknown',
+              jobTitle: jobTitle,
+              location: data['location'] as String? ?? '',
+              email: data['email'] as String? ?? '',
+              skills: data['skills'] as String? ?? '',
+              experience: data['experience'] as String? ?? '',
+              education: data['education'] as String? ?? '',
+              cvUrl: data['cvUrl'] as String? ?? '',
+              avatarUrl: data['avatarUrl'] as String? ?? '',
+              status: data['status'] as String? ?? 'pending',
+              appliedAt: data['appliedAt'] as String? ?? '',
+            ),
+          );
+        }
+
+        // Build JobWithApplicants list
+        final result = grouped.entries.map((entry) {
+          return JobWithApplicants(
+            jobId: entry.key,
+            jobTitle: jobTitles[entry.key] ?? 'Unknown Job',
+            applicants: entry.value,
+          );
+        }).toList();
+
+        jobs.value = result;
+        isLoading.value = false;
+      },
+      onError: (e) {
+        debugPrint('ApplicationList stream error: $e');
+        if (!isClosed) isLoading.value = false;
+      },
+    );
   }
 }
