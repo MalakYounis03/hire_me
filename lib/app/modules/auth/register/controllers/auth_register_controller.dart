@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/app/services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
   final emailController = TextEditingController();
@@ -15,10 +16,12 @@ class AuthRegisterController extends GetxController {
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final _storage = StorageService.to;
 
   String get _role {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
-    return args['role'] as String? ?? 'jobseeker';
+    return StorageService.normalizeRole(args['role'] as String?) ??
+        AppUserRole.job_seeker.value;
   }
 
   void toggleObscurePassword() => obscurePassword.toggle();
@@ -35,13 +38,24 @@ class AuthRegisterController extends GetxController {
       );
 
       await _saveUserToFirestore(credential.user!.uid);
+      await _storage.saveAuthSession(
+        userId: credential.user!.uid,
+        role: _role,
+        accessToken: await credential.user!.getIdToken(),
+        companyId:
+            _role == AppUserRole.company.value ? credential.user!.uid : null,
+        jobSeekerId: _role == AppUserRole.job_seeker.value
+            ? credential.user!.uid
+            : null,
+      );
 
       _navigateAfterRegister();
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
-    } catch (e) {
-      print('Firestore error: $e');
-      _navigateAfterRegister();
+    } catch (_) {
+      await _auth.signOut();
+      await _storage.clearAuthSession();
+      _showError('Unable to complete account creation');
     } finally {
       isLoading.value = false;
     }
@@ -88,9 +102,9 @@ class AuthRegisterController extends GetxController {
 
   void _navigateAfterRegister() {
     if (_role == 'company') {
-      Get.offAllNamed(Routes.APPLICATION_LIST);
+      Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
     } else {
-      Get.offAllNamed(Routes.JOB_SEEKER_DASHBOARD);
+      Get.offAllNamed(Routes.MAIN_WRAPPER);
     }
   }
 

@@ -7,9 +7,9 @@ import 'package:hire_me/core/widgets/app_bottom_nav_bar.dart';
 
 import '../controllers/jobseekercongratulations_controller.dart';
 
-class JobseekercongratulationsView
-    extends GetView<JobseekercongratulationsController> {
-  const JobseekercongratulationsView({super.key});
+class JobSeekerCongratulationsView
+    extends GetView<JobSeekerCongratulationsController> {
+  const JobSeekerCongratulationsView({super.key});
   @override
   @override
   Widget build(BuildContext context) {

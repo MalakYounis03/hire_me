@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/services/storage_service.dart';
 import 'package:hire_me/core/utils/app_assets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../routes/app_pages.dart';
 
 class OnboardingPageModel {
@@ -73,8 +73,7 @@ class OnboardingController extends GetxController {
   void onSkipPressed() => _goToSelectUser();
 
   Future<void> _goToSelectUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('seen_onboarding', true);
+    await StorageService.to.markOnboardingComplete();
     Get.offAllNamed(Routes.AUTH_SELECT_USER);
   }
 }

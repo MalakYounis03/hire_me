@@ -2,11 +2,11 @@ import 'package:get/get.dart';
 
 import '../controllers/jobseekercongratulations_controller.dart';
 
-class JobseekercongratulationsBinding extends Bindings {
+class JobSeekerCongratulationsBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<JobseekercongratulationsController>(
-      () => JobseekercongratulationsController(),
+    Get.lazyPut<JobSeekerCongratulationsController>(
+      () => JobSeekerCongratulationsController(),
     );
   }
 }
