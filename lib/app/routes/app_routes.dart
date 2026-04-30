@@ -25,6 +25,12 @@ abstract class Routes {
   static const COMPANY_APPLICANTS = _Paths.COMPANY + _Paths.APPLICANTS;
   static const JOBSEEKER = _Paths.JOBSEEKER;
   static const JOBSEEKERCONGRATULATIONS = _Paths.JOBSEEKERCONGRATULATIONS;
+  static const JOB_SEEKER_MAIN_FIELDS = _Paths.JOB_SEEKER + _Paths.MAIN_FIELDS;
+  static const JOB_SEEKER_SAVED_JOBS = _Paths.JOB_SEEKER + _Paths.SAVED_JOBS;
+  static const MAIN_WRAPPER = _Paths.MAIN_WRAPPER;
+
+  static const APPLICATION_REVIEW = _Paths.APPLICATION_REVIEW;
+  static const APPLICATION_LIST = _Paths.APPLICATION_LIST;
 }
 
 abstract class _Paths {
@@ -36,7 +42,6 @@ abstract class _Paths {
   static const AUTH_LOGIN = '/login';
   static const AUTH_REGISTER = '/register';
   static const AUTH_FORGOT_PASSWORD = '/forgot-password';
-  static const AUTH_OTP = '/otp';
   static const JOB_SEEKER = '/job-seeker';
 
   static const JOB_SEEKER_CONGRATULATIONS = '/congratulations';
@@ -50,4 +55,9 @@ abstract class _Paths {
   static const APPLICANTS = '/applicants';
   static const JOBSEEKER = '/jobseeker';
   static const JOBSEEKERCONGRATULATIONS = '/jobseekercongratulations';
+  static const MAIN_FIELDS = '/main-fields';
+  static const SAVED_JOBS = '/saved-jobs';
+  static const MAIN_WRAPPER = '/main-wrapper';
+  static const APPLICATION_REVIEW = '/application-review';
+  static const APPLICATION_LIST = '/application-list';
 }

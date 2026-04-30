@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+<<<<<<< HEAD:lib/app/modules/job_seeker/Jobseekercongratulations/controllers/jobseekercongratulations_controller.dart
 class JobseekercongratulationsController extends GetxController {
   //TODO: Implement JobseekercongratulationsController
 
@@ -21,3 +22,6 @@ class JobseekercongratulationsController extends GetxController {
 
   void increment() => count.value++;
 }
+=======
+class JobSeekerProfileController extends GetxController {}
+>>>>>>> main:lib/app/modules/job_seeker/profile/controllers/job_seeker_profile_controller.dart

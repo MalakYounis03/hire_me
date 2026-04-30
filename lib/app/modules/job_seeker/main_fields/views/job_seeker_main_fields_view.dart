@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/company_applicants_controller.dart';
+import '../controllers/job_seeker_main_fields_controller.dart';
 
-class CompanyApplicantsView extends GetView<CompanyApplicantsController> {
-  const CompanyApplicantsView({super.key});
+class JobSeekerMainFieldsView extends GetView<JobSeekerMainFieldsController> {
+  const JobSeekerMainFieldsView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CompanyApplicantsView'),
+        title: const Text('JobSeekerMainFieldsView'),
         centerTitle: true,
       ),
       body: const Center(
         child: Text(
-          'CompanyApplicantsView is working',
+          'JobSeekerMainFieldsView is working',
           style: TextStyle(fontSize: 20),
         ),
       ),
