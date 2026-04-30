@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,12 +55,19 @@ class AuthLoginController extends GetxController {
     return true;
   }
 
-  void _navigateAfterLogin() {
-    final args = Get.arguments as Map<String, dynamic>? ?? {};
-    final role = args['role'] as String? ?? 'jobseeker';
+  void _navigateAfterLogin() async {
+    final user = FirebaseAuth.instance.currentUser!;
+
+    // اقرأ الـ role من Firestore مش من arguments
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final role = doc.data()?['role'] as String? ?? 'jobseeker';
 
     if (role == 'company') {
-      Get.offAllNamed(Routes.APPLICATION_LIST);
+      Get.offAllNamed(Routes.COMPANY_DASHBOARD);
     } else {
       Get.offAllNamed(Routes.MAIN_WRAPPER);
     }

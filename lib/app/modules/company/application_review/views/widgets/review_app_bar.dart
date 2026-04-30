@@ -1,37 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 
 class ReviewAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ReviewAppBar({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColor.kwhite,
-      elevation: 0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: AppColor.kblack),
-        onPressed: () => Get.back(),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColor.kblue,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
-      title: Text(
-        'Applicant Detail',
-        style: TextStyle(
-          color: AppColor.kblack,
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppColor.kwhite,
+                  size: 24,
+                ),
+                onPressed: () => Get.back(),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Applicant Details',
+                  style: TextStyle(
+                    color: AppColor.kwhite,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      centerTitle: true,
-      actions: [
-        IconButton(
-          icon: Icon(Icons.notifications_none_rounded, color: AppColor.kblack),
-          onPressed: () {},
-        ),
-      ],
     );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(84);
 }

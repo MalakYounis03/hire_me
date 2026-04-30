@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 
 class ApplicantAvatar extends StatelessWidget {
   final String name;
@@ -14,8 +15,8 @@ class ApplicantAvatar extends StatelessWidget {
       child: url.isEmpty
           ? Text(
               name.isNotEmpty ? name[0].toUpperCase() : '?',
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: AppColor.kwhite,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -25,13 +26,7 @@ class ApplicantAvatar extends StatelessWidget {
   }
 
   Color _getColor(String name) {
-    final colors = [
-      const Color(0xFF4A90D9),
-      const Color(0xFFE8944A),
-      const Color(0xFF7B68EE),
-      const Color(0xFF48C78E),
-      const Color(0xFFE05C7A),
-    ];
+    final colors = [AppColor.kblue, AppColor.kblack, AppColor.greydark];
     if (name.isEmpty) return colors[0];
     return colors[name.codeUnitAt(0) % colors.length];
   }

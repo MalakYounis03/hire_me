@@ -1,8 +1,10 @@
 // lib/app/modules/job_seeker/dashboard/widgets/header_widget.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/core/utils/app_color.dart';
 import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 
 import '../controllers/job_seeker_dashboard_controller.dart';
 
@@ -41,6 +43,13 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
                 ),
               ),
             ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Get.offAllNamed(Routes.AUTH_LOGIN);
+            },
           ),
           Container(
             padding: const EdgeInsets.all(8),

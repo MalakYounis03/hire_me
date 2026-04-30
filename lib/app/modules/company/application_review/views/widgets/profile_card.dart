@@ -1,69 +1,99 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/app/core/utils/app_color.dart';
 
 class ProfileCard extends StatelessWidget {
-  final ApplicationReviewModel applicant;
-  const ProfileCard({required this.applicant, super.key});
+  final String name;
+  final String jobTitle;
+  final String location;
+  final String avatarUrl;
+
+  const ProfileCard({
+    super.key,
+    required this.name,
+    required this.jobTitle,
+    required this.location,
+    required this.avatarUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColor.kwhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColor.greyVeryLight),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.kblack.withOpacity(0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           CircleAvatar(
-            radius: 40,
-            backgroundImage: applicant.avatarUrl.isNotEmpty
-                ? NetworkImage(applicant.avatarUrl)
-                : null,
-            backgroundColor: AppColor.offWhite,
-            child: applicant.avatarUrl.isEmpty
-                ? Text(
-                    applicant.name.isNotEmpty
-                        ? applicant.name[0].toUpperCase()
-                        : '?',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.kblue,
-                    ),
-                  )
-                : null,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            applicant.name,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: AppColor.kblack,
+            radius: 46,
+            backgroundColor: AppColor.kblue.withOpacity(0.1),
+            backgroundImage: NetworkImage(
+              avatarUrl.isNotEmpty
+                  ? avatarUrl
+                  : 'https://i.pravatar.cc/150?img=47',
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 14),
           Text(
-            applicant.jobTitle,
-            style: TextStyle(fontSize: 13, color: AppColor.greydark),
+            name,
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w700,
+              color: AppColor.kblack,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 14,
-                color: AppColor.greyLight,
+              Icon(Icons.work_outline_rounded, size: 16, color: AppColor.kblue),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  jobTitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColor.greydark,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              const SizedBox(width: 2),
-              Text(
-                applicant.location,
-                style: TextStyle(fontSize: 13, color: AppColor.greyLight),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.location_on_outlined, size: 16, color: AppColor.kblue),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  location,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColor.greydark,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

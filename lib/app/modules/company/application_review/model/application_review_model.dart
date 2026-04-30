@@ -10,6 +10,7 @@ class ApplicationReviewModel {
   final String cvUrl;
   final String avatarUrl;
   final String status;
+  final String appliedAt;
 
   ApplicationReviewModel({
     required this.id,
@@ -23,5 +24,6 @@ class ApplicationReviewModel {
     required this.cvUrl,
     this.avatarUrl = '',
     this.status = 'pending',
+    required this.appliedAt,
   });
 }

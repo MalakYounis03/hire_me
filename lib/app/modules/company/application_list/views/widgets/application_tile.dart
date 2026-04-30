@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_list/model/application_list_model.dart';
 import 'package:hire_me/app/modules/company/application_list/views/widgets/application_avatar.dart';
 import 'package:hire_me/app/modules/company/application_list/views/widgets/application_info.dart';
-import 'package:hire_me/app/modules/company/application_review/views/application_review_view.dart';
+import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 
 class ApplicantTile extends StatelessWidget {
-  final ApplicationListModel applicant;
+  final ApplicationReviewModel applicant;
   const ApplicantTile({required this.applicant, super.key});
 
   @override
@@ -18,11 +18,17 @@ class ApplicantTile extends StatelessWidget {
         color: AppColor.kwhite,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColor.greyVeryLight),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.kblack.withOpacity(0.03),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: InkWell(
-        onTap: () {
-          Get.to(() => ApplicationReviewView());
-        },
+        onTap: () =>
+            Get.toNamed(Routes.APPLICATION_REVIEW, arguments: applicant),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -40,14 +46,28 @@ class ApplicantTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    applicant.appliedAt,
-                    style: TextStyle(fontSize: 11, color: AppColor.greyLight),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColor.kblue.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      applicant.appliedAt,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: AppColor.kblue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColor.greyLight,
+                    color: AppColor.greydark,
                     size: 20,
                   ),
                 ],
