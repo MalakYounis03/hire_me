@@ -4,7 +4,6 @@ import 'package:hire_me/core/models/user_model.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
-import 'package:hire_me/core/widgets/app_bottom_nav_bar.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -62,11 +61,9 @@ class ProfileView extends GetView<ProfileController> {
           ),
         );
       }),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
     );
   }
 
-  // ── Profile Card ──────────────────────────────────────
   Widget _buildProfileCard() {
     return Container(
       color: AppColor.kwhite,
