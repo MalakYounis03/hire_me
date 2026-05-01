@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/widgets/app_bottom_nav_bar.dart';
 import '../controllers/job_seeker_my_applications_controller.dart';
 
 class JobSeekerMyApplicationsView
@@ -76,7 +75,6 @@ class JobSeekerMyApplicationsView
               _ApplicationCard(app: list[i], controller: controller),
         );
       }),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
     );
   }
 }
