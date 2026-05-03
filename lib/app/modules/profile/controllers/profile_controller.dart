@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,10 +12,12 @@ class ProfileController extends GetxController {
   final userModel = Rxn<UserModel>();
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
+  final isUploadingCover = false.obs;
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
+  final _picker = ImagePicker();
 
   String get userName => userModel.value?.name ?? '';
   String get userTitle => userModel.value?.title ?? '';
@@ -22,6 +25,7 @@ class ProfileController extends GetxController {
   String get userLocation => userModel.value?.location ?? '';
   String get userAbout => userModel.value?.about ?? '';
   String get userImage => userModel.value?.profileImage ?? '';
+  String get coverImage => userModel.value?.coverImage ?? '';
   List<EducationModel> get education => userModel.value?.education ?? [];
   List<ExperienceModel> get experience => userModel.value?.experience ?? [];
   List<String> get skills => userModel.value?.skills ?? [];
@@ -44,7 +48,7 @@ class ProfileController extends GetxController {
         final newUser = UserModel(
           uid: uid,
           email: _auth.currentUser?.email ?? '',
-          role: 'job_seeker',
+          role: 'jobseeker',
         );
         await _firestore.collection('jobSeekers').doc(uid).set(newUser.toMap());
         userModel.value = newUser;
@@ -57,8 +61,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> pickAndUploadImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
+    final picked = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 70,
     );
@@ -68,15 +71,11 @@ class ProfileController extends GetxController {
     try {
       final uid = _auth.currentUser!.uid;
       final file = File(picked.path);
-      final fileName = '$uid.jpg';
+      final fileName = 'profile_$uid.jpg';
 
       await _supabase.storage
           .from('profile-images')
-          .upload(
-            fileName,
-            file,
-            fileOptions: const FileOptions(upsert: true), // ← يحدّث لو موجودة
-          );
+          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
 
       final imageUrl = _supabase.storage
           .from('profile-images')
@@ -85,26 +84,61 @@ class ProfileController extends GetxController {
       await _updateField('profileImage', imageUrl);
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
 
-      _showSuccess('Profile image updated!');
+      _showSuccess('Profile photo updated!');
     } catch (e) {
-      _showError('Failed to upload image: $e');
+      _showError('Failed to upload photo: $e');
     } finally {
       isUploadingImage.value = false;
     }
   }
 
+  Future<void> pickAndUploadCover() async {
+    final picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+    if (picked == null) return;
+
+    isUploadingCover.value = true;
+    try {
+      final uid = _auth.currentUser!.uid;
+      final file = File(picked.path);
+      final fileName = 'cover_$uid.jpg';
+
+      await _supabase.storage
+          .from('profile-images')
+          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+
+      final coverUrl = _supabase.storage
+          .from('profile-images')
+          .getPublicUrl(fileName);
+
+      await _updateField('coverImage', coverUrl);
+      userModel.value = userModel.value?.copyWith(coverImage: coverUrl);
+
+      _showSuccess('Cover photo updated!');
+    } catch (e) {
+      _showError('Failed to upload cover: $e');
+    } finally {
+      isUploadingCover.value = false;
+    }
+  }
+
+  // ── Add Education ─────────────────────────────────────
   Future<void> addEducation(EducationModel edu) async {
     final updated = [...education, edu];
     await _updateField('education', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(education: updated);
   }
 
+  // ── Add Experience ────────────────────────────────────
   Future<void> addExperience(ExperienceModel exp) async {
     final updated = [...experience, exp];
     await _updateField('experience', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(experience: updated);
   }
 
+  // ── Add Skill ─────────────────────────────────────────
   Future<void> addSkill(String skill) async {
     if (skill.trim().isEmpty) return;
     final updated = [...skills, skill.trim()];
@@ -112,6 +146,7 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
+  // ── Remove Skill ──────────────────────────────────────
   Future<void> removeSkill(int index) async {
     final updated = [...skills]..removeAt(index);
     await _updateField('skills', updated);

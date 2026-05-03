@@ -42,8 +42,9 @@ class AuthRegisterController extends GetxController {
         userId: credential.user!.uid,
         role: _role,
         accessToken: await credential.user!.getIdToken(),
-        companyId:
-            _role == AppUserRole.company.value ? credential.user!.uid : null,
+        companyId: _role == AppUserRole.company.value
+            ? credential.user!.uid
+            : null,
         jobSeekerId: _role == AppUserRole.job_seeker.value
             ? credential.user!.uid
             : null,
@@ -91,11 +92,15 @@ class AuthRegisterController extends GetxController {
       'uid': uid,
       'email': emailController.text.trim(),
       'role': _role,
+      'name': emailController.text.trim().split(
+        '@',
+      )[0], // ← اسم مؤقت من الإيميل
       'createdAt': FieldValue.serverTimestamp(),
     });
     await _firestore.collection(collection).doc(uid).set({
       'uid': uid,
       'email': emailController.text.trim(),
+      'name': emailController.text.trim().split('@')[0], // ← نفس الشي
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
