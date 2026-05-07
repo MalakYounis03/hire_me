@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/controllers/job_seeker_dashboard_controller.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/header_widget.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/categories_widget.dart';
+import '../../../../core/utils/app_color.dart';
+import '../../../../core/utils/app_text_style.dart';
+import '../controllers/job_seeker_dashboard_controller.dart';
+import '../widgets/header_widget.dart';
+import '../widgets/search_widget.dart';
+import '../widgets/job_card_widget.dart';
+import '../widgets/categories_widget.dart';
 
 class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
   const JobSeekerDashboardView({super.key});

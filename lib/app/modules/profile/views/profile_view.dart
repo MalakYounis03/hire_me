@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/models/user_model.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
-import 'package:hire_me/core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/models/user_model.dart';
+import '../../../../core/utils/app_color.dart';
+import '../../../../core/utils/app_string.dart';
+import '../../../../core/utils/app_text_style.dart';
+import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {

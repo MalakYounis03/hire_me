@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
-import 'package:hire_me/app/data/models/job_model.dart';
+
+import '../../../../core/utils/app_color.dart';
+import '../../../../core/utils/app_text_style.dart';
+import '../../../../data/models/job_model.dart';
 
 class JobCardWidget extends StatelessWidget {
   final Job job;

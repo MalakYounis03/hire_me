@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
+import '../../../../../core/utils/app_assets.dart';
 
 import '../controllers/auth_splash_controller.dart';
 

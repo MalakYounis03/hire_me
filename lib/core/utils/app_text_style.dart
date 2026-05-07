@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'app_color.dart';
 
 abstract class CustomTextstyle {
   static final Poppinsbold = TextStyle(

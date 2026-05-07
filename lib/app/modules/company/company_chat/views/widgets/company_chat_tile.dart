@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/model/chat_model.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/avatar.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/chat_info.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/chat_meta.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import '../../../../job_seeker/chat/model/chat_model.dart';
+import '../../../../job_seeker/chat/views/widgets/avatar.dart';
+import '../../../../job_seeker/chat/views/widgets/chat_info.dart';
+import '../../../../job_seeker/chat/views/widgets/chat_meta.dart';
+import '../../../../../routes/app_pages.dart';
+import '../../../../../../core/utils/app_color.dart';
 
 class CompanyChatTile extends StatelessWidget {
   final ChatModel chat;

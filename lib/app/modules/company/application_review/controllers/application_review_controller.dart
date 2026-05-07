@@ -3,8 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
+import '../../../../routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../model/application_review_model.dart';
 
@@ -57,6 +56,7 @@ class ApplicationReviewController extends GetxController {
         education: 'Unknown',
         cvUrl: '',
         appliedAt: '',
+        applicantFcmToken: '',
       ).obs;
     }
   }
@@ -76,10 +76,9 @@ class ApplicationReviewController extends GetxController {
 
     try {
       // 1. Update application status to Accepted in Firestore
-      await _firestore.collection('applications').doc(applicationId).set(
-        {'status': 'Accepted'},
-        SetOptions(merge: true),
-      );
+      await _firestore.collection('applications').doc(applicationId).set({
+        'status': 'Accepted',
+      }, SetOptions(merge: true));
 
       if (isClosed) return;
 
@@ -150,10 +149,9 @@ class ApplicationReviewController extends GetxController {
     isProcessing.value = true;
 
     try {
-      await _firestore.collection('applications').doc(applicationId).set(
-        {'status': 'Rejected'},
-        SetOptions(merge: true),
-      );
+      await _firestore.collection('applications').doc(applicationId).set({
+        'status': 'Rejected',
+      }, SetOptions(merge: true));
 
       if (isClosed) return;
 

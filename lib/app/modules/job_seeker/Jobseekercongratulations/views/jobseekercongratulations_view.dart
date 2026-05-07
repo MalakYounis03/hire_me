@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/widgets/app_bottom_nav_bar.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/widgets/app_bottom_nav_bar.dart';
 
 import '../controllers/jobseekercongratulations_controller.dart';
 

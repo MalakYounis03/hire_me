@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/modules/company/company_chat/views/widgets/company_chat_tile.dart';
-import 'package:hire_me/app/modules/company/company_chat/views/widgets/company_empty_state.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'widgets/company_chat_tile.dart';
+import 'widgets/company_empty_state.dart';
+import '../../../job_seeker/dashboard/widgets/search_widget.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../../core/utils/app_color.dart';
 
 import '../controllers/company_chat_controller.dart';
 

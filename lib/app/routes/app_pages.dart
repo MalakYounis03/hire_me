@@ -19,6 +19,8 @@ import '../modules/company/application_review/bindings/application_review_bindin
 import '../modules/company/application_review/views/application_review_view.dart';
 import '../modules/company/company_chat/bindings/company_chat_binding.dart';
 import '../modules/company/company_chat/views/company_chat_view.dart';
+import '../modules/company/company_chat_details/bindings/company_chat_details_binding.dart';
+import '../modules/company/company_chat_details/views/company_chat_details_view.dart';
 import '../modules/company/company_main_wrapper/bindings/company_main_wrapper_binding.dart';
 import '../modules/company/company_main_wrapper/views/company_main_wrapper_view.dart';
 import '../modules/company/company_profile/bindings/company_profile_binding.dart';
@@ -27,8 +29,6 @@ import '../modules/company/dashboard/bindings/company_dashboard_binding.dart';
 import '../modules/company/dashboard/views/company_dashboard_view.dart';
 import '../modules/company/post_job/bindings/company_post_job_binding.dart';
 import '../modules/company/post_job/views/company_post_job_view.dart';
-import '../modules/company/company_chat_details/bindings/company_chat_details_binding.dart';
-import '../modules/company/company_chat_details/views/company_chat_details_view.dart';
 import '../modules/job_seeker/apply_job/bindings/job_seeker_apply_job_binding.dart';
 import '../modules/job_seeker/apply_job/views/job_seeker_apply_job_view.dart';
 import '../modules/job_seeker/dashboard/bindings/job_seeker_dashboard_binding.dart';
@@ -39,6 +39,8 @@ import '../modules/job_seeker/main_fields/bindings/job_seeker_main_fields_bindin
 import '../modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
 import '../modules/job_seeker/my_applications/bindings/job_seeker_my_applications_binding.dart';
 import '../modules/job_seeker/my_applications/views/job_seeker_my_applications_view.dart';
+import '../modules/job_seeker/notifications/bindings/job_seeker_notifications_binding.dart';
+import '../modules/job_seeker/notifications/views/job_seeker_notifications_view.dart';
 import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
 import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
 import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
@@ -129,6 +131,14 @@ class AppPages {
       name: Routes.JOB_SEEKER_MY_APPLICATIONS,
       page: () => const JobSeekerMyApplicationsView(),
       binding: JobSeekerMyApplicationsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_NOTIFICATIONS,
+      page: () => const JobSeekerNotificationsView(),
+      binding: JobSeekerNotificationsBinding(),
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
       ],

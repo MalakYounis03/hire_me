@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_list/views/widgets/application_avatar.dart';
-import 'package:hire_me/app/modules/company/application_list/views/widgets/application_info.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
+import '../../../../../core/utils/app_color.dart';
+import 'application_avatar.dart';
+import 'application_info.dart';
+import '../../../application_review/model/application_review_model.dart';
+import '../../../../../routes/app_pages.dart';
 
 class ApplicantTile extends StatelessWidget {
   final ApplicationReviewModel applicant;

@@ -1,16 +1,23 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:get/get.dart';
-import 'package:hire_me/app/services/storage_service.dart';
-import 'package:hire_me/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/services/notification_service.dart';
+import 'app/services/storage_service.dart';
+import 'firebase_options.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint('Background FCM message: ${message.messageId}');
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await dotenv.load(fileName: '.env');
 
@@ -32,6 +39,11 @@ void main() async {
 
   await Get.putAsync<StorageService>(
     () => StorageService().init(),
+    permanent: true,
+  );
+
+  await Get.putAsync<NotificationService>(
+    () => NotificationService().init(),
     permanent: true,
   );
 
