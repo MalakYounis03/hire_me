@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../core/utils/app_color.dart';
-import '../../../../../core/utils/app_string.dart';
-import '../../../../../core/widgets/app_bottom_nav_bar.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_string.dart';
 import '../controllers/job_seeker_apply_job_controller.dart';
 
 class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
@@ -38,7 +37,6 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
   }
 

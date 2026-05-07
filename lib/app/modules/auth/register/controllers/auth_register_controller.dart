@@ -7,6 +7,8 @@ import '../../../../services/notification_service.dart';
 import '../../../../services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
+  final nameController = TextEditingController();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -68,6 +70,10 @@ class AuthRegisterController extends GetxController {
   void onLoginPressed() => Get.offAllNamed(Routes.AUTH_LOGIN);
 
   bool _isValid() {
+    if (nameController.text.trim().isEmpty) {
+      _showError('Please enter your full name');
+      return false;
+    }
     if (emailController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty ||
         confirmPasswordController.text.trim().isEmpty) {
@@ -93,13 +99,21 @@ class AuthRegisterController extends GetxController {
     final collection = _role == 'company' ? 'companies' : 'jobSeekers';
     await _firestore.collection('users').doc(uid).set({
       'uid': uid,
+      'name': nameController.text.trim(),
+
       'email': emailController.text.trim(),
       'role': _role,
+      'name': emailController.text.trim().split(
+        '@',
+      )[0], // ← اسم مؤقت من الإيميل
       'createdAt': FieldValue.serverTimestamp(),
     });
     await _firestore.collection(collection).doc(uid).set({
       'uid': uid,
+      'name': nameController.text.trim(),
+
       'email': emailController.text.trim(),
+      'name': emailController.text.trim().split('@')[0], // ← نفس الشي
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -139,6 +153,8 @@ class AuthRegisterController extends GetxController {
 
   @override
   void onClose() {
+    nameController.dispose();
+
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();

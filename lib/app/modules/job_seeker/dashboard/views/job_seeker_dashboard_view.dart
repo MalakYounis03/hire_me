@@ -34,7 +34,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                   ),
                 ),
 
-                // ✅ التعديل هنا: استخدام الـ Widget الجديد بدلاً من الدالة القديمة
                 const CategoriesWidget(),
 
                 Padding(
@@ -96,7 +95,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
     );
   }
 
-  // ✅ يمكنكِ الآن حذف دالة _buildCategorySection القديمة تماماً لتنظيف الكود
 
   Widget _buildEmptyState() {
     return Center(

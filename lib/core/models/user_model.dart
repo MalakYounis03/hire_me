@@ -8,6 +8,7 @@ class UserModel {
   final String location;
   final String about;
   final String profileImage;
+  final String coverImage; // ← جديد
   final List<EducationModel> education;
   final List<ExperienceModel> experience;
   final List<String> skills;
@@ -22,6 +23,7 @@ class UserModel {
     this.location = '',
     this.about = '',
     this.profileImage = '',
+    this.coverImage = '', // ← جديد
     this.education = const [],
     this.experience = const [],
     this.skills = const [],
@@ -31,13 +33,14 @@ class UserModel {
     return UserModel(
       uid: map['uid'] ?? '',
       email: map['email'] ?? '',
-      role: map['role'] ?? 'job_seeker',
+      role: map['role'] ?? 'jobseeker',
       name: map['name'] ?? '',
       title: map['title'] ?? '',
       university: map['university'] ?? '',
       location: map['location'] ?? '',
       about: map['about'] ?? '',
       profileImage: map['profileImage'] ?? '',
+      coverImage: map['coverImage'] ?? '', // ← جديد
       education: (map['education'] as List<dynamic>? ?? [])
           .map((e) => EducationModel.fromMap(e as Map<String, dynamic>))
           .toList(),
@@ -59,6 +62,7 @@ class UserModel {
       'location': location,
       'about': about,
       'profileImage': profileImage,
+      'coverImage': coverImage, // ← جديد
       'education': education.map((e) => e.toMap()).toList(),
       'experience': experience.map((e) => e.toMap()).toList(),
       'skills': skills,
@@ -72,6 +76,7 @@ class UserModel {
     String? location,
     String? about,
     String? profileImage,
+    String? coverImage, // ← جديد
     List<EducationModel>? education,
     List<ExperienceModel>? experience,
     List<String>? skills,
@@ -86,6 +91,7 @@ class UserModel {
       location: location ?? this.location,
       about: about ?? this.about,
       profileImage: profileImage ?? this.profileImage,
+      coverImage: coverImage ?? this.coverImage, // ← جديد
       education: education ?? this.education,
       experience: experience ?? this.experience,
       skills: skills ?? this.skills,
@@ -93,6 +99,7 @@ class UserModel {
   }
 }
 
+// ─── Education Model ──────────────────────────────────────
 class EducationModel {
   final String school;
   final String degree;
@@ -129,6 +136,7 @@ class EducationModel {
   }
 }
 
+// ─── Experience Model ─────────────────────────────────────
 class ExperienceModel {
   final String company;
   final String position;

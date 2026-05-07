@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import '../../../../routes/app_pages.dart';
-import '../../../../../core/utils/app_color.dart';
-import '../../../../../core/widgets/app_bottom_nav_bar.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/core/utils/app_color.dart';
 
 import '../controllers/jobseekercongratulations_controller.dart';
 
@@ -89,7 +88,6 @@ class JobSeekerCongratulationsView
           ),
         ),
       ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
   }
 }
