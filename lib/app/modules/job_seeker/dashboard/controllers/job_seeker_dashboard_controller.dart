@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hire_me/app/data/models/job_model.dart';
+import '../../../../data/models/job_model.dart';
 // تأكدي من إنشاء ملف الموديل هذا كما اقترحنا سابقاً
 import 'package:hire_me/app/data/models/category_model.dart';
 
@@ -21,11 +21,13 @@ class JobSeekerDashboardController extends GetxController {
   var categories = <CategoryModel>[].obs;
   var isCategoriesLoading = true.obs;
 
+  var notificationBadgeCount = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
     fetchUserData();
-    fetchCategories(); // جلب التصنيفات من Firestore
+    fetchCategories();
     loadRecentJobs();
   }
 

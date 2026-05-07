@@ -1,4 +1,4 @@
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
+import 'application_review_model.dart';
 
 class JobWithApplicants {
   final String jobId;

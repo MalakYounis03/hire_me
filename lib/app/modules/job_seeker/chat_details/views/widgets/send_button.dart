@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import '../../../../../../core/utils/app_color.dart';
 
 class SendButton extends StatelessWidget {
   final bool hasText;

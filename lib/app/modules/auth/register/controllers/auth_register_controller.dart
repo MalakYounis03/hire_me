@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/app/services/storage_service.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../services/notification_service.dart';
+import '../../../../services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
   final nameController = TextEditingController();
@@ -51,6 +52,8 @@ class AuthRegisterController extends GetxController {
             ? credential.user!.uid
             : null,
       );
+
+      await Get.find<NotificationService>().saveFcmToken();
 
       _navigateAfterRegister();
     } on FirebaseAuthException catch (e) {

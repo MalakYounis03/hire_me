@@ -3,8 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/core/models/user_model.dart';
+import '../../../../core/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -54,10 +53,6 @@ class ProfileController extends GetxController {
           uid: uid,
           email: _auth.currentUser?.email ?? '',
           role: 'jobseeker',
-<<<<<<< HEAD
-=======
-          name: name,
->>>>>>> main
         );
         await _firestore.collection('jobSeekers').doc(uid).set(newUser.toMap());
         userModel.value = newUser;
@@ -102,10 +97,6 @@ class ProfileController extends GetxController {
     }
   }
 
-<<<<<<< HEAD
-=======
-  // ── Upload Cover Image ────────────────────────────────
->>>>>>> main
   Future<void> pickAndUploadCover() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,

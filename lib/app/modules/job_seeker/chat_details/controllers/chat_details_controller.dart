@@ -3,8 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/model/chat_details_model.dart';
+import '../../chat/services/chat_services.dart';
+import '../model/chat_details_model.dart';
 
 class ChatDetailsController extends GetxController {
   final String chatId;

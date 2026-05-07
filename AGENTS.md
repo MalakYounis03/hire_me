@@ -1,65 +1,70 @@
 # AGENTS.md — HireMe
 
-## Developer Commands
+## Commands
 
 ```bash
-flutter pub get          # Install dependencies
-flutter analyze          # Lint (uses flutter_lints, no custom rules)
-flutter test             # Run all tests
-flutter test test/<file> # Run a single test file
-flutter run              # Run on connected device/emulator
-flutter build apk --release  # Build release APK
+flutter pub get                                   # Install dependencies
+flutter analyze --no-fatal-infos --no-fatal-warnings  # CI-friendly lint
+flutter test                                      # All tests
+flutter test test/<file>                          # Single test file
+flutter run                                       # Device/emulator
+flutter build apk --release                       # Release APK
 ```
+CI pipeline (`pub get` → `analyze` → `test --no-pub` → `build apk --release` → Firebase App Distribution).
 
 ## Setup
 
-- Requires Flutter SDK ^3.11.0 / Dart SDK ^3.11.0
-- A `.env` file at project root is **required** before running:
+- Flutter SDK `^3.11.0` / Dart `^3.11.0` (CI pins Flutter `3.41.6`)
+- `.env` at **project root** (declared as asset in `pubspec.yaml`, also in `.gitignore`):
   ```
   SUPABASE_URL=...
   SUPABASE_ANON_KEY=...
   ```
-- Firebase configured via `flutterfire configure --project=hireme-a59e6` (generates `lib/firebase_options.dart`)
-- `google-services.json` lives at `android/app/google-services.json`
+- Firebase: `flutterfire configure --project=hireme-a59e6` generates `lib/firebase_options.dart` + `google-services.json`
+- **Do not edit:** `lib/firebase_options.dart`, `android/app/google-services.json`, `.env` (denied in `opencode.json`)
+
+## Entrypoint (`lib/main.dart`)
+
+`WidgetsFlutterBinding.ensureInitialized()` → `dotenv.load(fileName: '.env')` → `Future.wait(Firebase.initializeApp` wrapped in `Firebase.apps.isEmpty` guard, `Supabase.initialize` with `authFlowType: AuthFlowType.pkce` + `autoRefreshToken: true`) → `Get.putAsync(StorageService, permanent: true)` → `runApp(GetMaterialApp(...))`.
+
+Initial route: `Routes.SPLASH` (`/splash`).
 
 ## Architecture
 
-- **State management & routing:** GetX (`GetMaterialApp`, `GetPage`, bindings, controllers)
-- **Entry point:** `lib/main.dart` — loads `.env`, initializes Firebase + Supabase in parallel (`Future.wait`), registers `StorageService` as permanent GetX service
-- **Feature-first modular structure:** `lib/app/modules/{auth, company, job_seeker, main_wrapper, profile}/`
-  - Each feature has `bindings/`, `controllers/`, `views/` subdirectories
-- **Routing:** `lib/app/routes/app_pages.dart` (defines all GetPage entries) + `app_routes.dart` (route string constants as `part`)
-- **Role guard:** `lib/app/middleware/role_guard_middleware.dart` — all protected routes use `RoleGuardMiddleware`. Mismatched role redirects to the other role's wrapper (`Routes.MAIN_WRAPPER` or `Routes.COMPANY_MAIN_WRAPPER`)
-- **Session persistence:** `lib/app/services/storage_service.dart` — GetX permanent service backed by `SharedPreferences`. Stores role, userId, tokens. Normalizes roles: `jobseeker`, `job seeker`, `job_seeker` all map to `job_seeker`
-- **Shared layer:** `lib/core/models/`, `lib/core/utils/`, `lib/core/widgets/`
-- **Asset constants:** `lib/core/utils/app_assets.dart` — auto-generated class for `assets/images/`
-
-## Backend
-
-- **Firebase:** Auth, Firestore, Storage, Realtime Database
-- **Supabase:** Initialized from `.env` credentials, used alongside Firebase
-- Auth sessions are persisted locally via `StorageService` (not Firebase state alone)
-
-## CI/CD (`.github/workflows/flutter.yml`)
-
-- Triggers on push/PR to `main`
-- Uses Flutter **3.41.6** stable, Java 17
-- Pipeline: `pub get` → `flutter analyze --no-fatal-infos --no-fatal-warnings` → `flutter test --no-pub` → `flutter build apk --release` → Firebase App Distribution
-- `.env` is generated from GitHub secrets (`SUPABASE_URL`, `SUPABASE_ANON_KEY`)
+- **State/routing:** GetX (`GetMaterialApp`, `GetPage`, `Bindings`, `GetxController`, `GetView`)
+- **Feature modules:** `lib/app/modules/{auth, company, job_seeker, main_wrapper, profile}/` — each sub-feature has `bindings/`, `controllers/`, `views/`
+- **Routing:** `lib/app/routes/app_pages.dart` (GetPage entries) with `app_routes.dart` as a `part` — **do not import** `app_routes.dart` directly (it's `part of 'app_pages.dart'`). Use `Routes.*` constants from `app_pages.dart`.
+- **Role guard:** `lib/app/middleware/role_guard_middleware.dart` — checks both `FirebaseAuth.currentUser` and SharedPreferences session. Mismatched role redirects to the other role's wrapper.
+- **Session:** `lib/app/services/storage_service.dart` — GetX permanent service backed by `SharedPreferences`. `normalizeRole()` maps `jobseeker`, `job seeker`, `job_seeker` → `job_seeker`. `AppUserRole` enum with `.value` getter.
+- **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (from `.env`)
+- **Models in two places:** `lib/app/data/models/` (`category_model.dart`, `job_model.dart`) and `lib/core/models/` (`job_model.dart`, `user_model.dart`).
+- **Assets:** `assets/images/` → `lib/core/utils/app_assets.dart` (auto-generated by `flutter_assets` — **do not edit**). Config in `pubspec.yaml` under `flutter_assets:`. `lib/app/core/utils/app_assets.dart` is a stale manual copy.
 
 ## Testing
 
-- Tests live in `/test/`. Current tests use local fakes, not Firebase mocks — no Firebase initialization needed for unit tests
-- `widget_test.dart` is a placeholder
-- Run: `flutter test` or `flutter test test/auth_login_controller_test.dart`
+- Tests in `test/` use **manual fakes** — no mockito/mocktail in deps
+- No Firebase/Supabase initialization needed
+- Files: `auth_login_controller_test.dart`, `application_review_controller_test.dart`, `widget_test.dart` (placeholder)
 
-## Asset & Font Conventions
+## Duplicated & diverged utils
 
-- Images: `assets/images/` (referenced via generated `Assets` class in `app_assets.dart`)
-- Fonts: Poppins, Inter, Montserrat, Roboto, Segoe.UI (defined in `pubspec.yaml`)
-- `.env` is declared as a Flutter asset — do not remove from `pubspec.yaml`
+`lib/app/core/utils/` and `lib/core/utils/` are **both active and have diverged** — edits to one do not affect the other:
 
-## Skills
-- skills/flutter-code-review/SKILL.md — run when task is done
-- skills/flutter-pr/SKILL.md — run when creating a PR  
-- skills/flutter-getx-controller/SKILL.md — run when creating a new screen
+| File | Copy A (`lib/app/core/utils/`) | Copy B (`lib/core/utils/`) |
+|------|-------------------------------|---------------------------|
+| `app_color.dart` | Has `kdanger`, `ksuccess`, `kshadow` | Has `light_themeGrey`, `light_themeBlue`, `textPrimary`, `textSecondary`, `divider`, `background` |
+| `app_string.dart` | Missing `apply`, `profile` | Has `apply`, `profile` |
+| `app_text_style.dart` | 15 text styles | 24 text styles (includes `Roboto`, `SegoeUI`, `Intermeduim`, etc.) |
+| `app_assets.dart` | Stale manual copy | Auto-generated (source of truth) |
+
+The `AppColor` class in `lib/app/core/utils/app_color.dart` is the **primary** one used by the modular views. However `lib/core/utils/app_color.dart` is imported by `lib/core/widgets/app_bottom_nav_bar.dart`.
+
+## Quirks
+
+- `hireme_skills /{name}/SKILL.md` — directory name has a **trailing space**; three skills exist: `flutter-code-review`, `flutter-getx-controller`, `flutter-pr`
+- `Routes.COMPANY_APPLICANTS` is defined in `app_routes.dart` but has **no `GetPage` entry** in `app_pages.dart`
+- `Routes.JOB_SEEKER_CONGRATULATIONS` maps to `JobSeekerApplyJobView`, not a dedicated view
+- **Unlinked modules** (have full bindings/controllers/views but **zero route entries**): `auth/role_selector/`, `job_seeker/chat/`, `job_seeker/chat_details/`
+- **Font family typo** in `app_text_style.dart`: `" Poppins"` and `" Inter"` have leading spaces — will not match the declared `Poppins`/`Inter` fonts in `pubspec.yaml`
+- `AppBottomNavBar` (`lib/core/widgets/app_bottom_nav_bar.dart`) has buttons for Chat (index 1) and Saved (index 4) but `_navigate()` has **no matching cases** — taps do nothing
+- Push notifications via `firebase_messaging` + `flutter_local_notifications`; `email_otp` used in forgot-password flow

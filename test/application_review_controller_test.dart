@@ -144,6 +144,7 @@ class _FakeApplicationReviewController {
               education: 'Unknown',
               cvUrl: '',
               appliedAt: '',
+              applicantFcmToken: '',
             ))
         .obs;
     companyName.value = initialCompanyName;
@@ -269,6 +270,7 @@ void main() {
     cvUrl: 'https://example.com/cv.pdf',
     avatarUrl: 'https://example.com/avatar.png',
     appliedAt: '2026-05-01',
+    applicantFcmToken: 'fcm-token-123',
   );
 
   const testCompanyId = 'company-456';

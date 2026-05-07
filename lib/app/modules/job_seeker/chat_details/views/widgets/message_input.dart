@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/controllers/chat_details_controller.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/send_button.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
+import '../../controllers/chat_details_controller.dart';
+import 'send_button.dart';
 
 class MessageInput extends StatelessWidget {
   final ChatDetailsController controller;

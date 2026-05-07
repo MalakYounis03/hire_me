@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/auth_forgot_password_controller.dart';
 
 class AuthForgotPasswordView extends GetView<AuthForgotPasswordController> {

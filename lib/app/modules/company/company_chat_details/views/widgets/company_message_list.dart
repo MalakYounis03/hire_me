@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/helper/data_helper.dart';
-import 'package:hire_me/app/modules/company/company_chat_details/controllers/company_chat_details_controller.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/data_divider.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_bubble.dart';
+import '../../../../../core/helper/data_helper.dart';
+import '../../controllers/company_chat_details_controller.dart';
+import '../../../../job_seeker/chat_details/views/widgets/data_divider.dart';
+import '../../../../job_seeker/chat_details/views/widgets/message_bubble.dart';
 
 class CompanyMessagesList extends StatelessWidget {
   final CompanyChatDetailsController controller;

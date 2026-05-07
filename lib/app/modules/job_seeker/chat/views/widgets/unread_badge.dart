@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class UnreadBadge extends StatelessWidget {
   final int count;
