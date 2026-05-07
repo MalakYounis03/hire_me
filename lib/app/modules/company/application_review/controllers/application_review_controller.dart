@@ -125,7 +125,7 @@ class ApplicationReviewController extends GetxController {
       if (isClosed) return;
 
       // 4. Route to company chat details
-      Get.toNamed(
+      Get.offNamed(
         Routes.COMPANY_CHAT_DETAILS,
         arguments: {
           'chatId': chatId,
