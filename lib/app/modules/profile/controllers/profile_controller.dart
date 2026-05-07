@@ -9,11 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
+  // ── State ─────────────────────────────────────────────
   final userModel = Rxn<UserModel>();
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
 
+  // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
@@ -45,10 +47,17 @@ class ProfileController extends GetxController {
       if (doc.exists) {
         userModel.value = UserModel.fromMap(doc.data()!);
       } else {
+        final userDoc = await _firestore.collection('users').doc(uid).get();
+        final name = userDoc.data()?['name'] ?? '';
+
         final newUser = UserModel(
           uid: uid,
           email: _auth.currentUser?.email ?? '',
           role: 'jobseeker',
+<<<<<<< HEAD
+=======
+          name: name,
+>>>>>>> main
         );
         await _firestore.collection('jobSeekers').doc(uid).set(newUser.toMap());
         userModel.value = newUser;
@@ -60,6 +69,7 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ── Upload Profile Image ───────────────────────────────
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -92,6 +102,10 @@ class ProfileController extends GetxController {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // ── Upload Cover Image ────────────────────────────────
+>>>>>>> main
   Future<void> pickAndUploadCover() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -153,6 +167,7 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
+  // ── Dialogs ───────────────────────────────────────────
   void showAddEducationDialog() {
     final schoolCtrl = TextEditingController();
     final degreeCtrl = TextEditingController();
@@ -272,6 +287,13 @@ class ProfileController extends GetxController {
     );
   }
 
+  // ── Logout ────────────────────────────────────────────
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.SPLASH);
+  }
+
+  // ── Private Helpers ───────────────────────────────────
   Future<void> _updateField(String field, dynamic value) async {
     final uid = _auth.currentUser!.uid;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});
