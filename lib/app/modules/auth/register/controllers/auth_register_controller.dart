@@ -6,6 +6,8 @@ import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/app/services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
+  final nameController = TextEditingController();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -42,8 +44,9 @@ class AuthRegisterController extends GetxController {
         userId: credential.user!.uid,
         role: _role,
         accessToken: await credential.user!.getIdToken(),
-        companyId:
-            _role == AppUserRole.company.value ? credential.user!.uid : null,
+        companyId: _role == AppUserRole.company.value
+            ? credential.user!.uid
+            : null,
         jobSeekerId: _role == AppUserRole.job_seeker.value
             ? credential.user!.uid
             : null,
@@ -64,6 +67,10 @@ class AuthRegisterController extends GetxController {
   void onLoginPressed() => Get.offAllNamed(Routes.AUTH_LOGIN);
 
   bool _isValid() {
+    if (nameController.text.trim().isEmpty) {
+      _showError('Please enter your full name');
+      return false;
+    }
     if (emailController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty ||
         confirmPasswordController.text.trim().isEmpty) {
@@ -89,12 +96,16 @@ class AuthRegisterController extends GetxController {
     final collection = _role == 'company' ? 'companies' : 'jobSeekers';
     await _firestore.collection('users').doc(uid).set({
       'uid': uid,
+      'name': nameController.text.trim(),
+
       'email': emailController.text.trim(),
       'role': _role,
       'createdAt': FieldValue.serverTimestamp(),
     });
     await _firestore.collection(collection).doc(uid).set({
       'uid': uid,
+      'name': nameController.text.trim(),
+
       'email': emailController.text.trim(),
       'createdAt': FieldValue.serverTimestamp(),
     });
@@ -135,6 +146,8 @@ class AuthRegisterController extends GetxController {
 
   @override
   void onClose() {
+    nameController.dispose();
+
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
