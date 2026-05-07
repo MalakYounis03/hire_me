@@ -22,8 +22,12 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               const SizedBox(height: 60),
               _buildTitle(),
               const SizedBox(height: 36),
+              // أضيفي هاد قبل _buildEmailField()
+              _buildNameField(),
+              const SizedBox(height: 16),
               _buildEmailField(),
               const SizedBox(height: 16),
+
               _buildPasswordField(),
               const SizedBox(height: 16),
               _buildConfirmPasswordField(),
@@ -54,6 +58,14 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
           style: CustomTextstyle.Poppinssemibold,
         ),
       ],
+    );
+  }
+
+  Widget _buildNameField() {
+    return _AuthTextField(
+      controller: controller.nameController,
+      hint: 'Full Name',
+      keyboardType: TextInputType.name,
     );
   }
 
