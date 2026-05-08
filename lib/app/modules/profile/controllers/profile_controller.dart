@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import '../../../../core/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -47,7 +48,7 @@ class ProfileController extends GetxController {
         userModel.value = UserModel.fromMap(doc.data()!);
       } else {
         final userDoc = await _firestore.collection('users').doc(uid).get();
-        final name = userDoc.data()?['name'] ?? '';
+        userDoc.data()?['name'] ?? '';
 
         final newUser = UserModel(
           uid: uid,
