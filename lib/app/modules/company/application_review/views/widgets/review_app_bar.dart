@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../core/utils/app_color.dart';
 
 class ReviewAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ReviewAppBar({super.key});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/company/company_chat_details/views/widgets/company_message_input.dart';
-import 'package:hire_me/app/modules/company/company_chat_details/views/widgets/company_message_list.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/chat_details_appbar.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'widgets/company_message_input.dart';
+import 'widgets/company_message_list.dart';
+import '../../../job_seeker/chat_details/views/widgets/chat_details_appbar.dart';
+import '../../../../../core/utils/app_color.dart';
 
 import '../controllers/company_chat_details_controller.dart';
 
@@ -51,9 +51,7 @@ class CompanyChatDetailsView extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
               return CompanyMessagesList(controller: controller);
             }),

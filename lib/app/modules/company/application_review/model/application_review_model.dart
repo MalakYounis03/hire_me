@@ -12,6 +12,7 @@ class ApplicationReviewModel {
   final String avatarUrl;
   final String status;
   final String appliedAt;
+  final String applicantFcmToken;
 
   ApplicationReviewModel({
     required this.id,
@@ -27,5 +28,6 @@ class ApplicationReviewModel {
     this.avatarUrl = '',
     this.status = 'pending',
     required this.appliedAt,
+    this.applicantFcmToken = '',
   });
 }

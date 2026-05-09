@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/application_list_controller.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_list/views/widgets/application_tile.dart';
-import 'package:hire_me/app/modules/company/application_list/views/widgets/applications_header.dart';
+import '../../../../core/utils/app_color.dart';
+import 'widgets/application_tile.dart';
+import 'widgets/applications_header.dart';
 
 class ApplicationListView extends GetView<ApplicationListController> {
   const ApplicationListView({super.key});
@@ -29,57 +29,55 @@ class ApplicationListView extends GetView<ApplicationListController> {
             ),
             Expanded(
               child: controller.isLoading.value
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ? const Center(child: CircularProgressIndicator())
                   : jobs.isEmpty
-                      ? Center(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 24),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 24,
+                  ? Center(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 24,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColor.kwhite,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColor.greyVeryLight),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColor.kblack.withOpacity(0.04),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
                             ),
-                            decoration: BoxDecoration(
-                              color: AppColor.kwhite,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColor.greyVeryLight),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColor.kblack.withOpacity(0.04),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.inbox_outlined,
+                              size: 32,
+                              color: AppColor.kblue,
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.inbox_outlined,
-                                  size: 32,
-                                  color: AppColor.kblue,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  'No applications yet',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: AppColor.kblack,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'New applications will appear here.',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColor.greyLight,
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 12),
+                            Text(
+                              'No applications yet',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppColor.kblack,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
-                          ),
-                        )
-                      : ListView.builder(
+                            const SizedBox(height: 4),
+                            Text(
+                              'New applications will appear here.',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: AppColor.greyLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
                       itemCount: jobs.length,
                       itemBuilder: (_, jobIndex) {

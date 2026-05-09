@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
+import '../../../../core/utils/app_color.dart';
+import '../model/application_review_model.dart';
 import '../controllers/application_review_controller.dart';
 import 'widgets/review_app_bar.dart';
 import 'widgets/profile_card.dart';
@@ -62,9 +62,8 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                         child: OutlinedButton.icon(
                           onPressed: controller.isProcessing.value
                               ? null
-                              : () => controller.rejectApplication(
-                                    applicant.id,
-                                  ),
+                              : () =>
+                                    controller.rejectApplication(applicant.id),
                           icon: const Icon(Icons.cancel_outlined, size: 18),
                           label: const Text(
                             'Reject',
@@ -92,12 +91,12 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                           onPressed: controller.isProcessing.value
                               ? null
                               : () => controller.acceptApplication(
-                                    applicant.id,
-                                    applicant.jobSeekerId,
-                                    applicant.name,
-                                    controller.companyId,
-                                    controller.companyName.value,
-                                  ),
+                                  applicant.id,
+                                  applicant.jobSeekerId,
+                                  applicant.name,
+                                  controller.companyId,
+                                  controller.companyName.value,
+                                ),
                           icon: const Icon(
                             Icons.check_circle_outline,
                             size: 18,

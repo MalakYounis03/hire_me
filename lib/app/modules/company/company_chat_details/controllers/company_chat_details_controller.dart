@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/model/chat_details_model.dart';
+
+import '../../../job_seeker/chat/services/chat_services.dart';
+import '../../../job_seeker/chat_details/model/chat_details_model.dart';
 
 class CompanyChatDetailsController extends GetxController {
   final String chatId;

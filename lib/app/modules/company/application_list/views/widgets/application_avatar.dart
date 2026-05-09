@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../core/utils/app_color.dart';
 
 class ApplicantAvatar extends StatelessWidget {
   final String name;

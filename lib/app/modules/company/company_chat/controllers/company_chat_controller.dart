@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/model/chat_model.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
+
+import '../../../job_seeker/chat/model/chat_model.dart';
+import '../../../job_seeker/chat/services/chat_services.dart';
 
 class CompanyChatController extends GetxController {
   final ChatService _chatService = ChatService();

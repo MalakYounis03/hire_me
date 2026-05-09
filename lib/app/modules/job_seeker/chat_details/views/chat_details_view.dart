@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/chat_details_appbar.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_input.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_list.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'widgets/chat_details_appbar.dart';
+import 'widgets/message_input.dart';
+import 'widgets/message_list.dart';
+import '../../../../../core/utils/app_color.dart';
 
 import '../controllers/chat_details_controller.dart';
 

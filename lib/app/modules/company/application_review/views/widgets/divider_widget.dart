@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../core/utils/app_color.dart';
+import '../../model/application_review_model.dart';
 
 class DividerWidget extends StatelessWidget {
   const DividerWidget({super.key});

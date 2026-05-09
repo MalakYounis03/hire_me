@@ -76,7 +76,6 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              // Cover
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -115,7 +114,53 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
 
-              // Avatar
+                child: Obx(() {
+                  final hasCover = controller.coverImage.isNotEmpty;
+                  return GestureDetector(
+                    onTap: controller.pickAndUploadCover,
+                    child: Container(
+                      height: 110,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB0BEC5),
+                        image: hasCover
+                            ? DecorationImage(
+                                image: NetworkImage(controller.coverImage),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: Obx(
+                        () => controller.isUploadingCover.value
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.8),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: 18,
+                                      color: AppColor.kblue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+
               Positioned(
                 bottom: -36,
                 left: 16,
@@ -279,12 +324,11 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── About Card ────────────────────────────────────────
   Widget _buildAboutCard() {
     return _sectionCard(
       title: 'About',
       icon: Icons.person_outline_rounded,
-      onEdit: controller.showEditAboutDialog, // ← القلم يفتح dialog
+      onEdit: controller.showEditAboutDialog, 
       child: Obx(
         () => controller.userAbout.isEmpty
             ? const Text(
@@ -299,7 +343,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Experience Card ───────────────────────────────────
   Widget _buildExperienceCard() {
     return _sectionCard(
       title: 'Experience',
@@ -318,7 +361,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Education Card ────────────────────────────────────
   Widget _buildEducationCard() {
     return _sectionCard(
       title: 'Education',
@@ -337,7 +379,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Skills Card ───────────────────────────────────────
   Widget _buildSkillsCard() {
     return _sectionCard(
       title: 'Skills',
@@ -365,7 +406,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Shared Section Card ───────────────────────────────
+
   Widget _sectionCard({
     required String title,
     required IconData icon,
@@ -417,7 +458,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Education Item ────────────────────────────────────
   Widget _educationItem(EducationModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -464,8 +504,8 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Experience Item ───────────────────────────────────
   Widget _experienceItem(ExperienceModel e, int index) {
+  Widget _experienceItem(ExperienceModel e) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -511,7 +551,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Skill Chip ────────────────────────────────────────
+
   Widget _skillChip(String skill, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

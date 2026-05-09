@@ -51,16 +51,52 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
               Get.offAllNamed(Routes.AUTH_LOGIN);
             },
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColor.kwhite.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.notifications_none_rounded,
-              color: AppColor.kwhite,
-              size: 28,
+          Obx(
+            () => GestureDetector(
+              onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColor.kwhite.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.notifications_none_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  if (controller.notificationBadgeCount.value > 0)
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          controller.notificationBadgeCount.value > 99
+                              ? '99+'
+                              : '${controller.notificationBadgeCount.value}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ],
