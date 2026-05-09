@@ -84,7 +84,7 @@ abstract class CustomTextstyle {
   static final InterregularOrange = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Color(0xffF16E12),
+    color: AppColor.kblue,
     fontFamily: " Inter",
   );
   static final Poppinssemibold500 = TextStyle(
@@ -100,7 +100,7 @@ abstract class CustomTextstyle {
     fontFamily: " Inter",
   );
   static final Intermeduim = TextStyle(
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: FontWeight.w500,
     color: AppColor.Eblack,
     fontFamily: " Inter",

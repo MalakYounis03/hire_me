@@ -99,21 +99,11 @@ class AuthRegisterController extends GetxController {
     final collection = _role == 'company' ? 'companies' : 'jobSeekers';
     await _firestore.collection('users').doc(uid).set({
       'uid': uid,
-      'name': nameController.text.trim(),
 
       'email': emailController.text.trim(),
       'role': _role,
-      'name': emailController.text.trim().split(
-        '@',
-      )[0], // ← اسم مؤقت من الإيميل
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-    await _firestore.collection(collection).doc(uid).set({
-      'uid': uid,
       'name': nameController.text.trim(),
 
-      'email': emailController.text.trim(),
-      'name': emailController.text.trim().split('@')[0], // ← نفس الشي
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
