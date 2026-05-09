@@ -9,13 +9,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
-  // ── State ─────────────────────────────────────────────
   final userModel = Rxn<UserModel>();
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
 
-  // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
@@ -46,6 +44,15 @@ class ProfileController extends GetxController {
 
       if (doc.exists) {
         userModel.value = UserModel.fromMap(doc.data()!);
+
+        if (userModel.value?.name.isEmpty ?? true) {
+          final userDoc = await _firestore.collection('users').doc(uid).get();
+          final name = userDoc.data()?['name'] ?? '';
+          if (name.isNotEmpty) {
+            await _updateField('name', name);
+            userModel.value = userModel.value?.copyWith(name: name);
+          }
+        }
       } else {
         final userDoc = await _firestore.collection('users').doc(uid).get();
         final name = userDoc.data()?['name'] ?? '';
@@ -54,10 +61,7 @@ class ProfileController extends GetxController {
           uid: uid,
           email: _auth.currentUser?.email ?? '',
           role: 'jobseeker',
-<<<<<<< HEAD
-=======
           name: name,
->>>>>>> main
         );
         await _firestore.collection('jobSeekers').doc(uid).set(newUser.toMap());
         userModel.value = newUser;
@@ -69,7 +73,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Upload Profile Image ───────────────────────────────
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -80,12 +83,15 @@ class ProfileController extends GetxController {
     isUploadingImage.value = true;
     try {
       final uid = _auth.currentUser!.uid;
-      final file = File(picked.path);
       final fileName = 'profile_$uid.jpg';
 
       await _supabase.storage
           .from('profile-images')
-          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+          .upload(
+            fileName,
+            File(picked.path),
+            fileOptions: const FileOptions(upsert: true),
+          );
 
       final imageUrl = _supabase.storage
           .from('profile-images')
@@ -93,7 +99,6 @@ class ProfileController extends GetxController {
 
       await _updateField('profileImage', imageUrl);
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
-
       _showSuccess('Profile photo updated!');
     } catch (e) {
       _showError('Failed to upload photo: $e');
@@ -102,10 +107,6 @@ class ProfileController extends GetxController {
     }
   }
 
-<<<<<<< HEAD
-=======
-  // ── Upload Cover Image ────────────────────────────────
->>>>>>> main
   Future<void> pickAndUploadCover() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -116,12 +117,15 @@ class ProfileController extends GetxController {
     isUploadingCover.value = true;
     try {
       final uid = _auth.currentUser!.uid;
-      final file = File(picked.path);
       final fileName = 'cover_$uid.jpg';
 
       await _supabase.storage
           .from('profile-images')
-          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
+          .upload(
+            fileName,
+            File(picked.path),
+            fileOptions: const FileOptions(upsert: true),
+          );
 
       final coverUrl = _supabase.storage
           .from('profile-images')
@@ -129,7 +133,6 @@ class ProfileController extends GetxController {
 
       await _updateField('coverImage', coverUrl);
       userModel.value = userModel.value?.copyWith(coverImage: coverUrl);
-
       _showSuccess('Cover photo updated!');
     } catch (e) {
       _showError('Failed to upload cover: $e');
@@ -138,143 +141,158 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Add Education ─────────────────────────────────────
-  Future<void> addEducation(EducationModel edu) async {
-    final updated = [...education, edu];
+  void showEditAboutDialog() {
+    final ctrl = TextEditingController(text: userAbout);
+    _showEditDialog(
+      title: 'Edit About',
+      fields: [_dialogField(ctrl, 'About yourself...', maxLines: 4)],
+      onSave: () async {
+        await _updateField('about', ctrl.text.trim());
+        userModel.value = userModel.value?.copyWith(about: ctrl.text.trim());
+      },
+    );
+  }
+
+  void showAddEducationDialog() => _openEducationDialog();
+
+  void showEditEducationDialog(int index) =>
+      _openEducationDialog(index: index, existing: education[index]);
+
+  Future<void> deleteEducation(int index) async {
+    final updated = [...education]..removeAt(index);
     await _updateField('education', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(education: updated);
   }
 
-  // ── Add Experience ────────────────────────────────────
-  Future<void> addExperience(ExperienceModel exp) async {
-    final updated = [...experience, exp];
+  void _openEducationDialog({int? index, EducationModel? existing}) {
+    final schoolCtrl = TextEditingController(text: existing?.school ?? '');
+    final degreeCtrl = TextEditingController(text: existing?.degree ?? '');
+    final fieldCtrl = TextEditingController(text: existing?.field ?? '');
+    final startCtrl = TextEditingController(text: existing?.startYear ?? '');
+    final endCtrl = TextEditingController(text: existing?.endYear ?? '');
+
+    _showEditDialog(
+      title: index == null ? 'Add Education' : 'Edit Education',
+      fields: [
+        _dialogField(schoolCtrl, 'School / University'),
+        _dialogField(degreeCtrl, 'Degree'),
+        _dialogField(fieldCtrl, 'Field of Study'),
+        _dialogField(startCtrl, 'Start Year'),
+        _dialogField(endCtrl, 'End Year'),
+      ],
+      onSave: () async {
+        if (schoolCtrl.text.isEmpty) return;
+        final edu = EducationModel(
+          school: schoolCtrl.text,
+          degree: degreeCtrl.text,
+          field: fieldCtrl.text,
+          startYear: startCtrl.text,
+          endYear: endCtrl.text,
+        );
+        final updated = [...education];
+        if (index == null) {
+          updated.add(edu);
+        } else {
+          updated[index] = edu;
+        }
+        await _updateField('education', updated.map((e) => e.toMap()).toList());
+        userModel.value = userModel.value?.copyWith(education: updated);
+      },
+    );
+  }
+
+  void showAddExperienceDialog() => _openExperienceDialog();
+
+  void showEditExperienceDialog(int index) =>
+      _openExperienceDialog(index: index, existing: experience[index]);
+
+  Future<void> deleteExperience(int index) async {
+    final updated = [...experience]..removeAt(index);
     await _updateField('experience', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(experience: updated);
   }
 
-  // ── Add Skill ─────────────────────────────────────────
-  Future<void> addSkill(String skill) async {
-    if (skill.trim().isEmpty) return;
-    final updated = [...skills, skill.trim()];
-    await _updateField('skills', updated);
-    userModel.value = userModel.value?.copyWith(skills: updated);
+  void _openExperienceDialog({int? index, ExperienceModel? existing}) {
+    final companyCtrl = TextEditingController(text: existing?.company ?? '');
+    final positionCtrl = TextEditingController(text: existing?.position ?? '');
+    final startCtrl = TextEditingController(text: existing?.startDate ?? '');
+    final endCtrl = TextEditingController(text: existing?.endDate ?? '');
+    final descCtrl = TextEditingController(text: existing?.description ?? '');
+
+    _showEditDialog(
+      title: index == null ? 'Add Experience' : 'Edit Experience',
+      fields: [
+        _dialogField(companyCtrl, 'Company'),
+        _dialogField(positionCtrl, 'Position'),
+        _dialogField(startCtrl, 'Start Date'),
+        _dialogField(endCtrl, 'End Date'),
+        _dialogField(descCtrl, 'Description', maxLines: 3),
+      ],
+      onSave: () async {
+        if (companyCtrl.text.isEmpty) return;
+        final exp = ExperienceModel(
+          company: companyCtrl.text,
+          position: positionCtrl.text,
+          startDate: startCtrl.text,
+          endDate: endCtrl.text,
+          description: descCtrl.text,
+        );
+        final updated = [...experience];
+        if (index == null) {
+          updated.add(exp);
+        } else {
+          updated[index] = exp;
+        }
+        await _updateField(
+          'experience',
+          updated.map((e) => e.toMap()).toList(),
+        );
+        userModel.value = userModel.value?.copyWith(experience: updated);
+      },
+    );
   }
 
-  // ── Remove Skill ──────────────────────────────────────
+  void showAddSkillDialog() {
+    final skillCtrl = TextEditingController();
+    _showEditDialog(
+      title: 'Add Skill',
+      fields: [_dialogField(skillCtrl, 'Skill name')],
+      onSave: () async {
+        if (skillCtrl.text.trim().isEmpty) return;
+        final updated = [...skills, skillCtrl.text.trim()];
+        await _updateField('skills', updated);
+        userModel.value = userModel.value?.copyWith(skills: updated);
+      },
+    );
+  }
+
   Future<void> removeSkill(int index) async {
     final updated = [...skills]..removeAt(index);
     await _updateField('skills', updated);
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
-  // ── Dialogs ───────────────────────────────────────────
-  void showAddEducationDialog() {
-    final schoolCtrl = TextEditingController();
-    final degreeCtrl = TextEditingController();
-    final fieldCtrl = TextEditingController();
-    final startCtrl = TextEditingController();
-    final endCtrl = TextEditingController();
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.SPLASH);
+  }
 
+  void _showEditDialog({
+    required String title,
+    required List<Widget> fields,
+    required Future<void> Function() onSave,
+  }) {
     Get.dialog(
       AlertDialog(
-        title: const Text('Add Education'),
+        title: Text(title),
         content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(schoolCtrl, 'School / University'),
-              _dialogField(degreeCtrl, 'Degree'),
-              _dialogField(fieldCtrl, 'Field of Study'),
-              _dialogField(startCtrl, 'Start Year'),
-              _dialogField(endCtrl, 'End Year'),
-            ],
-          ),
+          child: Column(mainAxisSize: MainAxisSize.min, children: fields),
         ),
         actions: [
           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
-            onPressed: () {
-              if (schoolCtrl.text.isNotEmpty) {
-                addEducation(
-                  EducationModel(
-                    school: schoolCtrl.text,
-                    degree: degreeCtrl.text,
-                    field: fieldCtrl.text,
-                    startYear: startCtrl.text,
-                    endYear: endCtrl.text,
-                  ),
-                );
-                Get.back();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showAddExperienceDialog() {
-    final companyCtrl = TextEditingController();
-    final positionCtrl = TextEditingController();
-    final startCtrl = TextEditingController();
-    final endCtrl = TextEditingController();
-    final descCtrl = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Add Experience'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(companyCtrl, 'Company'),
-              _dialogField(positionCtrl, 'Position'),
-              _dialogField(startCtrl, 'Start Date'),
-              _dialogField(endCtrl, 'End Date'),
-              _dialogField(descCtrl, 'Description', maxLines: 3),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (companyCtrl.text.isNotEmpty) {
-                addExperience(
-                  ExperienceModel(
-                    company: companyCtrl.text,
-                    position: positionCtrl.text,
-                    startDate: startCtrl.text,
-                    endDate: endCtrl.text,
-                    description: descCtrl.text,
-                  ),
-                );
-                Get.back();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showAddSkillDialog() {
-    final skillCtrl = TextEditingController();
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Add Skill'),
-        content: _dialogField(skillCtrl, 'Skill name'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              addSkill(skillCtrl.text);
+            onPressed: () async {
+              await onSave();
               Get.back();
             },
             style: ElevatedButton.styleFrom(
@@ -287,13 +305,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Logout ────────────────────────────────────────────
-  Future<void> logout() async {
-    await _auth.signOut();
-    Get.offAllNamed(Routes.SPLASH);
-  }
-
-  // ── Private Helpers ───────────────────────────────────
   Future<void> _updateField(String field, dynamic value) async {
     final uid = _auth.currentUser!.uid;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});
