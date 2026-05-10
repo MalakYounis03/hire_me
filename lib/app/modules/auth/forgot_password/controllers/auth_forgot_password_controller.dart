@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
+import '../../../../routes/app_pages.dart';
 
 class AuthForgotPasswordController extends GetxController {
   final emailController = TextEditingController();
@@ -31,10 +31,9 @@ class AuthForgotPasswordController extends GetxController {
     try {
       await _auth.sendPasswordResetEmail(email: emailController.text.trim());
       _showSuccess('Reset link sent! Check your email');
-      Get.toNamed(
-        Routes.AUTH_OTP,
-        arguments: {'email': emailController.text.trim()},
-      );
+
+      await Future.delayed(const Duration(seconds: 2));
+      Get.offAllNamed(Routes.AUTH_LOGIN);
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
     } finally {

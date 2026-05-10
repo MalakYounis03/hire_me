@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_assets.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_string.dart';
+import '../../../../../core/utils/app_text_style.dart';
 
 import '../controllers/auth_select_user_controller.dart';
 
@@ -56,8 +56,8 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                   () => _RoleCard(
                     title: AppString.user,
                     image: Assets.imagesUser,
-                    isSelected: controller.selectedRole.value == 'jobseeker',
-                    onTap: () => controller.selectRole('jobseeker'),
+                    isSelected: controller.selectedRole.value == 'job_seeker',
+                    onTap: () => controller.selectRole('job_seeker'),
                   ),
                 ),
 

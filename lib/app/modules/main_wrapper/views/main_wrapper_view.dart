@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/chat_view.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
-import 'package:hire_me/app/modules/main_wrapper/controllers/main_wrapper_controller.dart';
+import '../../../core/utils/app_color.dart';
+import '../../job_seeker/chat/views/chat_view.dart';
+import '../../job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
+import '../controllers/main_wrapper_controller.dart';
+import '../../profile/views/profile_view.dart';
 
 class MainWrapperView extends GetView<MainWrapperController> {
   const MainWrapperView({super.key});
@@ -19,7 +20,7 @@ class MainWrapperView extends GetView<MainWrapperController> {
             const JobSeekerDashboardView(),
             const ChatView(),
             const Center(child: Text("Portfolio Page")),
-            const Center(child: Text("Profile Page")),
+            const ProfileView(),
           ],
         ),
       ),

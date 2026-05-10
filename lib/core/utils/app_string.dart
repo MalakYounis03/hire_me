@@ -8,5 +8,7 @@ abstract class AppString {
       login = "Login",
       signin = "Sign in",
       createaccount = "Create Account",
-      signup = "Sign up";
+      signup = "Sign up",
+      apply = "Apply",
+      profile = "Profile";
 }

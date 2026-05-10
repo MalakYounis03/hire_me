@@ -2,9 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../services/notification_service.dart';
+import '../../../../services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
+  final nameController = TextEditingController();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -15,10 +19,12 @@ class AuthRegisterController extends GetxController {
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final _storage = StorageService.to;
 
   String get _role {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
-    return args['role'] as String? ?? 'jobseeker';
+    return StorageService.normalizeRole(args['role'] as String?) ??
+        AppUserRole.job_seeker.value;
   }
 
   void toggleObscurePassword() => obscurePassword.toggle();
@@ -29,15 +35,33 @@ class AuthRegisterController extends GetxController {
 
     isLoading.value = true;
     try {
-      await _auth.createUserWithEmailAndPassword(
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // ← احذفي _saveUserToFirestore مؤقتاً
+      await _saveUserToFirestore(credential.user!.uid);
+      await _storage.saveAuthSession(
+        userId: credential.user!.uid,
+        role: _role,
+        accessToken: await credential.user!.getIdToken(),
+        companyId: _role == AppUserRole.company.value
+            ? credential.user!.uid
+            : null,
+        jobSeekerId: _role == AppUserRole.job_seeker.value
+            ? credential.user!.uid
+            : null,
+      );
+
+      await Get.find<NotificationService>().saveFcmToken();
+
       _navigateAfterRegister();
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
+    } catch (_) {
+      await _auth.signOut();
+      await _storage.clearAuthSession();
+      _showError('Unable to complete account creation');
     } finally {
       isLoading.value = false;
     }
@@ -46,6 +70,10 @@ class AuthRegisterController extends GetxController {
   void onLoginPressed() => Get.offAllNamed(Routes.AUTH_LOGIN);
 
   bool _isValid() {
+    if (nameController.text.trim().isEmpty) {
+      _showError('Please enter your full name');
+      return false;
+    }
     if (emailController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty ||
         confirmPasswordController.text.trim().isEmpty) {
@@ -71,22 +99,20 @@ class AuthRegisterController extends GetxController {
     final collection = _role == 'company' ? 'companies' : 'jobSeekers';
     await _firestore.collection('users').doc(uid).set({
       'uid': uid,
+
       'email': emailController.text.trim(),
       'role': _role,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-    await _firestore.collection(collection).doc(uid).set({
-      'uid': uid,
-      'email': emailController.text.trim(),
+      'name': nameController.text.trim(),
+
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
   void _navigateAfterRegister() {
     if (_role == 'company') {
-      Get.offAllNamed(Routes.COMPANY_DASHBOARD);
+      Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
     } else {
-      Get.offAllNamed(Routes.JOB_SEEKER_DASHBOARD);
+      Get.offAllNamed(Routes.MAIN_WRAPPER);
     }
   }
 
@@ -117,6 +143,8 @@ class AuthRegisterController extends GetxController {
 
   @override
   void onClose() {
+    nameController.dispose();
+
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
