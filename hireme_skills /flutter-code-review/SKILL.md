@@ -1,9 +1,13 @@
 ---
-name:flutter-code-review
+name: flutter-code-review
 description: Run a self-review checklist before completing a task. Use when the user says "task done", "work is done", "finished", "review this", or when verifying code quality and safety before approval.
-allowed-tools: Read Grep Glob Bash(git diff *) Bash(git status *)
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash(git diff)
+  - Bash(git status)
 ---
-
 # Code Completion Self-Review
 
 Run this checklist before marking any task as done. This is a read-only review — do not modify code during this step.
