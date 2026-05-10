@@ -1,132 +1,258 @@
-import 'package:get/get.dart';
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:hire_me/app/data/models/job_model.dart';
-// تأكدي من إنشاء ملف الموديل هذا كما اقترحنا سابقاً
-import 'package:hire_me/app/data/models/category_model.dart';
+import 'package:hire_me/app/data/models/mainfield_model.dart';
 
 class JobSeekerDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // --- Observables (المتغيرات المراقبة) ---
-  var allJobs = <Job>[].obs;
-  var filteredJobs = <Job>[].obs;
-  var isLoading = true.obs;
-  var userName = "User".obs;
-  var searchQuery = "".obs;
-  var selectedCategory = "الكل".obs;
+  final TextEditingController searchTextController = TextEditingController();
 
-  // إضافات جديدة للتصنيفات الديناميكية
-  var categories = <CategoryModel>[].obs;
-  var isCategoriesLoading = true.obs;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _jobsSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _mainFieldsSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _savedJobsSubscription;
+
+  final userName = 'User'.obs;
+
+  final allJobs = <JobModel>[].obs;
+  final filteredJobs = <JobModel>[].obs;
+  final mainFields = <MainFieldModel>[].obs;
+
+  final savedJobIds = <String>{}.obs;
+
+  final isLoading = true.obs;
+  final isMainFieldsLoading = true.obs;
+
+  final searchQuery = ''.obs;
+  final selectedMainFieldId = 'all'.obs;
+  final selectedJobType = 'all'.obs;
+  final selectedWorkMode = 'all'.obs;
+
+  final jobTypes = const ['all', 'FullTime', 'PartTime', 'Freelance'];
+
+  final workModes = const ['all', 'Onsite', 'Remote', 'Hybrid'];
 
   @override
   void onInit() {
     super.onInit();
     fetchUserData();
-    fetchCategories(); // جلب التصنيفات من Firestore
-    loadRecentJobs();
+    listenToMainFields();
+    listenToOpenJobs();
+    listenToSavedJobs();
   }
 
-  // --- 1. جلب بيانات المستخدم ---
-  void fetchUserData() async {
+  Future<void> fetchUserData() async {
     try {
       final uid = _auth.currentUser?.uid;
-      if (uid != null) {
-        final doc = await _firestore.collection('jobSeekers').doc(uid).get();
-        if (doc.exists) {
-          userName.value = doc.data()?['fullName'] ?? "User";
-        }
+
+      if (uid == null) return;
+
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        userName.value = userDoc.data()?['fullName'] ?? 'User';
+        return;
       }
-    } catch (e) {
-      print("Error fetching user data: $e");
-    }
-  }
 
-  // --- 2. جلب التصنيفات ديناميكياً (الجديد) ---
-  void fetchCategories() async {
-    try {
-      isCategoriesLoading.value = true;
-      // جلب كولكشن categories الذي أنشأتِه في Firestore
-      var snapshot = await _firestore.collection('categories').get();
-
-      var fetchedCategories = snapshot.docs
-          .map((doc) => CategoryModel.fromMap(doc.id, doc.data()))
-          .toList();
-
-      categories.value = fetchedCategories;
-    } catch (e) {
-      print("Error fetching categories: $e");
-    } finally {
-      isCategoriesLoading.value = false;
-    }
-  }
-
-  // --- 3. جلب الوظائف من Firebase ---
-  Future<void> loadRecentJobs() async {
-    try {
-      isLoading.value = true;
-      final snapshot = await _firestore
-          .collection('jobs')
-          .where('isActive', isEqualTo: true)
+      final seekerDoc = await _firestore
+          .collection('jobSeekers')
+          .doc(uid)
           .get();
 
-      allJobs.value = snapshot.docs
-          .map((doc) => Job.fromMap(doc.id, doc.data()))
-          .toList();
-
-      applyFilters();
-    } catch (e) {
-      print("Error loading jobs: $e");
-      Get.snackbar("Error", "فشل في تحميل الوظائف");
-    } finally {
-      isLoading.value = false;
+      if (seekerDoc.exists) {
+        userName.value = seekerDoc.data()?['fullName'] ?? 'User';
+      }
+    } catch (_) {
+      userName.value = 'User';
     }
   }
 
-  // --- 4. منطق البحث والفلترة ---
+  void listenToMainFields() {
+    isMainFieldsLoading.value = true;
 
-  void onSearch(String query) {
-    searchQuery.value = query;
+    _mainFieldsSubscription = _firestore
+        .collection('mainFields')
+        .snapshots()
+        .listen(
+          (snapshot) {
+            mainFields.value = snapshot.docs
+                .map((doc) => MainFieldModel.fromMap(doc.id, doc.data()))
+                .toList();
+
+            isMainFieldsLoading.value = false;
+          },
+          onError: (_) {
+            isMainFieldsLoading.value = false;
+            Get.snackbar('Error', 'Failed to load main fields');
+          },
+        );
+  }
+
+  void listenToOpenJobs() {
+    isLoading.value = true;
+
+    _jobsSubscription = _firestore
+        .collection('jobs')
+        .where('status', isEqualTo: 'Open')
+        .snapshots()
+        .listen(
+          (snapshot) {
+            final jobs = snapshot.docs
+                .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+                .toList();
+
+            jobs.sort((a, b) {
+              final aDate = a.createdAt?.toDate();
+              final bDate = b.createdAt?.toDate();
+
+              if (aDate == null && bDate == null) return 0;
+              if (aDate == null) return 1;
+              if (bDate == null) return -1;
+
+              return bDate.compareTo(aDate);
+            });
+
+            allJobs.value = jobs;
+            applyFilters();
+
+            isLoading.value = false;
+          },
+          onError: (_) {
+            isLoading.value = false;
+            Get.snackbar('Error', 'Failed to load jobs');
+          },
+        );
+  }
+
+  void listenToSavedJobs() {
+    final uid = _auth.currentUser?.uid;
+
+    if (uid == null) return;
+
+    _savedJobsSubscription = _firestore
+        .collection('savedJobs')
+        .where('seekerId', isEqualTo: uid)
+        .snapshots()
+        .listen((snapshot) {
+          savedJobIds.value = snapshot.docs
+              .map((doc) => doc.data()['jobId']?.toString() ?? '')
+              .where((id) => id.isNotEmpty)
+              .toSet();
+        });
+  }
+
+  void onSearch(String value) {
+    searchQuery.value = value.trim();
     applyFilters();
   }
 
-  void selectCategory(String category) {
-    if (selectedCategory.value == category) {
-      selectedCategory.value = 'الكل';
-    } else {
-      selectedCategory.value = category;
-    }
+  void selectMainField(String fieldId) {
+    selectedMainFieldId.value = fieldId;
+    applyFilters();
+  }
+
+  void setJobTypeFilter(String value) {
+    selectedJobType.value = value;
+    applyFilters();
+  }
+
+  void setWorkModeFilter(String value) {
+    selectedWorkMode.value = value;
+    applyFilters();
+  }
+
+  void clearFilters() {
+    selectedMainFieldId.value = 'all';
+    selectedJobType.value = 'all';
+    selectedWorkMode.value = 'all';
+    searchQuery.value = '';
+    searchTextController.clear();
     applyFilters();
   }
 
   void applyFilters() {
-    Iterable<Job> results = allJobs;
+    Iterable<JobModel> results = allJobs;
 
-    if (selectedCategory.value != 'الكل') {
+    if (selectedMainFieldId.value != 'all') {
       results = results.where(
-        (job) =>
-            job.category.toLowerCase() == selectedCategory.value.toLowerCase(),
+        (job) => job.mainFieldId == selectedMainFieldId.value,
       );
     }
 
+    if (selectedJobType.value != 'all') {
+      results = results.where((job) => job.jobType == selectedJobType.value);
+    }
+
+    if (selectedWorkMode.value != 'all') {
+      results = results.where((job) => job.workMode == selectedWorkMode.value);
+    }
+
     if (searchQuery.value.isNotEmpty) {
-      results = results.where(
-        (job) =>
-            job.title.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-            job.companyName.toLowerCase().contains(
-              searchQuery.value.toLowerCase(),
-            ),
-      );
+      final query = searchQuery.value.toLowerCase();
+
+      results = results.where((job) {
+        return job.title.toLowerCase().contains(query) ||
+            job.companyName.toLowerCase().contains(query) ||
+            job.mainFieldName.toLowerCase().contains(query) ||
+            job.location.toLowerCase().contains(query) ||
+            job.description.toLowerCase().contains(query);
+      });
     }
 
     filteredJobs.value = results.toList();
   }
 
+  bool isJobSaved(String jobId) {
+    return savedJobIds.contains(jobId);
+  }
+
+  Future<void> toggleSaveJob(String jobId) async {
+    try {
+      final uid = _auth.currentUser?.uid;
+
+      if (uid == null) {
+        Get.snackbar('Login Required', 'Please login to save jobs');
+        return;
+      }
+
+      final savedJobDocId = '${uid}_$jobId';
+
+      final savedJobRef = _firestore.collection('savedJobs').doc(savedJobDocId);
+
+      if (isJobSaved(jobId)) {
+        await savedJobRef.delete();
+      } else {
+        await savedJobRef.set({
+          'seekerId': uid,
+          'jobId': jobId,
+          'savedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (_) {
+      Get.snackbar('Error', 'Failed to update saved job');
+    }
+  }
+
   Future<void> refreshDashboard() async {
-    fetchUserData();
-    fetchCategories();
-    await loadRecentJobs();
+    await fetchUserData();
+  }
+
+  @override
+  void onClose() {
+    _jobsSubscription?.cancel();
+    _mainFieldsSubscription?.cancel();
+    _savedJobsSubscription?.cancel();
+    searchTextController.dispose();
+    super.onClose();
   }
 }

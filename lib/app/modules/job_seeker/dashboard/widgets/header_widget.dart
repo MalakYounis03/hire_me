@@ -1,4 +1,3 @@
-// lib/app/modules/job_seeker/dashboard/widgets/header_widget.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/core/utils/app_color.dart';
@@ -13,7 +12,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(25, 50, 25, 70),
+      padding: const EdgeInsets.fromLTRB(25, 34, 25, 70),
       decoration: BoxDecoration(
         color: AppColor.kblue,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
@@ -21,37 +20,46 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Hello,",
-                style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
-                  fontSize: 16,
-                  color: AppColor.kwhite.withOpacity(0.8),
-                ),
+          Obx(
+            () => Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hello, ${controller.userName.value}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+                      fontSize: 15,
+                      color: AppColor.kwhite.withOpacity(0.85),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Find the right job\nfor your skills',
+                    style: CustomTextstyle.Poppinsbold.copyWith(
+                      color: AppColor.kwhite,
+                      fontSize: 24,
+                      height: 1.12,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                "Find the right job\nfor your skills",
-                style: CustomTextstyle.Poppinsbold.copyWith(
-                  color: AppColor.kwhite,
-                  fontSize: 24,
-                  height: 1.1,
-                ),
-              ),
-            ],
+            ),
           ),
+
+          const SizedBox(width: 12),
+
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: AppColor.kwhite.withOpacity(0.15),
+              color: AppColor.kwhite.withOpacity(0.14),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.notifications_none_rounded,
               color: AppColor.kwhite,
-              size: 28,
+              size: 27,
             ),
           ),
         ],
