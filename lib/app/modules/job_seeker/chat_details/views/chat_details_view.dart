@@ -16,9 +16,9 @@ class ChatDetailsView extends StatelessWidget {
 
   const ChatDetailsView({
     super.key,
-    required this.chatName,
-    required this.seekerId,
-    required this.companyId,
+    this.chatName = '',
+    this.seekerId = '',
+    this.companyId = '',
     this.avatarUrl = '',
   });
 
