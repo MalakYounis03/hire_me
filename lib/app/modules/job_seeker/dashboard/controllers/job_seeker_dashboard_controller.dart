@@ -28,8 +28,9 @@ class JobSeekerDashboardController extends GetxController {
   final filteredJobs = <JobModel>[].obs;
   final mainFields = <MainFieldModel>[].obs;
 
-  final savedJobIds = <String>{}.obs;
-
+final savedJobIds = <String>{}.obs;
+final notificationBadgeCount = 0.obs;
+  
   final isLoading = true.obs;
   final isMainFieldsLoading = true.obs;
 
