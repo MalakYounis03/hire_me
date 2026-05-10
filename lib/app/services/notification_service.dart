@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -72,9 +71,23 @@ class NotificationService extends GetxService {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
     try {
-      await _firestore.collection('jobSeekers').doc(uid).set({
-        'fcmToken': token,
-      }, SetOptions(merge: true));
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+      final role = userDoc.data()?['role'] as String?;
+
+      if (role == 'job_seeker') {
+        await _firestore.collection('jobSeekers').doc(uid).set({
+          'fcmToken': token,
+        }, SetOptions(merge: true));
+      } else if (role == 'company') {
+        await _firestore.collection('companies').doc(uid).set({
+          'fcmToken': token,
+        }, SetOptions(merge: true));
+      } else {
+        debugPrint(
+          'Unknown role "$role" for uid $uid — skipping role-specific save',
+        );
+      }
+
       await _firestore.collection('users').doc(uid).set({
         'fcmToken': token,
       }, SetOptions(merge: true));
@@ -137,9 +150,31 @@ class NotificationService extends GetxService {
   }
 
   void _navigateFromData(Map<String, dynamic> data) {
-    final type = data['type'] as String?;
-    if (type == 'application_update') {
-      Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS);
+    final type = data['type'];
+    switch (type) {
+      case 'application_update':
+        Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS);
+        break;
+      case 'new_application':
+        Get.toNamed(Routes.APPLICATION_LIST);
+        break;
+      case 'chat_message':
+        final chatId = data['chatId'] as String?;
+        final senderId = data['senderId'] as String?;
+        if (chatId == null || senderId == null) break;
+        final uid = _auth.currentUser?.uid;
+        if (uid == null || uid == senderId) break;
+        _firestore.collection('users').doc(uid).get().then((doc) {
+          final role = doc.data()?['role'] as String?;
+          if (role == 'job_seeker') {
+            Get.toNamed(Routes.JOB_SEEKER_CHAT_DETAILS, arguments: chatId);
+          } else if (role == 'company') {
+            Get.toNamed(Routes.COMPANY_CHAT_DETAILS, arguments: chatId);
+          }
+        });
+        break;
+      default:
+        debugPrint('Unknown notification type: $type');
     }
   }
 }

@@ -27,6 +27,8 @@ abstract class Routes {
   static const JOB_SEEKER_NOTIFICATIONS =
       _Paths.JOB_SEEKER + _Paths.NOTIFICATIONS;
   static const JOB_SEEKER_SAVED_JOBS = _Paths.JOB_SEEKER + _Paths.SAVED_JOBS;
+  static const JOB_SEEKER_CHAT = _Paths.JOB_SEEKER + _Paths.CHAT;
+  static const JOB_SEEKER_CHAT_DETAILS = _Paths.JOB_SEEKER + _Paths.CHAT_DETAILS;
   static const MAIN_WRAPPER = _Paths.MAIN_WRAPPER;
 
   static const APPLICATION_REVIEW = _Paths.APPLICATION_REVIEW;
@@ -60,6 +62,8 @@ abstract class _Paths {
   static const MAIN_FIELDS = '/main-fields';
   static const NOTIFICATIONS = '/notifications';
   static const SAVED_JOBS = '/saved-jobs';
+  static const CHAT = '/chat';
+  static const CHAT_DETAILS = '/chat-details';
   static const MAIN_WRAPPER = '/main-wrapper';
   static const APPLICATION_REVIEW = '/application-review';
   static const APPLICATION_LIST = '/application-list';

@@ -43,6 +43,10 @@ import '../modules/job_seeker/notifications/bindings/job_seeker_notifications_bi
 import '../modules/job_seeker/notifications/views/job_seeker_notifications_view.dart';
 import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
 import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
+import '../modules/job_seeker/chat/bindings/chat_binding.dart';
+import '../modules/job_seeker/chat/views/chat_view.dart';
+import '../modules/job_seeker/chat_details/bindings/chat_details_binding.dart';
+import '../modules/job_seeker/chat_details/views/chat_details_view.dart';
 import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
 import '../modules/main_wrapper/views/main_wrapper_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -176,6 +180,22 @@ class AppPages {
       ],
     ),
     GetPage(
+      name: Routes.JOB_SEEKER_CHAT,
+      page: () => const ChatView(),
+      binding: ChatBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_CHAT_DETAILS,
+      page: () => const ChatDetailsView(),
+      binding: ChatDetailsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
       name: _Paths.MAIN_WRAPPER,
       page: () => const MainWrapperView(),
       binding: MainWrapperBinding(),
@@ -227,6 +247,9 @@ class AppPages {
       name: _Paths.COMPANY_CHAT_DETAILS,
       page: () => const CompanyChatDetailsView(),
       binding: CompanyChatDetailsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
     ),
   ];
 }
