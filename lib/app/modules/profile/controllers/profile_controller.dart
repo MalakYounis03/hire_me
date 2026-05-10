@@ -494,6 +494,161 @@ class ProfileController extends GetxController {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Edit About ────────────────────────────────────────
+  void showEditAboutDialog() {
+    final aboutCtrl = TextEditingController(text: userAbout);
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Edit About'),
+        content: _dialogField(aboutCtrl, 'About yourself...', maxLines: 4),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              await _updateField('about', aboutCtrl.text.trim());
+              userModel.value = userModel.value?.copyWith(
+                about: aboutCtrl.text.trim(),
+              );
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Edit Education ────────────────────────────────────
+  void showEditEducationDialog(int index) {
+    final e = education[index];
+    final schoolCtrl = TextEditingController(text: e.school);
+    final degreeCtrl = TextEditingController(text: e.degree);
+    final fieldCtrl = TextEditingController(text: e.field);
+    final startCtrl = TextEditingController(text: e.startYear);
+    final endCtrl = TextEditingController(text: e.endYear);
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Edit Education'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              _dialogField(schoolCtrl, 'School / University'),
+              _dialogField(degreeCtrl, 'Degree'),
+              _dialogField(fieldCtrl, 'Field of Study'),
+              _dialogField(startCtrl, 'Start Year'),
+              _dialogField(endCtrl, 'End Year'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              final updated = [...education];
+              updated[index] = EducationModel(
+                school: schoolCtrl.text,
+                degree: degreeCtrl.text,
+                field: fieldCtrl.text,
+                startYear: startCtrl.text,
+                endYear: endCtrl.text,
+              );
+              await _updateField(
+                'education',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(education: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Edit Experience ───────────────────────────────────
+  void showEditExperienceDialog(int index) {
+    final e = experience[index];
+    final companyCtrl = TextEditingController(text: e.company);
+    final positionCtrl = TextEditingController(text: e.position);
+    final startCtrl = TextEditingController(text: e.startDate);
+    final endCtrl = TextEditingController(text: e.endDate);
+    final descCtrl = TextEditingController(text: e.description);
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Edit Experience'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              _dialogField(companyCtrl, 'Company'),
+              _dialogField(positionCtrl, 'Position'),
+              _dialogField(startCtrl, 'Start Date'),
+              _dialogField(endCtrl, 'End Date'),
+              _dialogField(descCtrl, 'Description', maxLines: 3),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              final updated = [...experience];
+              updated[index] = ExperienceModel(
+                company: companyCtrl.text,
+                position: positionCtrl.text,
+                startDate: startCtrl.text,
+                endDate: endCtrl.text,
+                description: descCtrl.text,
+              );
+              await _updateField(
+                'experience',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(experience: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Delete Education ──────────────────────────────────
+  Future<void> deleteEducation(int index) async {
+    final updated = [...education]..removeAt(index);
+    await _updateField('education', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(education: updated);
+  }
+
+  // ── Delete Experience ─────────────────────────────────
+  Future<void> deleteExperience(int index) async {
+    final updated = [...experience]..removeAt(index);
+    await _updateField('experience', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(experience: updated);
+  }
+
+  // ── Logout ────────────────────────────────────────────
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.SPLASH);
+  }
+
+  // ── Private Helpers ───────────────────────────────────
+>>>>>>> 25acee7 (my work)
   Future<void> _updateField(String field, dynamic value) async {
     final uid = _auth.currentUser!.uid;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});

@@ -76,7 +76,11 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
+<<<<<<< HEAD
               // ── Cover ──
+=======
+              // Cover
+>>>>>>> 25acee7 (my work)
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -258,8 +262,11 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                 ),
                 const SizedBox(height: 14),
+<<<<<<< HEAD
 
                 // ── Action Buttons ──
+=======
+>>>>>>> 25acee7 (my work)
                 Row(
                   children: [
                     Flexible(
@@ -487,7 +494,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
   // ── Education Item ────────────────────────────────────
+=======
+>>>>>>> 25acee7 (my work)
   Widget _educationItem(EducationModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -534,7 +544,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
   // ── Experience Item ───────────────────────────────────
+=======
+>>>>>>> 25acee7 (my work)
   Widget _experienceItem(ExperienceModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -624,7 +637,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
   // ── Mini Helpers ──────────────────────────────────────
+=======
+>>>>>>> 25acee7 (my work)
   Widget _iconBox(IconData icon) => Container(
     width: 40,
     height: 40,
