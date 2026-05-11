@@ -57,16 +57,6 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
         ),
       ),
       centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: Icon(
-            Icons.notifications_outlined,
-            color: Colors.white,
-            size: 26,
-          ),
-        ),
-      ],
     );
   }
 

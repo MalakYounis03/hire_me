@@ -91,7 +91,25 @@ class ApplicationReviewController extends GetxController {
 
       if (isClosed) return;
 
-      // 2. Create chat document in REALTIME DATABASE
+      // 2. Write in-app notification document to Firestore for the job seeker
+      await _firestore
+          .collection('notifications').doc(jobSeekerId).collection('items')
+          .add({
+        'type': 'application_update',
+        'title': 'Application Accepted!',
+        'body': 'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
+        'applicationId': applicationId,
+        'jobTitle': applicant.value.jobTitle,
+        'companyName': resolvedCompanyName,
+        'status': 'Accepted',
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+        'icon': 'notifications',
+      });
+
+      if (isClosed) return;
+
+      // 3. Create chat document in REALTIME DATABASE
       //    (NOT Firestore — the whole chat system lives in RTDB)
       final chatId = '${companyId}_$jobSeekerId';
       final now = DateTime.now();
@@ -112,7 +130,7 @@ class ApplicationReviewController extends GetxController {
 
       if (isClosed) return;
 
-      // 3. Add initial auto-message in RTDB messages sub-node
+      // 4. Add initial auto-message in RTDB messages sub-node
       final msgRef = _db.child('chats/$chatId/messages').push();
       await msgRef.set({
         'text': 'You have been accepted for this position.',
@@ -123,7 +141,7 @@ class ApplicationReviewController extends GetxController {
 
       if (isClosed) return;
 
-      // 4. Route to company chat details
+      // 5. Route to company chat details
       Get.offNamed(
         Routes.COMPANY_CHAT_DETAILS,
         arguments: {
@@ -152,6 +170,23 @@ class ApplicationReviewController extends GetxController {
       await _firestore.collection('applications').doc(applicationId).set({
         'status': 'Rejected',
       }, SetOptions(merge: true));
+
+      if (isClosed) return;
+
+      await _firestore
+          .collection('notifications').doc(applicant.value.jobSeekerId).collection('items')
+          .add({
+        'type': 'application_update',
+        'title': 'Application Update',
+        'body': 'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
+        'applicationId': applicationId,
+        'jobTitle': applicant.value.jobTitle,
+        'companyName': companyName.value,
+        'status': 'Rejected',
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+        'icon': 'notifications',
+      });
 
       if (isClosed) return;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
 
@@ -50,16 +51,19 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
 
           const SizedBox(width: 12),
 
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: AppColor.kwhite.withValues(alpha: .14),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.notifications_none_rounded,
-              color: AppColor.kwhite,
-              size: 27,
+          GestureDetector(
+            onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
+            child: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: AppColor.kwhite.withValues(alpha: .14),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.notifications_none_rounded,
+                color: AppColor.kwhite,
+                size: 27,
+              ),
             ),
           ),
         ],
