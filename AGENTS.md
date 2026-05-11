@@ -9,74 +9,68 @@ flutter test                                      # All tests
 flutter test test/<file>                          # Single test file
 flutter run                                       # Device/emulator
 flutter build apk --release                       # Release APK
+flutter pub run flutter_assets                    # Regenerate lib/core/utils/app_assets.dart
+cd functions && npm install && firebase deploy --only functions  # Deploy Cloud Functions
 ```
 
-CI pipeline order: `pub get` → `analyze --no-fatal-infos --no-fatal-warnings` → `test --no-pub` → `build apk --release` → Firebase App Distribution. CI uses Flutter `3.41.6`, Java 17.
+CI pipeline: `flutter pub get` → `flutter analyze --no-fatal-infos --no-fatal-warnings` → `flutter test --no-pub` → `flutter build apk --release` → upload to Firebase App Distribution. CI uses Flutter `3.41.6`, Java 17.
 
 ## Setup
 
 - Flutter SDK `^3.11.0` / Dart `^3.11.0`
-- `.env` at project root with `SUPABASE_URL` / `SUPABASE_ANON_KEY` (declared as asset, gitignored)
+- `.env` at project root with `SUPABASE_URL`/`SUPABASE_ANON_KEY` (declared as asset, gitignored)
 - `flutterfire configure --project=hireme-a59e6` generates `lib/firebase_options.dart` + `android/app/google-services.json`
-- **Do not edit:** `lib/firebase_options.dart`, `android/app/google-services.json`, `.env` (denied in `opencode.json`)
+- **Do not edit:** `lib/firebase_options.dart`, `android/app/google-services.json`, `.env`
 
 ## Entrypoint (`lib/main.dart`)
 
 ```
-FirebaseMessaging.onBackgroundMessage (top-level)
-→ WidgetsFlutterBinding.ensureInitialized()
-→ dotenv.load(fileName: '.env')
-→ Future.wait(Firebase.initializeApp + Supabase.initialize)
-→ Get.putAsync(StorageService, permanent: true)
-→ Get.putAsync(NotificationService, permanent: true)
-→ runApp(GetMaterialApp)
+main()
+  WidgetsFlutterBinding.ensureInitialized()
+  → FirebaseMessaging.onBackgroundMessage (top-level @pragma('vm:entry-point') handler re-inits Firebase)
+  → dotenv.load(fileName: '.env')
+  → Future.wait(
+      Firebase.apps.isEmpty ? Firebase.initializeApp(...) : Firebase.app(),
+      Supabase.initialize(..., authFlowType: AuthFlowType.pkce, autoRefreshToken: true)
+    )
+  → Get.putAsync(StorageService, permanent: true)
+  → Get.putAsync(NotificationService, permanent: true)
+  → runApp(GetMaterialApp, initialRoute: Routes.SPLASH)
 ```
-
-Supabase uses `authFlowType: AuthFlowType.pkce`, `autoRefreshToken: true`. FCM background handler is a top-level `@pragma('vm:entry-point')` function before `main()`. Initial route: `Routes.SPLASH` (`/splash`).
 
 ## Architecture
 
-- **State/routing:** GetX. Import routes from `app/routes/app_pages.dart` only — `app_routes.dart` is `part of 'app_pages.dart'` and must NOT be imported directly. Use `Routes.*` constants.
-- **Feature modules:** `lib/app/modules/{auth, company, job_seeker, main_wrapper, profile}/` — each sub-feature: `bindings/`, `controllers/`, `views/`.
-- **Role guard:** `lib/app/middleware/role_guard_middleware.dart` checks both `FirebaseAuth.currentUser` and `SharedPreferences` session. Mismatched role redirects to the other role's wrapper.
-- **Session:** `lib/app/services/storage_service.dart` — GetX permanent service. `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `job_seeker`. `AppUserRole` enum (company, job_seeker) with `.value` getter.
-- **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (`.env`).
-- **Notifications:** `notification_service.dart` manages FCM tokens, local notifications, foreground/background handling. Token saved to Firestore `jobSeekers/{uid}` and `users/{uid}`.
-- **Cloud Functions:** `functions/` directory with `index.js` + `package.json`.
+- **State/routing:** GetX. Import `app/routes/app_pages.dart` only — `app_routes.dart` is `part of 'app_pages.dart'`, do NOT import directly. Use `Routes.*` constants.
+- **Modules:** `lib/app/modules/{auth, company, job_seeker, main_wrapper, profile}/`. Each sub-feature: `bindings/`, `controllers/`, `views/`.
+- **Session:** `StorageService` — GetX permanent service. `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `job_seeker`. `AppUserRole` enum `.value` yields `'company'` or `'job_seeker'`. Session persisted in SharedPreferences.
+- **Role guard:** `RoleGuardMiddleware` checks `FirebaseAuth.currentUser` + SharedPreferences. Mismatch redirects to the other role's wrapper.
+- **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase. Cloud Functions at `functions/` (Node 20, `firebase-functions` v5).
+- **Notifications:** FCM tokens saved to both `users/{uid}` AND role-specific collection (`jobSeekers/{uid}` / `companies/{uid}`) via merge. Tap routing: `application_update` → `JOB_SEEKER_NOTIFICATIONS`, `new_application` → `APPLICATION_LIST`, `chat_message` → role-based chat details.
 
-## Duplicated & diverged utils
+## Utils
 
-`lib/app/core/utils/` and `lib/core/utils/` are both active and diverged — edits to one do NOT affect the other.
+`lib/core/utils/` is the single source of truth. Contains `AppColor`, `CustomTextstyle`, `AppString`, `AppAssets` (auto-generated by `flutter pub run flutter_assets`). Helpers (`formatTime`, `formatDate`) at `lib/core/helper/data_helper.dart`.
 
-| File | `lib/app/core/utils/` | `lib/core/utils/` |
-|------|-----------------------|-------------------|
-| `app_color.dart` | `kdanger`, `ksuccess`, `kshadow` | `light_themeGrey`, `light_themeBlue`, `textPrimary`, `textSecondary`, `divider`, `background` |
-| `app_string.dart` | 11 constants (no `apply`/`profile`) | 13 constants (has `apply`, `profile`) |
-| `app_text_style.dart` | 15 text styles | 27 text styles |
-| `app_assets.dart` | Stale manual copy (same content currently) | Auto-generated by `flutter_assets` (source of truth) |
+## Conventions
 
-The `AppColor` from `lib/app/core/utils/app_color.dart` is the primary one used by modular views.
-
-To regenerate `lib/core/utils/app_assets.dart` after adding new assets:
-```bash
-flutter pub run flutter_assets
-```
-(The `flutter_assets` config is in `pubspec.yaml` under `flutter > flutter_assets`.)
+- **Colors:** `AppColor` from `lib/core/utils/app_color.dart`
+- **Text styles:** `CustomTextstyle` from `lib/core/utils/app_text_style.dart`
+- **New models:** `lib/app/data/models/` (preferred) — see Quirks for legacy locations
+- **Controllers:** extend `GetxController`, use `Rx` variables for reactive state
+- **Firestore writes:** always use `SetOptions(merge: true)` to avoid overwriting fields
 
 ## Testing
 
-- Tests use **manual fakes** — no mockito/mocktail in dependencies. No Firebase/Supabase init needed.
-- Files: `auth_login_controller_test.dart`, `application_review_controller_test.dart`, `widget_test.dart` (placeholder).
-- Run single: `flutter test test/<file>.dart`.
+- Manual fakes only — no mockito/mocktail. No Firebase/Supabase init needed.
+- `flutter test test/<file>.dart` for single file.
+- Call `Get.reset()` in `tearDown` for GetX isolation.
 
 ## Quirks
 
-- `Routes.COMPANY_APPLICANTS` is defined in `app_routes.dart` but has no `GetPage` entry in `app_pages.dart`.
+- `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has no `GetPage` entry in `app_pages.dart`.
 - `Routes.JOB_SEEKER_CONGRATULATIONS` maps to `JobSeekerApplyJobView`, not a dedicated view.
-- **Unlinked modules** (full bindings/controllers/views, zero route entries): `auth/role_selector/`, `job_seeker/Jobseekercongratulations/`.
-- **Font family typo:** `" Poppins"`, `" Inter"` (both files) and `" Segoe.UI"` (`lib/core/utils/` only) have leading spaces — will NOT match declared `Poppins`/`Inter`/`Segoe.UI` fonts in `pubspec.yaml`.
-- `email_otp` package used in forgot-password flow.
-- `firebase_messaging` + `flutter_local_notifications` for push notifications.
-- Models live in three locations: `lib/app/data/models/`, `lib/core/models/`, and per-module `model/` directories (e.g. `application_review/model/`, `chat/model/`).
-- `Routes.COMPANY_CHAT_DETAILS` has no `middlewares` on its `GetPage` entry (unlike other company routes with `RoleGuardMiddleware`).
-- Notification module `notifications/` under `job_seeker/` IS linked (has `GetPage` entry).
+- Unlinked modules (full bindings/controllers/views, zero route entries): `auth/role_selector/`, `job_seeker/Jobseekercongratulations/`.
+- Font family typo: `" Poppins"`, `" Inter"`, `" Segoe.UI"` have leading spaces in `app_text_style.dart` — won't match `Poppins`/`Inter`/`Segoe.UI` in `pubspec.yaml`.
+- Models in 3 locations: `lib/app/data/models/`, `lib/core/models/`, per-module `model/` directories.
+- `notifications/` under `job_seeker/` IS linked (has `GetPage` entry).
+- `pubspec.yaml` uses standard `package:flutter_lints/flutter.yaml` — no custom lint rules.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 
 import '../controllers/job_seeker_dashboard_controller.dart';
 
@@ -29,7 +29,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
                     'Hello, ${controller.userName.value}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+                    style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
                       fontSize: 15,
                       color: AppColor.kwhite.withOpacity(0.85),
                     ),
@@ -37,7 +37,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
                   const SizedBox(height: 6),
                   Text(
                     'Find the right job\nfor your skills',
-                    style: CustomTextstyle.Poppinsbold.copyWith(
+                    style: CustomTextstyle.poppinsBold.copyWith(
                       color: AppColor.kwhite,
                       fontSize: 24,
                       height: 1.12,

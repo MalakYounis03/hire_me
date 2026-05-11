@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import '../../../../../core/helper/data_helper.dart';
+import '../../../../../../core/helper/data_helper.dart';
 import '../../controllers/company_chat_details_controller.dart';
 import '../../../../job_seeker/chat_details/views/widgets/data_divider.dart';
 import '../../../../job_seeker/chat_details/views/widgets/message_bubble.dart';

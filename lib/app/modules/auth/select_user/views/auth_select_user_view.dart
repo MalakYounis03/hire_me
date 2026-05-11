@@ -33,7 +33,7 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                 Center(
                   child: Text(
                     AppString.selectUserType,
-                    style: CustomTextstyle.Poppinsbold,
+                    style: CustomTextstyle.poppinsBold,
                   ),
                 ),
 
@@ -77,7 +77,7 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                     ),
                     child: Text(
                       AppString.next,
-                      style: CustomTextstyle.Interregular,
+                      style: CustomTextstyle.interRegular,
                     ),
                   ),
                 ),
@@ -153,7 +153,7 @@ class _RoleCard extends StatelessWidget {
             SizedBox(width: 24.0),
             Expanded(
               child: Center(
-                child: Text(title, style: CustomTextstyle.Interbold),
+                child: Text(title, style: CustomTextstyle.interBold),
               ),
             ),
           ],

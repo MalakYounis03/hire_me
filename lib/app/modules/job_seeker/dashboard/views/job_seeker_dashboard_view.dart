@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/MainFieldsWidget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 
 import '../controllers/job_seeker_dashboard_controller.dart';
 import '../widgets/header_widget.dart';
@@ -45,9 +46,9 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                     children: [
                       Text(
                         'Job For You',
-                        style: CustomTextstyle.Poppinsbold.copyWith(
+                        style: CustomTextstyle.poppinsBold.copyWith(
                           fontSize: 18,
-                          color: AppColor.Eblack,
+                          color: AppColor.eblack,
                         ),
                       ),
                       GestureDetector(
@@ -113,7 +114,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
             const SizedBox(height: 12),
             Text(
               'No jobs found',
-              style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 16),
+              style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 16),
             ),
             const SizedBox(height: 6),
             Text(
@@ -154,7 +155,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
 
               Text(
                 'Filter Jobs',
-                style: CustomTextstyle.Poppinsbold.copyWith(fontSize: 20),
+                style: CustomTextstyle.poppinsBold.copyWith(fontSize: 20),
               ),
 
               const SizedBox(height: 20),
@@ -163,7 +164,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                 'Job Type',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: AppColor.Eblack,
+                  color: AppColor.eblack,
                 ),
               ),
 
@@ -189,7 +190,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                 'Work Mode',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: AppColor.Eblack,
+                  color: AppColor.eblack,
                 ),
               ),
 

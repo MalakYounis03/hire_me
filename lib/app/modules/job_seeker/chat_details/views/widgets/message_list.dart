@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
-import '../../../../../core/helper/data_helper.dart';
+import '../../../../../../core/helper/data_helper.dart';
 import '../../controllers/chat_details_controller.dart';
 import 'data_divider.dart';
 import 'message_bubble.dart';

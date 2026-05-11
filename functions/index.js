@@ -62,6 +62,22 @@ exports.onNewApplication = onDocumentCreated(
     } catch (err) {
       logger.error('Failed to send FCM push', err);
     }
+
+    try {
+      await db
+        .collection('notifications').doc(companyId).collection('items')
+        .add({
+          type: 'new_application',
+          title: 'New Application Received 📋',
+          body: `${applicantName} applied for ${jobTitle}`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for company ${companyId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
   },
 );
 
@@ -121,11 +137,102 @@ exports.onApplicationAccepted = onDocumentUpdated(
     } catch (err) {
       logger.error('Failed to send FCM push', err);
     }
+
+    try {
+      await db
+        .collection('notifications').doc(jobSeekerId).collection('items')
+        .add({
+          type: 'application_update',
+          title: 'Application Accepted! 🎉',
+          body: `Your application for ${jobTitle} has been accepted`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
   },
 );
 
 // ─────────────────────────────────────────────
-// Function 3: New chat message → notify recipient
+// Function 3: Application rejected → notify seeker
+// ─────────────────────────────────────────────
+exports.onApplicationRejected = onDocumentUpdated(
+  'applications/{applicationId}',
+  async (event) => {
+    const { applicationId } = event.params;
+    const before = event.data.before.data();
+    const after = event.data.after.data();
+
+    if (!after) return;
+    if (after.status !== 'Rejected') return;
+    if (before && before.status === 'Rejected') return;
+
+    const jobSeekerId = after.seekerId || after.jobSeekerId;
+    const jobTitle = after.jobTitle || 'a position';
+
+    if (!jobSeekerId) {
+      logger.warn(`No jobSeekerId on application ${applicationId}`);
+      return;
+    }
+
+    let fcmToken;
+    try {
+      const seekerDoc = await db.collection('jobSeekers').doc(jobSeekerId).get();
+      fcmToken = seekerDoc.data()?.fcmToken;
+    } catch (err) {
+      logger.error(`Failed to read jobSeeker doc for ${jobSeekerId}`, err);
+      return;
+    }
+
+    if (!fcmToken) {
+      logger.warn(`No FCM token for job seeker ${jobSeekerId}`);
+      return;
+    }
+
+    const message = {
+      notification: {
+        title: 'Application Update',
+        body: `Unfortunately, your application for ${jobTitle} was not accepted`,
+      },
+      data: {
+        type: 'application_update',
+        applicationId,
+      },
+      token: fcmToken,
+    };
+
+    try {
+      await admin.messaging().send(message);
+      logger.info(
+        `Notification sent to job seeker ${jobSeekerId} for rejected application`,
+      );
+    } catch (err) {
+      logger.error('Failed to send FCM push', err);
+    }
+
+    try {
+      await db
+        .collection('notifications').doc(jobSeekerId).collection('items')
+        .add({
+          type: 'application_update',
+          title: 'Application Update',
+          body: `Unfortunately, your application for ${jobTitle} was not accepted`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
+  },
+);
+
+// ─────────────────────────────────────────────
+// Function 4: New chat message → notify recipient
 // ─────────────────────────────────────────────
 exports.onNewChatMessage = onValueCreated(
   'chats/{chatId}/messages/{pushId}',
@@ -227,6 +334,22 @@ exports.onNewChatMessage = onValueCreated(
       logger.info(`Chat notification sent to ${receiverId} from ${senderId}`);
     } catch (err) {
       logger.error('Failed to send chat notification', err);
+    }
+
+    try {
+      await db
+        .collection('notifications').doc(receiverId).collection('items')
+        .add({
+          type: 'chat_message',
+          title: senderDisplayName,
+          body: messageText,
+          chatId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for receiver ${receiverId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
     }
   },
 );

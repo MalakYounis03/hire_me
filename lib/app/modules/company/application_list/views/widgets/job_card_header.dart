@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/utils/app_color.dart';
+import '../../../../../../core/utils/app_color.dart';
 
 class JobCardHeader extends StatelessWidget {
   final String jobTitle;
@@ -16,9 +16,9 @@ class JobCardHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColor.kblue.withOpacity(0.08),
+        color: AppColor.kblue.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColor.kblue.withOpacity(0.2)),
+        border: Border.all(color: AppColor.kblue.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

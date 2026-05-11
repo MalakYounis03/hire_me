@@ -9,43 +9,26 @@ import '../../../../../core/utils/app_color.dart';
 import '../controllers/company_chat_details_controller.dart';
 
 class CompanyChatDetailsView extends StatelessWidget {
-  final String? chatName;
-  final String? avatarUrl;
-  final String? seekerId;
-  final String? companyId;
-
-  const CompanyChatDetailsView({
-    super.key,
-    this.chatName,
-    this.seekerId,
-    this.companyId,
-    this.avatarUrl,
-  });
+  const CompanyChatDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, dynamic>? ?? {};
-
-    final name = chatName ?? args['chatName'] ?? 'Chat';
-    final avatar = avatarUrl ?? args['avatarUrl'] ?? '';
-    final sId = seekerId ?? args['seekerId'] ?? '';
-    final cId = companyId ?? args['companyId'] ?? '';
-    final chatId = args['chatId'] ?? '';
-
-    final controller = Get.put(
-      CompanyChatDetailsController(
-        chatName: name,
-        chatAvatarUrl: avatar,
-        chatId: chatId,
-        seekerId: sId,
-        companyId: cId,
-      ),
-      tag: name,
+    final args = Get.arguments;
+    final chatId = args is Map<String, dynamic>
+        ? (args['chatId'] as String? ?? '')
+        : args is String
+            ? args
+            : '';
+    final controller = Get.find<CompanyChatDetailsController>(
+      tag: chatId.isNotEmpty ? chatId : null,
     );
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: ChatDetailsAppbar(name: name, avatarUrl: avatar),
+      appBar: ChatDetailsAppbar(
+        name: controller.chatName,
+        avatarUrl: controller.chatAvatarUrl,
+      ),
       body: Column(
         children: [
           Expanded(

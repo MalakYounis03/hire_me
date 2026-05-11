@@ -1,6 +1,6 @@
 // lib/app/modules/job_seeker/dashboard/widgets/search_widget.dart
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_color.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController searchController;
@@ -25,7 +25,7 @@ class SearchBarWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColor.kblue.withOpacity(0.1),
+              color: AppColor.kblue.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),

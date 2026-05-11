@@ -22,7 +22,7 @@ class ProfileView extends GetView<ProfileController> {
         ),
         title: Text(
           AppString.profile,
-          style: CustomTextstyle.Intersemiboldwhite,
+          style: CustomTextstyle.interSemiBoldWhite,
         ),
         centerTitle: true,
         actions: [
@@ -112,7 +112,9 @@ class ProfileView extends GetView<ProfileController> {
                                   child: Container(
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -197,7 +199,7 @@ class ProfileView extends GetView<ProfileController> {
                     controller.userName.isEmpty
                         ? 'Your Name'
                         : controller.userName.toUpperCase(),
-                    style: CustomTextstyle.Intermeduim,
+                    style: CustomTextstyle.interMedium,
                   ),
                 ),
 
@@ -209,7 +211,7 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userTitle,
-                          style: CustomTextstyle.Interregular400,
+                          style: CustomTextstyle.interRegular400,
                         ),
                 ),
 
@@ -221,7 +223,7 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userUniversity,
-                          style: CustomTextstyle.Interregular400,
+                          style: CustomTextstyle.interRegular400,
                         ),
                 ),
 
@@ -233,7 +235,7 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userLocation,
-                          style: CustomTextstyle.Roboto300,
+                          style: CustomTextstyle.roboto300,
                         ),
                 ),
 
@@ -257,7 +259,7 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                       child: Text(
                         'Open to',
-                        style: CustomTextstyle.Interregular500,
+                        style: CustomTextstyle.interRegular500,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -267,7 +269,7 @@ class ProfileView extends GetView<ProfileController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
+                        side: BorderSide(color: AppColor.lightThemeGrey),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
@@ -275,7 +277,7 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                       child: Text(
                         'Add section',
-                        style: CustomTextstyle.Interregular500grey,
+                        style: CustomTextstyle.interRegular500Grey,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -285,13 +287,13 @@ class ProfileView extends GetView<ProfileController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
+                        side: BorderSide(color: AppColor.lightThemeGrey),
                         minimumSize: const Size(36, 36),
                         padding: EdgeInsets.zero,
                       ),
                       child: Icon(
                         Icons.more_horiz,
-                        color: AppColor.light_themeGrey,
+                        color: AppColor.lightThemeGrey,
                         size: 20,
                       ),
                     ),

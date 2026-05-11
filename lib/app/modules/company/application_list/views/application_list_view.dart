@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/application_list_controller.dart';
-import '../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_color.dart';
 import 'widgets/application_tile.dart';
 import 'widgets/applications_header.dart';
 
@@ -13,7 +13,7 @@ class ApplicationListView extends GetView<ApplicationListController> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColor.Ewhite,
+      backgroundColor: AppColor.ewhite,
       body: Obx(() {
         final jobs = controller.jobs;
         final totalApplicants = jobs.fold<int>(
@@ -44,7 +44,7 @@ class ApplicationListView extends GetView<ApplicationListController> {
                           border: Border.all(color: AppColor.greyVeryLight),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColor.kblack.withOpacity(0.04),
+                              color: AppColor.kblack.withValues(alpha: 0.04),
                               blurRadius: 18,
                               offset: const Offset(0, 6),
                             ),
@@ -92,7 +92,7 @@ class ApplicationListView extends GetView<ApplicationListController> {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColor.kblack.withOpacity(0.05),
+                                    color: AppColor.kblack.withValues(alpha: 0.05),
                                     blurRadius: 16,
                                     offset: const Offset(0, 6),
                                   ),
@@ -113,21 +113,21 @@ class ApplicationListView extends GetView<ApplicationListController> {
                                   expandedCrossAxisAlignment:
                                       CrossAxisAlignment.start,
                                   initiallyExpanded: false,
-                                  backgroundColor: AppColor.kblue.withOpacity(
+                                  backgroundColor: AppColor.kblue.withValues(alpha: 
                                     0.03,
                                   ),
                                   collapsedBackgroundColor: AppColor.kblue
-                                      .withOpacity(0.08),
+                                      .withValues(alpha: 0.08),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     side: BorderSide(
-                                      color: AppColor.kblue.withOpacity(0.18),
+                                      color: AppColor.kblue.withValues(alpha: 0.18),
                                     ),
                                   ),
                                   collapsedShape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                     side: BorderSide(
-                                      color: AppColor.kblue.withOpacity(0.2),
+                                      color: AppColor.kblue.withValues(alpha: 0.2),
                                     ),
                                   ),
                                   iconColor: AppColor.kblue,

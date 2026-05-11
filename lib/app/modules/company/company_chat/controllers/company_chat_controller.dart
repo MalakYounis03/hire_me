@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -30,7 +32,7 @@ class CompanyChatController extends GetxController {
             isLoading.value = false;
           },
           onError: (e) {
-            print('Error: $e'); // ✅
+            log('Error: $e'); // ✅
           },
         );
   }

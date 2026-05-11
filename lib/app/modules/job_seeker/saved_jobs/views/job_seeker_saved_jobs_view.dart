@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
 
 import '../controllers/job_seeker_saved_jobs_controller.dart';
@@ -20,7 +20,7 @@ class JobSeekerSavedJobsView extends GetView<JobSeekerSavedJobsController> {
         centerTitle: true,
         title: Text(
           'Saved Jobs',
-          style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+          style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
             fontSize: 18,
             color: AppColor.kwhite,
           ),
@@ -83,9 +83,9 @@ class JobSeekerSavedJobsView extends GetView<JobSeekerSavedJobsController> {
         Center(
           child: Text(
             'No saved jobs yet',
-            style: CustomTextstyle.Poppinssemibold.copyWith(
+            style: CustomTextstyle.poppinsSemiBold.copyWith(
               fontSize: 17,
-              color: AppColor.Eblack,
+              color: AppColor.eblack,
             ),
           ),
         ),

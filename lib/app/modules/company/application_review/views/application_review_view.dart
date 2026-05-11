@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_color.dart';
 import '../model/application_review_model.dart';
 import '../controllers/application_review_controller.dart';
 import 'widgets/review_app_bar.dart';
@@ -12,7 +12,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.Ewhite,
+      backgroundColor: AppColor.ewhite,
       appBar: const ReviewAppBar(),
       body: Obx(() {
         final applicant = controller.applicant.value;
@@ -48,7 +48,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.kblack.withOpacity(0.05),
+                      color: AppColor.kblack.withValues(alpha: 0.05),
                       blurRadius: 14,
                       offset: const Offset(0, -4),
                     ),
@@ -151,7 +151,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
         border: Border.all(color: AppColor.greyVeryLight),
         boxShadow: [
           BoxShadow(
-            color: AppColor.kblack.withOpacity(0.03),
+            color: AppColor.kblack.withValues(alpha: 0.03),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

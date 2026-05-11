@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
 
 import '../controllers/job_seeker_search_jobs_controller.dart';
@@ -20,7 +20,7 @@ class JobSeekerSearchJobsView extends GetView<JobSeekerSearchJobsController> {
         centerTitle: true,
         title: Text(
           'Search Jobs',
-          style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+          style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
             fontSize: 18,
             color: AppColor.kwhite,
           ),
@@ -90,7 +90,7 @@ class JobSeekerSearchJobsView extends GetView<JobSeekerSearchJobsController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColor.Eblack.withOpacity(0.06),
+              color: AppColor.eblack.withOpacity(0.06),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -134,9 +134,9 @@ class JobSeekerSearchJobsView extends GetView<JobSeekerSearchJobsController> {
         Center(
           child: Text(
             'No jobs found',
-            style: CustomTextstyle.Poppinssemibold.copyWith(
+            style: CustomTextstyle.poppinsSemiBold.copyWith(
               fontSize: 17,
-              color: AppColor.Eblack,
+              color: AppColor.eblack,
             ),
           ),
         ),

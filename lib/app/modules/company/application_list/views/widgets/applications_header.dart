@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/utils/app_color.dart';
+import '../../../../../../core/utils/app_color.dart';
 
 class ApplicantsHeader extends StatelessWidget {
   final int jobsCount;
@@ -69,9 +69,9 @@ class _InfoPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColor.kwhite.withOpacity(0.14),
+        color: AppColor.kwhite.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColor.kwhite.withOpacity(0.25)),
+        border: Border.all(color: AppColor.kwhite.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
