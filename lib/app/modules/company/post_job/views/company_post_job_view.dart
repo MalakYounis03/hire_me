@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 
 import '../controllers/company_post_job_controller.dart';
 
@@ -159,7 +159,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
             child: Text(
               'Post a Job',
               textAlign: TextAlign.center,
-              style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+              style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
                 fontSize: 18,
                 color: AppColor.kwhite,
               ),
@@ -217,7 +217,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
           Text(
             'Company logo',
             style: TextStyle(
-              color: AppColor.Eblack,
+              color: AppColor.eblack,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -239,7 +239,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         Text(
           text,
           style: TextStyle(
-            color: AppColor.Eblack,
+            color: AppColor.eblack,
             fontSize: 13,
             fontWeight: FontWeight.w700,
           ),
@@ -265,7 +265,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         }
         return null;
       },
-      style: TextStyle(color: AppColor.Eblack, fontSize: 13),
+      style: TextStyle(color: AppColor.eblack, fontSize: 13),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: AppColor.greyLight, fontSize: 12),
@@ -281,7 +281,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
-          borderSide: BorderSide(color: AppColor.Eblack.withOpacity(0.04)),
+          borderSide: BorderSide(color: AppColor.eblack.withOpacity(0.04)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
@@ -334,7 +334,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         decoration: BoxDecoration(
           color: AppColor.kwhite,
           borderRadius: BorderRadius.circular(7),
-          border: Border.all(color: AppColor.Eblack.withOpacity(0.04)),
+          border: Border.all(color: AppColor.eblack.withOpacity(0.04)),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
@@ -352,7 +352,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                 child: Text(
                   field.name,
                   style: TextStyle(
-                    color: AppColor.Eblack,
+                    color: AppColor.eblack,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

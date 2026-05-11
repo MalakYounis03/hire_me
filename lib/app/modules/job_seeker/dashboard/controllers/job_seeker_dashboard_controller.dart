@@ -145,10 +145,13 @@ class JobSeekerDashboardController extends GetxController {
         .where('seekerId', isEqualTo: uid)
         .snapshots()
         .listen((snapshot) {
-          savedJobIds.value = snapshot.docs
+          final ids = snapshot.docs
               .map((doc) => doc.data()['jobId']?.toString() ?? '')
               .where((id) => id.isNotEmpty)
               .toSet();
+
+          savedJobIds.clear();
+          savedJobIds.addAll(ids);
         });
   }
 

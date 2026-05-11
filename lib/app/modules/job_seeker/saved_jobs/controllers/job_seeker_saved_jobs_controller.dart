@@ -46,8 +46,8 @@ class JobSeekerSavedJobsController extends GetxController {
                   .where((id) => id.isNotEmpty)
                   .toSet();
 
-              savedJobIds.value = jobIds;
-
+              savedJobIds.clear();
+              savedJobIds.addAll(jobIds);
               if (jobIds.isEmpty) {
                 savedJobs.clear();
                 isLoading.value = false;
@@ -113,8 +113,7 @@ class JobSeekerSavedJobsController extends GetxController {
 
       final updatedIds = {...savedJobIds};
       updatedIds.remove(jobId);
-      savedJobIds.value = updatedIds;
-
+      savedJobIds.remove(jobId);
       Get.snackbar('Removed', 'Job removed from saved jobs');
     } catch (_) {
       Get.snackbar('Error', 'Failed to remove saved job');

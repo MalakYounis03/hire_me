@@ -82,7 +82,8 @@ class JobSeekerSearchJobsController extends GetxController {
               .where((id) => id.isNotEmpty)
               .toSet();
 
-          savedJobIds.value = ids;
+          savedJobIds.clear();
+          savedJobIds.addAll(ids);
         });
   }
 
