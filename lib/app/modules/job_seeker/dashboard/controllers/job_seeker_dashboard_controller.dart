@@ -7,8 +7,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:hire_me/app/data/models/job_model.dart';
-import 'package:hire_me/app/data/models/mainfield_model.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/mainfield_model.dart';
 
 class JobSeekerDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

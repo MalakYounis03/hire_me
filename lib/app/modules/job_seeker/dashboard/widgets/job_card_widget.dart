@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
-import 'package:hire_me/app/data/models/job_model.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
 
 class JobCardWidget extends StatelessWidget {
   final JobModel job;
