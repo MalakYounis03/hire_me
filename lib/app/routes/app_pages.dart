@@ -31,6 +31,10 @@ import '../modules/company/post_job/bindings/company_post_job_binding.dart';
 import '../modules/company/post_job/views/company_post_job_view.dart';
 import '../modules/job_seeker/apply_job/bindings/job_seeker_apply_job_binding.dart';
 import '../modules/job_seeker/apply_job/views/job_seeker_apply_job_view.dart';
+import '../modules/job_seeker/chat/bindings/chat_binding.dart';
+import '../modules/job_seeker/chat/views/chat_view.dart';
+import '../modules/job_seeker/chat_details/bindings/chat_details_binding.dart';
+import '../modules/job_seeker/chat_details/views/chat_details_view.dart';
 import '../modules/job_seeker/dashboard/bindings/job_seeker_dashboard_binding.dart';
 import '../modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import '../modules/job_seeker/job_details/bindings/job_seeker_job_details_binding.dart';
@@ -43,10 +47,8 @@ import '../modules/job_seeker/notifications/bindings/job_seeker_notifications_bi
 import '../modules/job_seeker/notifications/views/job_seeker_notifications_view.dart';
 import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
 import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
-import '../modules/job_seeker/chat/bindings/chat_binding.dart';
-import '../modules/job_seeker/chat/views/chat_view.dart';
-import '../modules/job_seeker/chat_details/bindings/chat_details_binding.dart';
-import '../modules/job_seeker/chat_details/views/chat_details_view.dart';
+import '../modules/job_seeker/search_jobs/bindings/job_seeker_search_jobs_binding.dart';
+import '../modules/job_seeker/search_jobs/views/job_seeker_search_jobs_view.dart';
 import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
 import '../modules/main_wrapper/views/main_wrapper_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -250,6 +252,11 @@ class AppPages {
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
       ],
+    ),
+    GetPage(
+      name: _Paths.SEARCH_JOBS,
+      page: () => const JobSeekerSearchJobsView(),
+      binding: JobSeekerSearchJobsBinding(),
     ),
   ];
 }
