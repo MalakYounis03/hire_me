@@ -103,9 +103,6 @@ class AuthRegisterController extends GetxController {
 
       'email': emailController.text.trim(),
       'role': _role,
-      'name': emailController.text.trim().split(
-        '@',
-      )[0], // ← اسم مؤقت من الإيميل
       'createdAt': FieldValue.serverTimestamp(),
     });
     await _firestore.collection(collection).doc(uid).set({
@@ -113,7 +110,6 @@ class AuthRegisterController extends GetxController {
       'name': nameController.text.trim(),
 
       'email': emailController.text.trim(),
-      'name': emailController.text.trim().split('@')[0], // ← نفس الشي
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

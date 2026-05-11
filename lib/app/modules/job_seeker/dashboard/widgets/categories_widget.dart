@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_color.dart';
 import '../controllers/job_seeker_dashboard_controller.dart';
 
 class CategoriesWidget extends GetView<JobSeekerDashboardController> {
@@ -19,7 +19,7 @@ class CategoriesWidget extends GetView<JobSeekerDashboardController> {
             style: TextStyle(
               fontWeight: FontWeight.w700, // جعل الخط أسمك كما في فيجما
               fontSize: 18, // تكبير الخط قليلاً
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
         ),
@@ -71,7 +71,7 @@ class CategoriesWidget extends GetView<JobSeekerDashboardController> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
+                                color: Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               ),

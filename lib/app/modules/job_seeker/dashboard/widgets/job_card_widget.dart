@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/app_color.dart';
-import '../../../../core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../../../../data/models/job_model.dart';
 
 class JobCardWidget extends StatelessWidget {
@@ -21,7 +21,7 @@ class JobCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColor.Eblack.withOpacity(0.04),
+            color: AppColor.eblack.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -38,7 +38,7 @@ class JobCardWidget extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: AppColor.Ewhite,
+                  color: AppColor.ewhite,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ClipRRect(
@@ -53,7 +53,7 @@ class JobCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       job.title,
-                      style: CustomTextstyle.Poppinssemibold.copyWith(
+                      style: CustomTextstyle.poppinsSemiBold.copyWith(
                         fontSize: 16,
                       ),
                     ),

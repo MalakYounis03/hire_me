@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../../core/utils/app_color.dart';
+import '../../../../../../core/utils/app_color.dart';
 import 'application_avatar.dart';
 import 'application_info.dart';
 import '../../../application_review/model/application_review_model.dart';
@@ -20,7 +20,7 @@ class ApplicantTile extends StatelessWidget {
         border: Border.all(color: AppColor.greyVeryLight),
         boxShadow: [
           BoxShadow(
-            color: AppColor.kblack.withOpacity(0.03),
+            color: AppColor.kblack.withValues(alpha: 0.03),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -52,7 +52,7 @@ class ApplicantTile extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColor.kblue.withOpacity(0.08),
+                      color: AppColor.kblue.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(

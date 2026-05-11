@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/utils/app_color.dart';
+import '../../../../core/utils/app_color.dart';
 import '../../job_seeker/chat/views/chat_view.dart';
 import '../../job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import '../controllers/main_wrapper_controller.dart';
@@ -31,7 +31,7 @@ class MainWrapperView extends GetView<MainWrapperController> {
             color: AppColor.kwhite,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 20,
                 offset: const Offset(0, -5),
               ),
@@ -92,7 +92,7 @@ class MainWrapperView extends GetView<MainWrapperController> {
       activeIcon: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColor.kblue.withOpacity(
+          color: AppColor.kblue.withValues(alpha: 
             0.1,
           ), // خلفية خفيفة عند الاختيار (اختياري)
           shape: BoxShape.circle,

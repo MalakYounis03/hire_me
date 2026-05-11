@@ -2,8 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 
 import '../controllers/job_seeker_dashboard_controller.dart';
@@ -28,15 +28,15 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
             children: [
               Text(
                 "Hello,",
-                style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+                style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
                   fontSize: 16,
-                  color: AppColor.kwhite.withOpacity(0.8),
+                  color: AppColor.kwhite.withValues(alpha: 0.8),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 "Find the right job\nfor your skills",
-                style: CustomTextstyle.Poppinsbold.copyWith(
+                style: CustomTextstyle.poppinsBold.copyWith(
                   color: AppColor.kwhite,
                   fontSize: 24,
                   height: 1.1,
@@ -59,7 +59,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColor.kwhite.withOpacity(0.15),
+                      color: AppColor.kwhite.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

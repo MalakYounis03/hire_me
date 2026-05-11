@@ -99,34 +99,4 @@ class ChatService {
       return Transaction.success(current + 1);
     });
   }
-
-  // ─────────────────────────────────────────
-  // إنشاء chat جديد (بس لما status = Accepted)
-  // ─────────────────────────────────────────
-  Future<String> createChat({
-    required String companyId,
-    required String seekerId,
-    required String jobId,
-    required String name,
-    required String avatarUrl,
-    required String companyName,
-    required String seekerName,
-  }) async {
-    final ref = _db.child('chats').push();
-
-    await ref.set({
-      'companyId': companyId,
-      'seekerId': seekerId,
-      'jobId': jobId,
-      'name': name,
-      'avatarUrl': avatarUrl,
-      'lastMessage': '',
-      'lastMessageTime': DateTime.now().millisecondsSinceEpoch,
-      'unreadCount': 0,
-      'companyName': companyName,
-      'seekerName': seekerName,
-    });
-
-    return ref.key!; // ✅ يرجع الـ chatId
-  }
 }

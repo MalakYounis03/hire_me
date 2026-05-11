@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../../../../core/utils/app_color.dart';
-import '../../../../../core/helper/data_helper.dart';
+import '../../../../../../core/helper/data_helper.dart';
 import 'unread_badge.dart';
 
 class ChatMeta extends StatelessWidget {

@@ -41,7 +41,7 @@ class OnboardingView extends GetView<OnboardingController> {
                         onTap: controller.onSkipPressed,
                         child: Text(
                           AppString.skip,
-                          style: CustomTextstyle.Montserratmedium,
+                          style: CustomTextstyle.montserratMedium,
                         ),
                       ),
               ),
@@ -89,7 +89,7 @@ class OnboardingView extends GetView<OnboardingController> {
                 ),
                 elevation: 0,
               ),
-              child: Text(AppString.next, style: CustomTextstyle.Interregular),
+              child: Text(AppString.next, style: CustomTextstyle.interRegular),
             ),
           ),
         ],
@@ -116,7 +116,7 @@ class _OnboardingSlide extends StatelessWidget {
             child: Image.asset(
               page.image,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => Icon(
+              errorBuilder: (_, _, _) => Icon(
                 Icons.image_outlined,
                 size: 120,
                 color: Colors.grey.shade300,
@@ -129,7 +129,7 @@ class _OnboardingSlide extends StatelessWidget {
           Text(
             page.title,
             textAlign: TextAlign.center,
-            style: CustomTextstyle.Poppinsbold,
+            style: CustomTextstyle.poppinsBold,
           ),
 
           const SizedBox(height: 12),
@@ -137,7 +137,7 @@ class _OnboardingSlide extends StatelessWidget {
           Text(
             page.subtitle,
             textAlign: TextAlign.center,
-            style: CustomTextstyle.Intersemibold,
+            style: CustomTextstyle.interSemiBold,
           ),
         ],
       ),

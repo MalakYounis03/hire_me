@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/app_color.dart';
-import '../../../../core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/job_seeker_notifications_controller.dart';
 import '../models/notification_model.dart';
 
@@ -19,7 +19,7 @@ class JobSeekerNotificationsView
         foregroundColor: AppColor.kwhite,
         title: Text(
           'Notifications',
-          style: CustomTextstyle.Poppinssemiboldwhite,
+          style: CustomTextstyle.poppinsSemiBoldWhite,
         ),
         elevation: 0,
         actions: [
@@ -72,12 +72,12 @@ class JobSeekerNotificationsView
           const SizedBox(height: 16),
           Text(
             'No notifications yet',
-            style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 16),
+            style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 16),
           ),
           const SizedBox(height: 8),
           Text(
             'We\'ll notify you when something arrives',
-            style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 12),
+            style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 12),
           ),
         ],
       ),
@@ -125,7 +125,7 @@ class _NotificationTile extends StatelessWidget {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: _iconColor().withOpacity(0.15),
+        color: _iconColor().withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
       child: Icon(_mapIcon(notification.icon), color: _iconColor(), size: 22),
@@ -138,7 +138,7 @@ class _NotificationTile extends StatelessWidget {
       children: [
         Text(
           notification.title,
-          style: CustomTextstyle.Poppinssemibold500.copyWith(
+          style: CustomTextstyle.poppinsSemiBold500.copyWith(
             fontSize: 14,
             fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.w600,
           ),
@@ -146,14 +146,14 @@ class _NotificationTile extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           notification.body,
-          style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 12),
+          style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 12),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 6),
         Text(
           _formatTime(notification.timestamp),
-          style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 11),
+          style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 11),
         ),
       ],
     );
@@ -164,10 +164,7 @@ class _NotificationTile extends StatelessWidget {
       margin: const EdgeInsets.only(left: 8, top: 6),
       width: 10,
       height: 10,
-      decoration: const BoxDecoration(
-        color: AppColor.kblue,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: AppColor.kblue, shape: BoxShape.circle),
     );
   }
 

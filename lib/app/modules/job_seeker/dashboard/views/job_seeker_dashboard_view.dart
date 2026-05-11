@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/utils/app_color.dart';
-import '../../../../core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/job_seeker_dashboard_controller.dart';
 import '../widgets/header_widget.dart';
 import '../widgets/search_widget.dart';
@@ -46,7 +46,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                     children: [
                       Text(
                         "Recent Jobs",
-                        style: CustomTextstyle.Poppinsbold.copyWith(
+                        style: CustomTextstyle.poppinsBold.copyWith(
                           fontSize: 18,
                         ),
                       ),
@@ -95,7 +95,6 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
     );
   }
 
-
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
@@ -106,7 +105,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
             const SizedBox(height: 10),
             Text(
               "No jobs found!",
-              style: CustomTextstyle.Poppins500grey.copyWith(fontSize: 16),
+              style: CustomTextstyle.poppins500Grey.copyWith(fontSize: 16),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,7 +44,7 @@ class JobSeekerDashboardController extends GetxController {
         }
       }
     } catch (e) {
-      print("Error fetching user data: $e");
+      log("Error fetching user data: $e");
     }
   }
 
@@ -59,7 +61,7 @@ class JobSeekerDashboardController extends GetxController {
 
       categories.value = fetchedCategories;
     } catch (e) {
-      print("Error fetching categories: $e");
+      log("Error fetching categories: $e");
     } finally {
       isCategoriesLoading.value = false;
     }
@@ -80,7 +82,6 @@ class JobSeekerDashboardController extends GetxController {
 
       applyFilters();
     } catch (e) {
-      print("Error loading jobs: $e");
       Get.snackbar("Error", "فشل في تحميل الوظائف");
     } finally {
       isLoading.value = false;
