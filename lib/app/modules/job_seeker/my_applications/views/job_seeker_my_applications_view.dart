@@ -15,10 +15,6 @@ class JobSeekerMyApplicationsView
       appBar: AppBar(
         backgroundColor: _primaryBlue,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(Icons.arrow_back, color: Colors.white),
-        ),
         title: const Text(
           'Status',
           style: TextStyle(
@@ -28,16 +24,6 @@ class JobSeekerMyApplicationsView
           ),
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: Colors.white,
-              size: 26,
-            ),
-          ),
-        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {

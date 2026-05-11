@@ -25,14 +25,6 @@ class JobSeekerSavedJobsView extends GetView<JobSeekerSavedJobsController> {
             color: AppColor.kwhite,
           ),
         ),
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: AppColor.kwhite,
-            size: 20,
-          ),
-        ),
       ),
       body: SafeArea(
         child: RefreshIndicator(

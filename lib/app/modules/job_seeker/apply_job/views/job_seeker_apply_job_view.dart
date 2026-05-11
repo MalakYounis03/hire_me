@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
 import '../controllers/job_seeker_apply_job_controller.dart';
@@ -57,16 +58,6 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
         ),
       ),
       centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: Icon(
-            Icons.notifications_outlined,
-            color: Colors.white,
-            size: 26,
-          ),
-        ),
-      ],
     );
   }
 

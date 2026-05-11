@@ -68,11 +68,6 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
               ),
             ),
           ),
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
-          ),
         ],
       ),
     );

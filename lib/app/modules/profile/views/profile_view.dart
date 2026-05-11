@@ -16,25 +16,12 @@ class ProfileView extends GetView<ProfileController> {
       appBar: AppBar(
         backgroundColor: AppColor.kblue,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Icon(Icons.arrow_back, color: AppColor.kwhite),
-        ),
+
         title: Text(
           AppString.profile,
           style: CustomTextstyle.interSemiBoldWhite,
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: AppColor.kwhite,
-              size: 26,
-            ),
-          ),
-        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
