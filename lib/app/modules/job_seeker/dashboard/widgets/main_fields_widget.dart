@@ -19,7 +19,7 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 18,
-              color: Colors.black.withOpacity(0.82),
+              color: Colors.black.withValues(alpha: 0.82),
             ),
           ),
         ),
@@ -97,7 +97,7 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.035),
+                    color: Colors.black.withValues(alpha: 0.035),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),

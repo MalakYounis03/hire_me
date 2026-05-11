@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 
 import '../controllers/job_seeker_job_details_controller.dart';
@@ -62,7 +62,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
             child: Text(
               'Job Description',
               textAlign: TextAlign.center,
-              style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+              style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
                 fontSize: 18,
                 color: AppColor.kwhite,
               ),
@@ -89,7 +89,8 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: AppColor.Eblack.withOpacity(0.08),
+            color: AppColor.eblack.withValues(alpha: 0.08),
+
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -189,9 +190,9 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
                 job.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: CustomTextstyle.Poppinssemibold.copyWith(
+                style: CustomTextstyle.poppinsSemiBold.copyWith(
                   fontSize: 16,
-                  color: AppColor.Eblack,
+                  color: AppColor.eblack,
                 ),
               ),
               const SizedBox(height: 2),
@@ -234,7 +235,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
       width: 46,
       height: 46,
       decoration: BoxDecoration(
-        color: AppColor.Ewhite,
+        color: AppColor.ewhite,
         borderRadius: BorderRadius.circular(8),
       ),
       child: ClipRRect(
@@ -322,7 +323,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
     return Text(
       title,
       style: TextStyle(
-        color: AppColor.Eblack,
+        color: AppColor.eblack,
         fontSize: 14,
         fontWeight: FontWeight.w700,
       ),
@@ -333,7 +334,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
     return Text(
       text,
       style: TextStyle(
-        color: AppColor.Eblack.withOpacity(0.78),
+        color: AppColor.eblack..withValues(alpha: 0.78),
         fontSize: 13,
         height: 1.55,
         fontWeight: FontWeight.w400,
@@ -349,7 +350,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
         color: AppColor.kwhite,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: .04),
             blurRadius: 18,
             offset: const Offset(0, -5),
           ),

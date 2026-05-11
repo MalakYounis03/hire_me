@@ -90,7 +90,7 @@ class JobSeekerSearchJobsView extends GetView<JobSeekerSearchJobsController> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColor.eblack.withOpacity(0.06),
+              color: AppColor.eblack.withValues(alpha: 0.06),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
