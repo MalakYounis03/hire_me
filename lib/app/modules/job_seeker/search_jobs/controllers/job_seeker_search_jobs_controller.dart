@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/data/models/job_model.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
 
 class JobSeekerSearchJobsController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/data/models/job_model.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 
 class JobSeekerJobDetailsController extends GetxController {
