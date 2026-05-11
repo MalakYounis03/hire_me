@@ -31,7 +31,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
                     overflow: TextOverflow.ellipsis,
                     style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
                       fontSize: 15,
-                      color: AppColor.kwhite.withOpacity(0.85),
+                      color: AppColor.kwhite.withValues(alpha: .85),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -53,7 +53,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
           Container(
             padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: AppColor.kwhite.withOpacity(0.14),
+              color: AppColor.kwhite.withValues(alpha: .14),
               shape: BoxShape.circle,
             ),
             child: Icon(

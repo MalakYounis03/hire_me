@@ -89,7 +89,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: AppColor.eblack.withOpacity(0.08),
+            color: AppColor.eblack.withValues(alpha: 0.08),
 
             blurRadius: 8,
             offset: const Offset(0, 3),
@@ -334,7 +334,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
     return Text(
       text,
       style: TextStyle(
-        color: AppColor.eblack.withOpacity(0.78),
+        color: AppColor.eblack..withValues(alpha: 0.78),
         fontSize: 13,
         height: 1.55,
         fontWeight: FontWeight.w400,
@@ -350,7 +350,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
         color: AppColor.kwhite,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: .04),
             blurRadius: 18,
             offset: const Offset(0, -5),
           ),

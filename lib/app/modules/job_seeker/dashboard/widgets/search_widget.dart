@@ -74,7 +74,7 @@ class SearchFilterWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.kblue.withOpacity(0.08),
+                    color: AppColor.kblue.withValues(alpha: 0.08),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -107,7 +107,7 @@ class SearchFilterWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.kblue.withOpacity(0.08),
+                    color: AppColor.kblue.withValues(alpha: .08),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),

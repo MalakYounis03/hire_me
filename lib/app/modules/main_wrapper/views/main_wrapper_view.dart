@@ -46,7 +46,7 @@ class _MainBottomNavBar extends GetView<MainWrapperController> {
         color: AppColor.kwhite,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 18,
             offset: const Offset(0, -5),
           ),
@@ -102,7 +102,7 @@ class _MainBottomNavBar extends GetView<MainWrapperController> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColor.kblue.withOpacity(0.22),
+                    color: AppColor.kblue.withValues(alpha: 0.22),
                     blurRadius: 14,
                     offset: const Offset(0, 6),
                   ),

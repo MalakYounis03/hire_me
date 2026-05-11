@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/MainFieldsWidget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/main_fields_widget.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
