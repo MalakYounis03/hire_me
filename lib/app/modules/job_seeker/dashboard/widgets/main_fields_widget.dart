@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/core/utils/app_color.dart';
@@ -104,16 +105,14 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
                 ],
               ),
               child: iconUrl.isNotEmpty
-                  ? Image.network(
-                      iconUrl,
+                  ? CachedNetworkImage(
+                      imageUrl: iconUrl,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.work_outline_rounded,
-                          color: AppColor.kblue,
-                          size: 30,
-                        );
-                      },
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.work_outline_rounded,
+                        color: AppColor.kblue,
+                        size: 30,
+                      ),
                     )
                   : Icon(
                       Icons.work_outline_rounded,

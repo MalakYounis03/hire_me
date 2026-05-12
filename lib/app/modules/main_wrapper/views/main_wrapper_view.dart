@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/app/modules/job_seeker/chat/views/chat_view.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
@@ -63,10 +64,24 @@ class _MainBottomNavBar extends GetView<MainWrapperController> {
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
               ),
-              _navIcon(
-                index: 1,
-                icon: Icons.chat_bubble_outline_rounded,
-                activeIcon: Icons.chat_bubble_rounded,
+              Badge(
+                isLabelVisible: controller.unreadNotifications > 0,
+                label: Text('${controller.unreadNotifications}'),
+                child: _navIcon(
+                  onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
+                  icon: Icons.notifications_outlined,
+                  activeIcon: Icons.notifications,
+                  isActive: false,
+                ),
+              ),
+              Badge(
+                isLabelVisible: controller.unreadChats > 0,
+                label: Text('${controller.unreadChats}'),
+                child: _navIcon(
+                  index: 1,
+                  icon: Icons.chat_bubble_outline_rounded,
+                  activeIcon: Icons.chat_bubble_rounded,
+                ),
               ),
               _homeIcon(),
               _navIcon(
@@ -119,21 +134,23 @@ class _MainBottomNavBar extends GetView<MainWrapperController> {
   }
 
   Widget _navIcon({
-    required int index,
+    int? index,
+    VoidCallback? onTap,
     required IconData icon,
     required IconData activeIcon,
+    bool? isActive,
   }) {
-    final isSelected = controller.currentIndex.value == index;
+    final selected = isActive ?? (index != null && controller.currentIndex.value == index);
 
     return GestureDetector(
-      onTap: () => controller.changePage(index),
+      onTap: onTap ?? (index != null ? () => controller.changePage(index) : null),
       child: SizedBox(
         width: 42,
         height: 52,
         child: Center(
           child: Icon(
-            isSelected ? activeIcon : icon,
-            color: isSelected ? AppColor.kblue : AppColor.greyLight,
+            selected ? activeIcon : icon,
+            color: selected ? AppColor.kblue : AppColor.greyLight,
             size: 25,
           ),
         ),

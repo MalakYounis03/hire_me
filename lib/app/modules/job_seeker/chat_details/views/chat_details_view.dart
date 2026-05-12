@@ -9,43 +9,33 @@ import '../../../../../core/utils/app_color.dart';
 import '../controllers/chat_details_controller.dart';
 
 class ChatDetailsView extends StatelessWidget {
-  final String chatName;
-  final String avatarUrl;
-  final String seekerId;
-  final String companyId;
-
-  const ChatDetailsView({
-    super.key,
-    this.chatName = '',
-    this.seekerId = '',
-    this.companyId = '',
-    this.avatarUrl = '',
-  });
+  const ChatDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ///todo
-    final controller = Get.put(
-      ChatDetailsController(
-        chatName: chatName,
-        chatAvatarUrl: avatarUrl,
-        chatId: Get.arguments?['chatId'] ?? '', // ✅ null check
-        seekerId: seekerId,
-        companyId: companyId,
-      ),
-      tag: chatName,
+    final args = Get.arguments;
+    final chatId = args is Map<String, dynamic>
+        ? (args['chatId'] as String? ?? '')
+        : args is String
+            ? args
+            : '';
+    final controller = Get.find<ChatDetailsController>(
+      tag: chatId.isNotEmpty ? chatId : null,
     );
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: ChatDetailsAppbar(name: chatName, avatarUrl: avatarUrl),
+      appBar: ChatDetailsAppbar(
+        name: controller.chatName,
+        avatarUrl: controller.chatAvatarUrl,
+      ),
       body: Column(
         children: [
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(), // ✅
+                  child: CircularProgressIndicator(),
                 );
               }
               return MessagesList(controller: controller);

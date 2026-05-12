@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../routes/app_pages.dart';
 
 class NotificationService extends GetxService {
+  static final RxString currentScreen = ''.obs;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
@@ -101,6 +102,13 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
+    final type = message.data['type'];
+    final screen = currentScreen.value;
+
+    if (type == 'chat_message' && screen == 'chat_details') return;
+    if (type == 'application_update' && screen == 'notifications') return;
+    if (type == 'new_application' && screen == 'notifications') return;
+
     final notification = message.notification;
     if (notification == null) return;
 
