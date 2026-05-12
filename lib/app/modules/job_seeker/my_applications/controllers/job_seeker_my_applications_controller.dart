@@ -62,11 +62,11 @@ class JobSeekerMyApplicationsController extends GetxController {
 
   Color statusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'acceptable':
+      case 'accepted':
         return const Color(0xFF22C55E);
-      case 'unacceptable':
+      case 'rejected':
         return const Color(0xFFEF4444);
-      case 'on hold':
+      case 'pending':
         return const Color(0xFFF59E0B);
       default:
         return const Color(0xFF8A8A9A);

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import 'package:hire_me/app/services/storage_service.dart';
 import 'widgets/company_chat_tile.dart';
 import 'widgets/company_empty_state.dart';
 import '../../../job_seeker/dashboard/widgets/search_widget.dart';
@@ -45,7 +48,24 @@ class CompanyChatView extends GetView<CompanyChatController> {
                     IconButton(
                       icon: const Icon(Icons.logout, color: Colors.white),
                       onPressed: () async {
-                        await FirebaseAuth.instance.signOut();
+                        final auth = FirebaseAuth.instance;
+                        final uid = auth.currentUser?.uid;
+                        if (uid != null) {
+                          final firestore = FirebaseFirestore.instance;
+                          final role = StorageService.to.userRole;
+                          final roleCollection = role == AppUserRole.company.value
+                              ? 'companies'
+                              : 'jobSeekers';
+                          await firestore.collection(roleCollection).doc(uid).set({
+                            'fcmToken': FieldValue.delete(),
+                          }, SetOptions(merge: true));
+                          await firestore.collection('users').doc(uid).set({
+                            'fcmToken': FieldValue.delete(),
+                          }, SetOptions(merge: true));
+                          await FirebaseMessaging.instance.deleteToken();
+                        }
+                        await StorageService.to.clearAuthSession();
+                        await auth.signOut();
                         Get.offAllNamed(Routes.AUTH_LOGIN);
                       },
                     ),
