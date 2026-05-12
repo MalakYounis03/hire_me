@@ -107,7 +107,7 @@ class JobSeekerApplyJobController extends GetxController {
 
       final cvUrl = _supabase.storage.from('cv').getPublicUrl(fileName);
 
-      await _firestore.collection('applications').add({
+      final data = <String, dynamic>{
         'jobId': currentJob.id,
         'jobTitle': currentJob.title,
         'companyId': currentJob.companyId,
@@ -118,7 +118,8 @@ class JobSeekerApplyJobController extends GetxController {
         'cvUrl': cvUrl,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      };
+      await _firestore.collection('applications').add(data);
 
       Get.offNamed(Routes.JOB_SEEKER_CONGRATULATIONS);
     } catch (e) {

@@ -17,6 +17,24 @@ class ApplicationListController extends GetxController {
   final jobsCount = 0.obs;
   final applicantsCount = 0.obs;
   final activeTab = 'applications'.obs;
+  final selectedStatus = 'All'.obs;
+
+  List<JobWithApplicants> get filteredJobs {
+    if (selectedStatus.value == 'All') return jobs;
+    return jobs
+        .map((job) {
+          final filtered = job.applicants
+              .where((a) => a.status == selectedStatus.value)
+              .toList();
+          return JobWithApplicants(
+            jobId: job.jobId,
+            jobTitle: job.jobTitle,
+            applicants: filtered,
+          );
+        })
+        .where((job) => job.applicants.isNotEmpty)
+        .toList();
+  }
 
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
@@ -50,7 +68,6 @@ class ApplicationListController extends GetxController {
     _appSub = _firestore
         .collection('applications')
         .where('companyId', isEqualTo: companyId)
-        .where('status', isEqualTo: 'pending')
         .snapshots()
         .listen(
           (snapshot) {

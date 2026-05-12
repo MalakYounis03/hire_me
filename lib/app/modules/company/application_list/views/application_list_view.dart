@@ -17,7 +17,6 @@ class ApplicationListView extends GetView<ApplicationListController> {
     return Scaffold(
       backgroundColor: AppColor.ewhite,
       body: Obx(() {
-        final jobs = controller.jobs;
         return Column(
           children: [
             ApplicantsHeader(
@@ -27,10 +26,15 @@ class ApplicationListView extends GetView<ApplicationListController> {
               onApplicationsTap: () => controller.switchTab('applications'),
             ),
             _TabBar(activeTab: controller.activeTab.value, onTab: controller.switchTab),
+            if (controller.activeTab.value == 'applications')
+              _StatusFilterBar(
+                selectedStatus: controller.selectedStatus.value,
+                onSelect: (s) => controller.selectedStatus.value = s,
+              ),
             Expanded(
               child: controller.activeTab.value == 'jobs'
                   ? _buildJobsTab(theme)
-                  : _buildApplicationsTab(theme, jobs),
+                  : _buildApplicationsTab(theme, controller.filteredJobs),
             ),
           ],
         );
@@ -281,6 +285,54 @@ class _TabBar extends StatelessWidget {
             onTap: () => onTab('applications'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _StatusFilterBar extends StatelessWidget {
+  final String selectedStatus;
+  final void Function(String) onSelect;
+
+  const _StatusFilterBar({
+    required this.selectedStatus,
+    required this.onSelect,
+  });
+
+  static const _tabs = ['All', 'Pending', 'Accepted', 'Rejected'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 4),
+      child: Row(
+        children: _tabs.map((tab) {
+          final isActive = selectedStatus == tab;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () => onSelect(tab),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isActive ? AppColor.kblue : AppColor.kwhite,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isActive ? AppColor.kblue : AppColor.greyVeryLight,
+                  ),
+                ),
+                child: Text(
+                  tab,
+                  style: TextStyle(
+                    color: isActive ? AppColor.kwhite : AppColor.greydark,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
