@@ -82,7 +82,7 @@ class JobSeekerApplyJobController extends GetxController {
 
     final existing = await _firestore
         .collection('applications')
-        .where('applicantId', isEqualTo: uid)
+        .where('seekerId', isEqualTo: uid)
         .where('jobId', isEqualTo: currentJob.id)
         .limit(1)
         .get();
@@ -112,9 +112,9 @@ class JobSeekerApplyJobController extends GetxController {
         'jobTitle': currentJob.title,
         'companyId': currentJob.companyId,
         'companyName': currentJob.companyName,
-        'applicantId': uid,
-        'applicantName': nameController.text.trim(),
-        'applicantEmail': emailController.text.trim(),
+        'seekerId': uid,
+        'seekerName': nameController.text.trim(),
+        'email': emailController.text.trim(),
         'cvUrl': cvUrl,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
