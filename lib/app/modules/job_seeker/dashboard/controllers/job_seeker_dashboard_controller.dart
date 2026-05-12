@@ -21,6 +21,7 @@ class JobSeekerDashboardController extends GetxController {
   _mainFieldsSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _savedJobsSubscription;
+  StreamSubscription<int>? _notifBadgeSub;
 
   final userName = 'User'.obs;
 
@@ -50,6 +51,7 @@ class JobSeekerDashboardController extends GetxController {
     listenToMainFields();
     listenToOpenJobs();
     listenToSavedJobs();
+    listenToNotificationBadge();
   }
 
   Future<void> fetchUserData() async {
@@ -247,6 +249,20 @@ class JobSeekerDashboardController extends GetxController {
     }
   }
 
+  void listenToNotificationBadge() {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    _notifBadgeSub = _firestore
+        .collection('notifications')
+        .doc(uid)
+        .collection('items')
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snap) => snap.docs.length)
+        .listen((count) => notificationBadgeCount.value = count);
+  }
+
   Future<void> refreshDashboard() async {
     await fetchUserData();
   }
@@ -256,6 +272,7 @@ class JobSeekerDashboardController extends GetxController {
     _jobsSubscription?.cancel();
     _mainFieldsSubscription?.cancel();
     _savedJobsSubscription?.cancel();
+    _notifBadgeSub?.cancel();
     searchTextController.dispose();
     super.onClose();
   }
