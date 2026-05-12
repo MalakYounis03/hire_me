@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../../data/repositories/notification_repository.dart';
 import '../../../../services/notification_service.dart';
-import '../../dashboard/controllers/job_seeker_dashboard_controller.dart';
 import '../models/notification_model.dart';
 
 class JobSeekerNotificationsController extends GetxController {
@@ -30,7 +29,6 @@ class JobSeekerNotificationsController extends GetxController {
       notifications.value = snapshot.docs
           .map((doc) => NotificationModel.fromMap(doc.id, doc.data()))
           .toList();
-      _syncBadge();
     });
   }
 
@@ -55,15 +53,6 @@ class JobSeekerNotificationsController extends GetxController {
       await _repository.markAllAsRead(uid, unread.map((n) => n.id).toList());
     } catch (e) {
       debugPrint('Error in JobSeekerNotificationsController.markAllAsRead: $e');
-    }
-  }
-
-  void _syncBadge() {
-    try {
-      Get.find<JobSeekerDashboardController>().notificationBadgeCount.value =
-          unreadCount;
-    } catch (e) {
-      debugPrint('Error in JobSeekerNotificationsController._syncBadge: $e');
     }
   }
 

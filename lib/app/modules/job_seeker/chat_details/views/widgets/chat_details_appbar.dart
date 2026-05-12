@@ -48,7 +48,7 @@ class ChatDetailsAppbar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(Icons.more_vert, color: AppColor.kblack, size: 20),
-          onPressed: () {},
+          onPressed: () => debugPrint('Chat more options pressed'),
         ),
       ],
     );

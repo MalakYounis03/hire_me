@@ -1,16 +1,19 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class JobSeekerMyApplicationsController extends GetxController {
-  final applications = <Map<String, dynamic>>[].obs;
+  final applications = <String, Map<String, dynamic>>{}.obs;
   final isLoading = false.obs;
   final selectedTab = 'All'.obs;
   final tabs = ['All', 'Pending', 'Accepted', 'Rejected'];
 
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _appSub;
 
   @override
   void onInit() {
@@ -18,49 +21,38 @@ class JobSeekerMyApplicationsController extends GetxController {
     loadApplications();
   }
 
-  Future<void> loadApplications() async {
-    isLoading.value = true;
-    try {
-      final uid = _auth.currentUser!.uid;
-      final snapshot = await _firestore
-          .collection('applications')
-          .where('applicantId', isEqualTo: uid)
-          .get();
-
-      applications.assignAll(
-        snapshot.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id;
-          return data;
-        }).toList(),
-      );
-    } catch (e) {
-      applications.assignAll([
-        {
-          'jobTitle': 'Graphic Designer',
-          'companyName': 'Zain Design Company',
-          'status': 'unacceptable',
-        },
-        {
-          'jobTitle': 'Graphic Designer',
-          'companyName': 'Zain Design Company',
-          'status': 'acceptable',
-        },
-        {
-          'jobTitle': 'Graphic Designer',
-          'companyName': 'Zain Design Company',
-          'status': 'on hold',
-        },
-      ]);
-    } finally {
+  void loadApplications() {
+    final uid = _auth.currentUser?.uid ?? '';
+    if (uid.isEmpty) {
       isLoading.value = false;
+      return;
     }
+
+    isLoading.value = true;
+
+    _appSub = _firestore
+        .collection('applications')
+        .where('applicantId', isEqualTo: uid)
+        .snapshots()
+        .listen((snapshot) {
+          final map = <String, Map<String, dynamic>>{};
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            map[doc.id] = data;
+          }
+          applications.value = map;
+          isLoading.value = false;
+        }, onError: (_) {
+          isLoading.value = false;
+        });
   }
 
   List<Map<String, dynamic>> get filteredApplications {
-    if (selectedTab.value == 'All') return applications;
+    final list = applications.values.toList();
+    if (selectedTab.value == 'All') return list;
     final filter = selectedTab.value.toLowerCase();
-    return applications.where((a) {
+    return list.where((a) {
       final status = (a['status'] as String? ?? '').toLowerCase();
       return status == filter;
     }).toList();
@@ -79,5 +71,11 @@ class JobSeekerMyApplicationsController extends GetxController {
       default:
         return const Color(0xFF8A8A9A);
     }
+  }
+
+  @override
+  void onClose() {
+    _appSub?.cancel();
+    super.onClose();
   }
 }

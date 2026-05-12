@@ -1,16 +1,13 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
 class MainWrapperController extends GetxController {
   final currentIndex = 2.obs;
-  final unreadNotifications = 0.obs;
   final unreadChats = 0.obs;
 
-  StreamSubscription? _notifSub;
   StreamSubscription? _chatSub;
 
   @override
@@ -22,21 +19,7 @@ class MainWrapperController extends GetxController {
       currentIndex.value = args['initialIndex'];
     }
 
-    _listenToUnreadNotifications();
     _listenToUnreadChats();
-  }
-
-  void _listenToUnreadNotifications() {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
-    _notifSub = FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(uid)
-        .collection('items')
-        .where('isRead', isEqualTo: false)
-        .snapshots()
-        .map((snap) => snap.docs.length)
-        .listen((c) => unreadNotifications.value = c);
   }
 
   void _listenToUnreadChats() {
@@ -65,7 +48,6 @@ class MainWrapperController extends GetxController {
 
   @override
   void onClose() {
-    _notifSub?.cancel();
     _chatSub?.cancel();
     super.onClose();
   }

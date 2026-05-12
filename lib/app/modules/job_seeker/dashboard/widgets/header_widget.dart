@@ -51,18 +51,28 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
 
           const SizedBox(width: 12),
 
-          GestureDetector(
-            onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
-            child: Container(
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                color: AppColor.kwhite.withValues(alpha: .14),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.notifications_none_rounded,
-                color: AppColor.kwhite,
-                size: 27,
+          Obx(
+            () => Badge(
+              isLabelVisible: controller.notificationBadgeCount > 0,
+              label: Text('${controller.notificationBadgeCount}'),
+              textStyle: const TextStyle(color: Colors.white, fontSize: 10),
+              textColor: Colors.white,
+              backgroundColor: Colors.red,
+              smallSize: 18,
+              child: GestureDetector(
+                onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
+                child: Container(
+                  padding: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(
+                    color: AppColor.kwhite.withValues(alpha: .14),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.notifications_none_rounded,
+                    color: AppColor.kwhite,
+                    size: 27,
+                  ),
+                ),
               ),
             ),
           ),

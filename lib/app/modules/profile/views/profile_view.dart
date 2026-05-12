@@ -232,7 +232,7 @@ class ProfileView extends GetView<ProfileController> {
                 Row(
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => debugPrint('Open to pressed'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.kblue,
                         shape: RoundedRectangleBorder(
@@ -251,7 +251,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => debugPrint('Add section pressed'),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -269,7 +269,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () => debugPrint('More options pressed'),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -413,7 +413,7 @@ class ProfileView extends GetView<ProfileController> {
                 ],
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () => debugPrint('Edit section pressed'),
                 child: const Icon(
                   Icons.edit_outlined,
                   color: Color(0xFF8A8A9A),

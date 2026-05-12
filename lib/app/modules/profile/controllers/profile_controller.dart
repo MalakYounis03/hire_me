@@ -41,7 +41,8 @@ class ProfileController extends GetxController {
   Future<void> loadProfile() async {
     isLoading.value = true;
     try {
-      final uid = _auth.currentUser!.uid;
+      final uid = _auth.currentUser?.uid ?? '';
+      if (uid.isEmpty) return;
       final doc = await _firestore.collection('jobSeekers').doc(uid).get();
 
       if (doc.exists) {
@@ -107,7 +108,8 @@ class ProfileController extends GetxController {
 
     isUploadingCover.value = true;
     try {
-      final uid = _auth.currentUser!.uid;
+      final uid = _auth.currentUser?.uid ?? '';
+      if (uid.isEmpty) return;
       final file = File(picked.path);
       final fileName = 'cover_$uid.jpg';
 
@@ -282,12 +284,13 @@ class ProfileController extends GetxController {
   // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
     await _auth.signOut();
-    Get.offAllNamed(Routes.SPLASH);
+    Get.offAllNamed(Routes.AUTH_LOGIN);
   }
 
   // ── Private Helpers ───────────────────────────────────
   Future<void> _updateField(String field, dynamic value) async {
-    final uid = _auth.currentUser!.uid;
+    final uid = _auth.currentUser?.uid ?? '';
+    if (uid.isEmpty) return;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});
   }
 
