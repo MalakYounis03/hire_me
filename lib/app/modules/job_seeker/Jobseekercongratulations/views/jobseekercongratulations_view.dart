@@ -9,10 +9,6 @@ import '../controllers/jobseekercongratulations_controller.dart';
 class JobSeekerCongratulationsView
     extends GetView<JobSeekerCongratulationsController> {
   const JobSeekerCongratulationsView({super.key});
-<<<<<<< HEAD
-=======
-
->>>>>>> 4681132 (fix: update job application flow)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
