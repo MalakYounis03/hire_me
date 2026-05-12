@@ -21,6 +21,8 @@ import '../modules/company/company_chat/bindings/company_chat_binding.dart';
 import '../modules/company/company_chat/views/company_chat_view.dart';
 import '../modules/company/company_chat_details/bindings/company_chat_details_binding.dart';
 import '../modules/company/company_chat_details/views/company_chat_details_view.dart';
+import '../modules/company/company_notifications/bindings/company_notifications_binding.dart';
+import '../modules/company/company_notifications/views/company_notifications_view.dart';
 import '../modules/company/company_main_wrapper/bindings/company_main_wrapper_binding.dart';
 import '../modules/company/company_main_wrapper/views/company_main_wrapper_view.dart';
 import '../modules/company/company_profile/bindings/company_profile_binding.dart';
@@ -253,6 +255,14 @@ class AppPages {
       name: _Paths.COMPANY_CHAT_DETAILS,
       page: () => const CompanyChatDetailsView(),
       binding: CompanyChatDetailsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
+    ),
+    GetPage(
+      name: _Paths.COMPANY_NOTIFICATIONS,
+      page: () => const CompanyNotificationsView(),
+      binding: CompanyNotificationsBinding(),
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
       ],
