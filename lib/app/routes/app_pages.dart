@@ -19,6 +19,8 @@ import '../modules/company/application_review/bindings/application_review_bindin
 import '../modules/company/application_review/views/application_review_view.dart';
 import '../modules/company/company_chat/bindings/company_chat_binding.dart';
 import '../modules/company/company_chat/views/company_chat_view.dart';
+import '../modules/company/company_chat_details/bindings/company_chat_details_binding.dart';
+import '../modules/company/company_chat_details/views/company_chat_details_view.dart';
 import '../modules/company/company_main_wrapper/bindings/company_main_wrapper_binding.dart';
 import '../modules/company/company_main_wrapper/views/company_main_wrapper_view.dart';
 import '../modules/company/company_profile/bindings/company_profile_binding.dart';
@@ -27,10 +29,14 @@ import '../modules/company/dashboard/bindings/company_dashboard_binding.dart';
 import '../modules/company/dashboard/views/company_dashboard_view.dart';
 import '../modules/company/post_job/bindings/company_post_job_binding.dart';
 import '../modules/company/post_job/views/company_post_job_view.dart';
-import '../modules/company/company_chat_details/bindings/company_chat_details_binding.dart';
-import '../modules/company/company_chat_details/views/company_chat_details_view.dart';
 import '../modules/job_seeker/apply_job/bindings/job_seeker_apply_job_binding.dart';
 import '../modules/job_seeker/apply_job/views/job_seeker_apply_job_view.dart';
+import '../modules/job_seeker/Jobseekercongratulations/bindings/jobseekercongratulations_binding.dart';
+import '../modules/job_seeker/Jobseekercongratulations/views/jobseekercongratulations_view.dart';
+import '../modules/job_seeker/chat/bindings/chat_binding.dart';
+import '../modules/job_seeker/chat/views/chat_view.dart';
+import '../modules/job_seeker/chat_details/bindings/chat_details_binding.dart';
+import '../modules/job_seeker/chat_details/views/chat_details_view.dart';
 import '../modules/job_seeker/dashboard/bindings/job_seeker_dashboard_binding.dart';
 import '../modules/job_seeker/dashboard/views/job_seeker_dashboard_view.dart';
 import '../modules/job_seeker/job_details/bindings/job_seeker_job_details_binding.dart';
@@ -39,8 +45,12 @@ import '../modules/job_seeker/main_fields/bindings/job_seeker_main_fields_bindin
 import '../modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
 import '../modules/job_seeker/my_applications/bindings/job_seeker_my_applications_binding.dart';
 import '../modules/job_seeker/my_applications/views/job_seeker_my_applications_view.dart';
+import '../modules/job_seeker/notifications/bindings/job_seeker_notifications_binding.dart';
+import '../modules/job_seeker/notifications/views/job_seeker_notifications_view.dart';
 import '../modules/job_seeker/saved_jobs/bindings/job_seeker_saved_jobs_binding.dart';
 import '../modules/job_seeker/saved_jobs/views/job_seeker_saved_jobs_view.dart';
+import '../modules/job_seeker/search_jobs/bindings/job_seeker_search_jobs_binding.dart';
+import '../modules/job_seeker/search_jobs/views/job_seeker_search_jobs_view.dart';
 import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
 import '../modules/main_wrapper/views/main_wrapper_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -95,8 +105,8 @@ class AppPages {
     ),
     GetPage(
       name: Routes.JOB_SEEKER_CONGRATULATIONS,
-      page: () => const JobSeekerApplyJobView(),
-      binding: JobSeekerApplyJobBinding(),
+      page: () => const JobSeekerCongratulationsView(),
+      binding: JobSeekerCongratulationsBinding(),
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
       ],
@@ -134,6 +144,14 @@ class AppPages {
       ],
     ),
     GetPage(
+      name: Routes.JOB_SEEKER_NOTIFICATIONS,
+      page: () => const JobSeekerNotificationsView(),
+      binding: JobSeekerNotificationsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
       name: Routes.COMPANY_DASHBOARD,
       page: () => const CompanyDashboardView(),
       binding: CompanyDashboardBinding(),
@@ -161,6 +179,22 @@ class AppPages {
       name: Routes.JOB_SEEKER_SAVED_JOBS,
       page: () => const JobSeekerSavedJobsView(),
       binding: JobSeekerSavedJobsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_CHAT,
+      page: () => const ChatView(),
+      binding: ChatBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+      ],
+    ),
+    GetPage(
+      name: Routes.JOB_SEEKER_CHAT_DETAILS,
+      page: () => const ChatDetailsView(),
+      binding: ChatDetailsBinding(),
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
       ],
@@ -217,6 +251,14 @@ class AppPages {
       name: _Paths.COMPANY_CHAT_DETAILS,
       page: () => const CompanyChatDetailsView(),
       binding: CompanyChatDetailsBinding(),
+      middlewares: [
+        RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
+      ],
+    ),
+    GetPage(
+      name: _Paths.SEARCH_JOBS,
+      page: () => const JobSeekerSearchJobsView(),
+      binding: JobSeekerSearchJobsBinding(),
     ),
   ];
 }

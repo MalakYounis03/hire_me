@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_assets.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_string.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/auth_register_controller.dart';
 
 class AuthRegisterView extends GetView<AuthRegisterController> {
@@ -50,12 +50,12 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
   Widget _buildTitle() {
     return Column(
       children: [
-        Text(AppString.createaccount, style: CustomTextstyle.Poppinsbold2),
+        Text(AppString.createaccount, style: CustomTextstyle.poppinsBold2),
         const SizedBox(height: 14),
         Text(
           'Create an account so you can\nexplore all the existing jobs',
           textAlign: TextAlign.center,
-          style: CustomTextstyle.Poppinssemibold,
+          style: CustomTextstyle.poppinsSemiBold,
         ),
       ],
     );
@@ -137,7 +137,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               ? const CircularProgressIndicator(color: Colors.white)
               : Text(
                   AppString.signup,
-                  style: CustomTextstyle.Poppinssemiboldwhite,
+                  style: CustomTextstyle.poppinsSemiBoldWhite,
                 ),
         ),
       ),
@@ -159,7 +159,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('OR', style: CustomTextstyle.Poppins500or),
+          child: Text('OR', style: CustomTextstyle.poppins500Or),
         ),
         Expanded(
           child: Container(
@@ -200,11 +200,11 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
       children: [
         Text(
           'Already have an Account? ',
-          style: CustomTextstyle.Interregularblack,
+          style: CustomTextstyle.interRegularBlack,
         ),
         GestureDetector(
           onTap: controller.onLoginPressed,
-          child: Text('Log In', style: CustomTextstyle.InterregularOrange),
+          child: Text('Log In', style: CustomTextstyle.interRegularOrange),
         ),
       ],
     );

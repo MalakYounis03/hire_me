@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/app/services/storage_service.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../services/storage_service.dart';
 
 class AuthSplashController extends GetxController {
   @override
@@ -63,7 +63,10 @@ class AuthSplashController extends GetxController {
   }
 
   Future<String?> _loadRoleFromFirestore(String uid) async {
-    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     return StorageService.normalizeRole(doc.data()?['role'] as String?);
   }
 }

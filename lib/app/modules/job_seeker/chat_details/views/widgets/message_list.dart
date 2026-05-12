@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
-import 'package:hire_me/app/core/helper/data_helper.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/controllers/chat_details_controller.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/data_divider.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_bubble.dart';
+import '../../../../../../core/helper/data_helper.dart';
+import '../../controllers/chat_details_controller.dart';
+import 'data_divider.dart';
+import 'message_bubble.dart';
 
 class MessagesList extends StatelessWidget {
   final ChatDetailsController controller;

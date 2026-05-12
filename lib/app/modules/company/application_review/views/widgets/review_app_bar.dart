@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class ReviewAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ReviewAppBar({super.key});
@@ -8,7 +9,7 @@ class ReviewAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.kblue,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
@@ -19,17 +20,13 @@ class ReviewAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             children: [
               IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: AppColor.kwhite,
-                  size: 24,
-                ),
+                icon: Icon(Icons.arrow_back, color: AppColor.kwhite, size: 24),
                 onPressed: () => Get.back(),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Applicant Details',
                   style: TextStyle(

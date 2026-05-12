@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/model/chat_model.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/avatar.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/chat_info.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/chat_meta.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/chat_details_view.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import '../../model/chat_model.dart';
+import 'avatar.dart';
+import 'chat_info.dart';
+import 'chat_meta.dart';
+import '../../../../../../core/utils/app_color.dart';
+import '../../../../../routes/app_pages.dart';
 
 class ChatTile extends StatelessWidget {
   final ChatModel chat;
@@ -21,15 +20,15 @@ class ChatTile extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Get.to(
-              () => ChatDetailsView(
-                chatName: chat.otherName(currentUserId),
-                avatarUrl: chat.avatarUrl,
-                seekerId: chat.seekerId,
-                companyId: chat.companyId,
-              ),
-              arguments: {'chatId': chat.id},
-              transition: Transition.rightToLeft,
+            Get.toNamed(
+              Routes.JOB_SEEKER_CHAT_DETAILS,
+              arguments: {
+                'chatId': chat.id,
+                'chatName': chat.otherName(currentUserId),
+                'avatarUrl': chat.avatarUrl,
+                'seekerId': chat.seekerId,
+                'companyId': chat.companyId,
+              },
             );
           },
           borderRadius: BorderRadius.circular(12),

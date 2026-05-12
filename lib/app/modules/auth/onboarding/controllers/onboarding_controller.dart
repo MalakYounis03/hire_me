@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/services/storage_service.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
+import '../../../../services/storage_service.dart';
+import '../../../../../core/utils/app_assets.dart';
 import '../../../../routes/app_pages.dart';
 
 class OnboardingPageModel {

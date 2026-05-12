@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class InfoRow extends StatelessWidget {
   final IconData icon;
@@ -43,7 +44,7 @@ class InfoRow extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

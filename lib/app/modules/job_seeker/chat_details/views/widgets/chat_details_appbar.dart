@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/avatar.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
+import '../../../chat/views/widgets/avatar.dart';
 
 class ChatDetailsAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
@@ -47,7 +48,7 @@ class ChatDetailsAppbar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(Icons.more_vert, color: AppColor.kblack, size: 20),
-          onPressed: () {},
+          onPressed: () => debugPrint('Chat more options pressed'),
         ),
       ],
     );

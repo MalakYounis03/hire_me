@@ -10,7 +10,6 @@ class JobSeekerCongratulationsView
     extends GetView<JobSeekerCongratulationsController> {
   const JobSeekerCongratulationsView({super.key});
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FF),
@@ -30,16 +29,6 @@ class JobSeekerCongratulationsView
           ),
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: Colors.white,
-              size: 26,
-            ),
-          ),
-        ],
       ),
       body: Center(
         child: Padding(

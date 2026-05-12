@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_assets.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_string.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/auth_login_controller.dart';
 
 class AuthLoginView extends GetView<AuthLoginController> {
@@ -46,12 +46,12 @@ class AuthLoginView extends GetView<AuthLoginController> {
   Widget _buildTitle() {
     return Column(
       children: [
-        Text(AppString.login, style: CustomTextstyle.Poppinsbold2),
+        Text(AppString.login, style: CustomTextstyle.poppinsBold2),
         const SizedBox(height: 14),
         Text(
           "Welcome back you've\nbeen missed!",
           textAlign: TextAlign.center,
-          style: CustomTextstyle.Poppinssemibold,
+          style: CustomTextstyle.poppinsSemiBold,
         ),
       ],
     );
@@ -105,13 +105,13 @@ class AuthLoginView extends GetView<AuthLoginController> {
                 ),
               ),
               const SizedBox(width: 6),
-              Text('Remember me', style: CustomTextstyle.Poppins500grey),
+              Text('Remember me', style: CustomTextstyle.poppins500Grey),
             ],
           ),
         ),
         GestureDetector(
           onTap: controller.onForgotPasswordPressed,
-          child: Text('Forgot Password ?', style: CustomTextstyle.Poppins500),
+          child: Text('Forgot Password ?', style: CustomTextstyle.poppins500),
         ),
       ],
     );
@@ -137,7 +137,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
               ? const CircularProgressIndicator(color: Colors.white)
               : Text(
                   AppString.signin,
-                  style: CustomTextstyle.Poppinssemiboldwhite,
+                  style: CustomTextstyle.poppinsSemiBoldWhite,
                 ),
         ),
       ),
@@ -159,7 +159,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('OR', style: CustomTextstyle.Poppins500or),
+          child: Text('OR', style: CustomTextstyle.poppins500Or),
         ),
         Expanded(
           child: Container(
@@ -200,13 +200,13 @@ class AuthLoginView extends GetView<AuthLoginController> {
       children: [
         Text(
           "Don't have an Account? ",
-          style: CustomTextstyle.Interregularblack,
+          style: CustomTextstyle.interRegularBlack,
         ),
         GestureDetector(
           onTap: controller.onCreateAccountPressed,
           child: Text(
             'Create Account',
-            style: CustomTextstyle.Interregularblue,
+            style: CustomTextstyle.interRegularBlue,
           ),
         ),
       ],

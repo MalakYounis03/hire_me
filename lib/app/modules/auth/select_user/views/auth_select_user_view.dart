@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_assets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_assets.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_string.dart';
+import '../../../../../core/utils/app_text_style.dart';
 
 import '../controllers/auth_select_user_controller.dart';
 
@@ -33,7 +33,7 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                 Center(
                   child: Text(
                     AppString.selectUserType,
-                    style: CustomTextstyle.Poppinsbold,
+                    style: CustomTextstyle.poppinsBold,
                   ),
                 ),
 
@@ -77,7 +77,7 @@ class AuthSelectUserView extends GetView<AuthSelectUserController> {
                     ),
                     child: Text(
                       AppString.next,
-                      style: CustomTextstyle.Interregular,
+                      style: CustomTextstyle.interRegular,
                     ),
                   ),
                 ),
@@ -153,7 +153,7 @@ class _RoleCard extends StatelessWidget {
             SizedBox(width: 24.0),
             Expanded(
               child: Center(
-                child: Text(title, style: CustomTextstyle.Interbold),
+                child: Text(title, style: CustomTextstyle.interBold),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class InfoCard extends StatelessWidget {
   final String title;
@@ -8,12 +9,12 @@ class InfoCard extends StatelessWidget {
   final Color iconColor;
 
   const InfoCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     required this.icon,
     this.iconColor = const Color(0xff0D47A1),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class InfoCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: AppColor.kblack.withOpacity(0.08),
+                color: AppColor.kblack.withValues(alpha: 0.08),
                 spreadRadius: 1,
                 blurRadius: 4,
                 offset: const Offset(0, 2),

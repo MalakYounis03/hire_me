@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/app/services/storage_service.dart';
+import '../routes/app_pages.dart';
+import '../services/storage_service.dart';
 
 class RoleGuardMiddleware extends GetMiddleware {
   RoleGuardMiddleware({required this.requiredRole});
