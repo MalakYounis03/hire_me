@@ -39,6 +39,7 @@ abstract class Routes {
   static const COMPANY_PROFILE = _Paths.COMPANY_PROFILE;
   static const COMPANY_CHAT_DETAILS = _Paths.COMPANY_CHAT_DETAILS;
   static const JOB_SEEKER_SEARCH_JOBS = _Paths.JOB_SEEKER + _Paths.SEARCH_JOBS;
+  static const PDF_VIEWER = _Paths.PDF_VIEWER;
 }
 
 abstract class _Paths {
@@ -74,4 +75,5 @@ abstract class _Paths {
   static const COMPANY_PROFILE = '/company-profile';
   static const COMPANY_CHAT_DETAILS = '/company-chat-details';
   static const SEARCH_JOBS = '/search-jobs';
+  static const PDF_VIEWER = '/pdf-viewer';
 }

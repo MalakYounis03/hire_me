@@ -20,7 +20,7 @@ CI (`flutter.yml` on main): `pub get` → `analyze` → `test --no-pub` → `bui
 - Dart SDK `^3.11.0`. Flutter `3.41.6` pinned in CI only.
 - `.env` at project root (declared as asset, gitignored). Required: `SUPABASE_URL`, `SUPABASE_ANON_KEY`.
 - `flutterfire configure --project=hireme-a59e6` generates `lib/firebase_options.dart` + `android/app/google-services.json`.
-- **Do not edit:** `firebase_options.dart`, `google-services.json`, `.env`.
+- **Do not edit:** `firebase_options.dart`, `google-services.json`, `.env` (also denied in `opencode.json`).
 - Cloud Functions at `functions/` (Node 20, firebase-functions v5). Deploy from project root via `firebase.json`.
 
 ## Architecture
@@ -72,5 +72,4 @@ Background handler runs in a separate isolate and re-initializes Firebase.
 - `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has **no** `GetPage` entry in `app_pages.dart`.
 - `Routes.JOB_SEEKER_SEARCH_JOBS` has **no** `RoleGuardMiddleware` — public access.
 - Unlinked modules (bindings/controllers/views exist, zero `GetPage` entries): `auth/role_selector/`.
-- `Jobseekercongratulations/my_applications/` is a nested sub-module (own bindings/controllers/views) within `job_seeker/Jobseekercongratulations/` — zero `GetPage` entries.
 - `pubspec.yaml` uses `package:flutter_lints/flutter.yaml` — no custom lint rules.
