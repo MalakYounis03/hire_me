@@ -10,7 +10,7 @@ import '../../../job_seeker/chat/services/chat_services.dart';
 
 class CompanyChatController extends GetxController {
   final ChatService _chatService = ChatService();
-  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   final searchController = TextEditingController();
   final RxString searchQuery = ''.obs;

@@ -25,7 +25,7 @@ class ChatDetailsController extends GetxController {
   });
 
   final ChatService _chatService = ChatService();
-  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
   final messageController = TextEditingController();
   final scrollController = ScrollController();
   final RxBool hasText = false.obs;

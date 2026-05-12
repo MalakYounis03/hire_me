@@ -5,8 +5,8 @@ import '../../model/chat_model.dart';
 import 'avatar.dart';
 import 'chat_info.dart';
 import 'chat_meta.dart';
-import '../../../chat_details/views/chat_details_view.dart';
 import '../../../../../../core/utils/app_color.dart';
+import '../../../../../routes/app_pages.dart';
 
 class ChatTile extends StatelessWidget {
   final ChatModel chat;
@@ -20,8 +20,8 @@ class ChatTile extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Get.to(
-              () => const ChatDetailsView(),
+            Get.toNamed(
+              Routes.JOB_SEEKER_CHAT_DETAILS,
               arguments: {
                 'chatId': chat.id,
                 'chatName': chat.otherName(currentUserId),
@@ -29,7 +29,6 @@ class ChatTile extends StatelessWidget {
                 'seekerId': chat.seekerId,
                 'companyId': chat.companyId,
               },
-              transition: Transition.rightToLeft,
             );
           },
           borderRadius: BorderRadius.circular(12),

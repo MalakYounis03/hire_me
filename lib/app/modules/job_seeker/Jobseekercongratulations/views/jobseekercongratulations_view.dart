@@ -10,7 +10,6 @@ class JobSeekerCongratulationsView
     extends GetView<JobSeekerCongratulationsController> {
   const JobSeekerCongratulationsView({super.key});
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FF),

@@ -61,7 +61,11 @@ class JobSeekerApplyJobController extends GetxController {
 
     isLoading.value = true;
     try {
-      final uid = _auth.currentUser!.uid;
+      final uid = _auth.currentUser?.uid ?? '';
+      if (uid.isEmpty) {
+        _showError('Please login first');
+        return;
+      }
       final file = File(cvFilePath.value);
       final fileName =
           '${uid}_${DateTime.now().millisecondsSinceEpoch}_${cvFileName.value}';
