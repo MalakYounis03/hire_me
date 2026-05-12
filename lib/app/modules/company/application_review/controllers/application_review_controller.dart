@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../../routes/app_pages.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../model/application_review_model.dart';
 
 class ApplicationReviewController extends GetxController {
@@ -201,29 +200,12 @@ class ApplicationReviewController extends GetxController {
     }
   }
 
-  /// Opens the applicant's CV URL using url_launcher.
-  /// Falls back to a dummy PDF if no URL is provided.
-  Future<void> viewApplicantCV(String? cvUrl) async {
+  void viewApplicantCV(String? cvUrl) {
     final url = cvUrl?.isNotEmpty == true
         ? cvUrl!
         : 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    final uri = Uri.parse(url);
-
-    try {
-      // Attempt to launch directly. On Android 11+ this requires the
-      // <queries> intent in AndroidManifest.xml (already added).
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        _showError('No app found to open this link');
-      }
-    } catch (e) {
-      debugPrint('viewApplicantCV error: $e');
-      _showError('Failed to open CV. Please try again.');
-    }
+    Get.toNamed(Routes.PDF_VIEWER, arguments: url);
   }
 
   void _showError(String message) {
