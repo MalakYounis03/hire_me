@@ -31,6 +31,8 @@ import '../modules/company/post_job/bindings/company_post_job_binding.dart';
 import '../modules/company/post_job/views/company_post_job_view.dart';
 import '../modules/job_seeker/apply_job/bindings/job_seeker_apply_job_binding.dart';
 import '../modules/job_seeker/apply_job/views/job_seeker_apply_job_view.dart';
+import '../modules/job_seeker/Jobseekercongratulations/bindings/jobseekercongratulations_binding.dart';
+import '../modules/job_seeker/Jobseekercongratulations/views/jobseekercongratulations_view.dart';
 import '../modules/job_seeker/chat/bindings/chat_binding.dart';
 import '../modules/job_seeker/chat/views/chat_view.dart';
 import '../modules/job_seeker/chat_details/bindings/chat_details_binding.dart';
@@ -103,8 +105,8 @@ class AppPages {
     ),
     GetPage(
       name: Routes.JOB_SEEKER_CONGRATULATIONS,
-      page: () => const JobSeekerApplyJobView(),
-      binding: JobSeekerApplyJobBinding(),
+      page: () => const JobSeekerCongratulationsView(),
+      binding: JobSeekerCongratulationsBinding(),
       middlewares: [
         RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
       ],

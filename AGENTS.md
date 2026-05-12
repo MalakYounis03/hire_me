@@ -70,8 +70,7 @@ Background handler runs in a separate isolate and re-initializes Firebase.
 
 - **Broken font families:** `" Poppins"`, `" Inter"`, `" Segoe.UI"` have leading spaces in `app_text_style.dart` — won't match `Poppins`/`Inter`/`Segoe.UI` in `pubspec.yaml`.
 - `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has **no** `GetPage` entry in `app_pages.dart`.
-- `Routes.JOB_SEEKER_CONGRATULATIONS` maps to `JobSeekerApplyJobView`, not a dedicated view.
 - `Routes.JOB_SEEKER_SEARCH_JOBS` has **no** `RoleGuardMiddleware` — public access.
-- Unlinked modules (bindings/controllers/views exist, zero `GetPage` entries): `auth/role_selector/`, `job_seeker/Jobseekercongratulations/`.
-- `Jobseekercongratulations/my_applications/` is a nested sub-module (own bindings/controllers/views) within an already-unlinked parent.
+- Unlinked modules (bindings/controllers/views exist, zero `GetPage` entries): `auth/role_selector/`.
+- `Jobseekercongratulations/my_applications/` is a nested sub-module (own bindings/controllers/views) within `job_seeker/Jobseekercongratulations/` — zero `GetPage` entries.
 - `pubspec.yaml` uses `package:flutter_lints/flutter.yaml` — no custom lint rules.
