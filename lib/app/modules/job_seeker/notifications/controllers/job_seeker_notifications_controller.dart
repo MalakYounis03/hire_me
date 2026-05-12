@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../../data/repositories/notification_repository.dart';
+import '../../../../services/notification_service.dart';
 import '../../dashboard/controllers/job_seeker_dashboard_controller.dart';
 import '../models/notification_model.dart';
 
@@ -17,6 +18,7 @@ class JobSeekerNotificationsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    NotificationService.currentScreen.value = 'notifications';
     _listenToNotifications();
   }
 
@@ -67,6 +69,7 @@ class JobSeekerNotificationsController extends GetxController {
 
   @override
   void onClose() {
+    NotificationService.currentScreen.value = '';
     _notificationsSub?.cancel();
     super.onClose();
   }

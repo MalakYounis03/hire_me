@@ -55,16 +55,12 @@ class JobSeekerSavedJobsController extends GetxController {
               }
 
               final jobs = <JobModel>[];
-
-              for (final jobId in jobIds) {
-                final jobDoc = await _firestore
-                    .collection('jobs')
-                    .doc(jobId)
-                    .get();
-
-                if (jobDoc.exists && jobDoc.data() != null) {
-                  jobs.add(JobModel.fromMap(jobDoc.id, jobDoc.data()!));
-                }
+              final jobSnap = await _firestore
+                  .collection('jobs')
+                  .where(FieldPath.documentId, whereIn: jobIds.toList())
+                  .get();
+              for (final doc in jobSnap.docs) {
+                jobs.add(JobModel.fromMap(doc.id, doc.data()));
               }
 
               jobs.sort((a, b) {

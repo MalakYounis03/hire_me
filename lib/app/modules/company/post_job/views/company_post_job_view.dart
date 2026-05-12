@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -203,12 +204,11 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                           ),
                         )
                       : controller.companyLogoUrl.value.isNotEmpty
-                      ? Image.network(
-                          controller.companyLogoUrl.value,
+                      ? CachedNetworkImage(
+                          imageUrl: controller.companyLogoUrl.value,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _logoPlaceholder();
-                          },
+                          errorWidget: (context, url, error) =>
+                              _logoPlaceholder(),
                         )
                       : _logoPlaceholder(),
                 ),

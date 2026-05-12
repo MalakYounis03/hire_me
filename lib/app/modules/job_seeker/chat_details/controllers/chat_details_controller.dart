@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import '../../../../services/notification_service.dart';
 import '../../chat/services/chat_services.dart';
 import '../model/chat_details_model.dart';
 
@@ -40,6 +41,7 @@ class ChatDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    NotificationService.currentScreen.value = 'chat_details';
     _listenToMessages();
     _markChatAsRead();
     _markSeen();
@@ -138,6 +140,7 @@ class ChatDetailsController extends GetxController {
 
   @override
   void onClose() {
+    NotificationService.currentScreen.value = '';
     _messageSub?.cancel();
     _seenSub?.cancel();
     messageController.dispose();

@@ -12,7 +12,6 @@ class ChatService {
   // جيب كل الشاتس تبع اليوزر (real-time)
   // ─────────────────────────────────────────
   Stream<List<ChatModel>> getChats(String userId) {
-    // ignore: close_sinks
     final controller = StreamController<List<ChatModel>>();
 
     List<ChatModel> seekerChats = [];
@@ -24,9 +23,12 @@ class ChatService {
       controller.add(result);
     }
 
-    _db.child('chats').orderByChild('seekerId').equalTo(userId).onValue.listen((
-      event,
-    ) {
+    final seekerSub = _db
+        .child('chats')
+        .orderByChild('seekerId')
+        .equalTo(userId)
+        .onValue
+        .listen((event) {
       final data = event.snapshot.value as Map<dynamic, dynamic>?;
       seekerChats =
           data?.entries
@@ -36,17 +38,25 @@ class ChatService {
       emit();
     });
 
-    _db.child('chats').orderByChild('companyId').equalTo(userId).onValue.listen(
-      (event) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>?;
-        companyChats =
-            data?.entries
-                .map((e) => ChatModel.fromMap(e.key, e.value))
-                .toList() ??
-            [];
-        emit();
-      },
-    );
+    final companySub = _db
+        .child('chats')
+        .orderByChild('companyId')
+        .equalTo(userId)
+        .onValue
+        .listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      companyChats =
+          data?.entries
+              .map((e) => ChatModel.fromMap(e.key, e.value))
+              .toList() ??
+          [];
+      emit();
+    });
+
+    controller.onCancel = () {
+      seekerSub.cancel();
+      companySub.cancel();
+    };
 
     return controller.stream;
   }

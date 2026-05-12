@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
@@ -126,16 +127,14 @@ class JobCardWidget extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: job.logoUrl.isNotEmpty
-            ? Image.network(
-                job.logoUrl,
+            ? CachedNetworkImage(
+                imageUrl: job.logoUrl,
                 fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.business_rounded,
-                    color: AppColor.kblue,
-                    size: 28,
-                  );
-                },
+                errorWidget: (context, url, error) => Icon(
+                  Icons.business_rounded,
+                  color: AppColor.kblue,
+                  size: 28,
+                ),
               )
             : Icon(Icons.business_rounded, color: AppColor.kblue, size: 28),
       ),

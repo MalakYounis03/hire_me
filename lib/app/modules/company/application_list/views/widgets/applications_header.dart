@@ -5,10 +5,14 @@ import '../../../../../../core/utils/app_color.dart';
 class ApplicantsHeader extends StatelessWidget {
   final int jobsCount;
   final int applicantsCount;
+  final VoidCallback? onJobsTap;
+  final VoidCallback? onApplicationsTap;
 
   const ApplicantsHeader({
     required this.jobsCount,
     required this.applicantsCount,
+    this.onJobsTap,
+    this.onApplicationsTap,
     super.key,
   });
 
@@ -40,14 +44,19 @@ class ApplicantsHeader extends StatelessWidget {
               spacing: 10,
               runSpacing: 8,
               children: [
-                _InfoPill(
-                  icon: Icons.work_outline_rounded,
-                  text: '$jobsCount ${jobsCount == 1 ? 'job' : 'jobs'}',
+                GestureDetector(
+                  onTap: onJobsTap,
+                  child: _InfoPill(
+                    icon: Icons.work_outline_rounded,
+                    text: '$jobsCount ${jobsCount == 1 ? 'job' : 'jobs'}',
+                  ),
                 ),
-                _InfoPill(
-                  icon: Icons.group_outlined,
-                  text:
-                      '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
+                GestureDetector(
+                  onTap: onApplicationsTap,
+                  child: _InfoPill(
+                    icon: Icons.group_outlined,
+                    text: '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
+                  ),
                 ),
               ],
             ),
