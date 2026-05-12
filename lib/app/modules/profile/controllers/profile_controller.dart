@@ -167,7 +167,9 @@ class ProfileController extends GetxController {
                           height: 38,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                ? const Color(
+                                    0xFF1A3794,
+                                  ).withValues(alpha: 0.12)
                                 : const Color(0xFFE8EDF9),
                             shape: BoxShape.circle,
                           ),
