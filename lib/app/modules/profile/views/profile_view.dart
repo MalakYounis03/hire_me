@@ -76,7 +76,7 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              // Cover
+              // ── Cover ──
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -115,22 +115,28 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
 
-              // Avatar
+              // ── Avatar ──
               Positioned(
                 bottom: -36,
                 left: 16,
-                child: Obx(
-                  () => GestureDetector(
-                    onTap: controller.pickAndUploadImage,
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 44,
+                child: Obx(() {
+                  final showBadge = controller.isOpenToWork;
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // الصورة نفسها — بدون GestureDetector هون
+                      CircleAvatar(
+                        radius: 44,
+                        backgroundColor: showBadge
+                            ? const Color(0xFF22C55E)
+                            : Colors.white,
+                        child: CircleAvatar(
+                          radius: 40,
                           backgroundColor: Colors.white,
                           child: controller.isUploadingImage.value
                               ? CircularProgressIndicator(color: AppColor.kblue)
                               : CircleAvatar(
-                                  radius: 40,
+                                  radius: 38,
                                   backgroundColor: const Color(0xFFE8EDF9),
                                   backgroundImage:
                                       controller.userImage.isNotEmpty
@@ -139,15 +145,20 @@ class ProfileView extends GetView<ProfileController> {
                                   child: controller.userImage.isEmpty
                                       ? Icon(
                                           Icons.person_rounded,
-                                          size: 40,
+                                          size: 38,
                                           color: AppColor.kblue,
                                         )
                                       : null,
                                 ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
+                      ),
+
+                      // ── زر + منفصل تماماً ──
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: controller.pickAndUploadImage, // ← هون بس
                           child: Container(
                             width: 26,
                             height: 26,
@@ -163,10 +174,43 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+
+                      // ── Open to Work badge ──
+                      if (showBadge)
+                        Positioned(
+                          bottom: -10,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF22C55E),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: const Text(
+                                'Open to Work',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
               ),
             ],
           ),
@@ -214,24 +258,50 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                 ),
                 const SizedBox(height: 14),
+
+                // ── Action Buttons ──
                 Row(
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.kblue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    Flexible(
+                      child: Obx(
+                        () => ElevatedButton(
+                          onPressed: controller.showOpenToBottomSheet,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: controller.isOpenToWork
+                                ? const Color(0xFF22C55E)
+                                : AppColor.kblue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            elevation: 0,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (controller.isOpenToWork) ...[
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                              ],
+                              Flexible(
+                                child: Text(
+                                  controller.isOpenToWork
+                                      ? 'Open to Work'
+                                      : 'Open to',
+                                  style: CustomTextstyle.Interregular500,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 8,
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Open to',
-                        style: CustomTextstyle.Interregular500,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -284,7 +354,7 @@ class ProfileView extends GetView<ProfileController> {
     return _sectionCard(
       title: 'About',
       icon: Icons.person_outline_rounded,
-      onEdit: controller.showEditAboutDialog, // ← القلم يفتح dialog
+      onEdit: controller.showEditAboutDialog,
       child: Obx(
         () => controller.userAbout.isEmpty
             ? const Text(
@@ -365,7 +435,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ── Shared Section Card ───────────────────────────────
+  // ── Section Card ──────────────────────────────────────
   Widget _sectionCard({
     required String title,
     required IconData icon,
@@ -555,7 +625,6 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   // ── Mini Helpers ──────────────────────────────────────
-
   Widget _iconBox(IconData icon) => Container(
     width: 40,
     height: 40,

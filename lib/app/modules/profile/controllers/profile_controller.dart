@@ -9,16 +9,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
+  // ── State ─────────────────────────────────────────────
   final userModel = Rxn<UserModel>();
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
+  final openToOptions = <String>[].obs;
 
+  // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
   final _picker = ImagePicker();
 
+  // ── Getters ───────────────────────────────────────────
   String get userName => userModel.value?.name ?? '';
   String get userTitle => userModel.value?.title ?? '';
   String get userUniversity => userModel.value?.university ?? '';
@@ -29,6 +33,7 @@ class ProfileController extends GetxController {
   List<EducationModel> get education => userModel.value?.education ?? [];
   List<ExperienceModel> get experience => userModel.value?.experience ?? [];
   List<String> get skills => userModel.value?.skills ?? [];
+  bool get isOpenToWork => openToOptions.isNotEmpty;
 
   @override
   void onInit() {
@@ -36,6 +41,7 @@ class ProfileController extends GetxController {
     loadProfile();
   }
 
+  // ── Load Profile ──────────────────────────────────────
   Future<void> loadProfile() async {
     isLoading.value = true;
     try {
@@ -45,6 +51,7 @@ class ProfileController extends GetxController {
       if (doc.exists) {
         userModel.value = UserModel.fromMap(doc.data()!);
 
+        // fallback للاسم
         if (userModel.value?.name.isEmpty ?? true) {
           final userDoc = await _firestore.collection('users').doc(uid).get();
           final name = userDoc.data()?['name'] ?? '';
@@ -53,10 +60,13 @@ class ProfileController extends GetxController {
             userModel.value = userModel.value?.copyWith(name: name);
           }
         }
+
+        // حمّل openToOptions
+        final saved = List<String>.from(doc.data()?['openToOptions'] ?? []);
+        openToOptions.assignAll(saved);
       } else {
         final userDoc = await _firestore.collection('users').doc(uid).get();
         final name = userDoc.data()?['name'] ?? '';
-
         final newUser = UserModel(
           uid: uid,
           email: _auth.currentUser?.email ?? '',
@@ -73,6 +83,194 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ── Open To Work ──────────────────────────────────────
+  void showOpenToBottomSheet() {
+    final allOptions = ['Open to Work', 'Freelance', 'Internship'];
+
+    // نسخة مؤقتة observable — بدون StatefulBuilder
+    final tempSelected = <String>[...openToOptions].obs;
+
+    Get.bottomSheet(
+      // Obx مباشرة بدون StatefulBuilder
+      Obx(
+        () => Container(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE0E0E0),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Open to',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A2E),
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                "Let recruiters know what opportunities you're looking for",
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+              const SizedBox(height: 20),
+
+              // ── Options ──
+              ...allOptions.map((option) {
+                final isSelected = tempSelected.contains(option);
+                return GestureDetector(
+                  onTap: () {
+                    if (isSelected) {
+                      tempSelected.remove(option);
+                    } else {
+                      tempSelected.add(option);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFFE8EDF9)
+                          : const Color(0xFFF5F7FF),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : Colors.transparent,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                : const Color(0xFFE8EDF9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            _optionIcon(option),
+                            color: isSelected
+                                ? const Color(0xFF1A3794)
+                                : const Color(0xFF8A8A9A),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Text(
+                          option,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? const Color(0xFF1A3794)
+                                : const Color(0xFF1A1A2E),
+                          ),
+                        ),
+                        const Spacer(),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Color(0xFF1A3794),
+                                  size: 22,
+                                  key: ValueKey('check'),
+                                )
+                              : const Icon(
+                                  Icons.circle_outlined,
+                                  color: Color(0xFFCCCCCC),
+                                  size: 22,
+                                  key: ValueKey('empty'),
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 20),
+
+              // ── Save ──
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _saveOpenTo(List<String>.from(tempSelected));
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A3794),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Future<void> _saveOpenTo(List<String> selected) async {
+    openToOptions.assignAll(selected);
+    await _updateField('openToOptions', selected);
+  }
+
+  IconData _optionIcon(String option) {
+    switch (option) {
+      case 'Open to Work':
+        return Icons.work_outline_rounded;
+      case 'Freelance':
+        return Icons.laptop_outlined;
+      case 'Internship':
+        return Icons.school_outlined;
+      default:
+        return Icons.circle_outlined;
+    }
+  }
+
+  // ── Upload Profile Image ──────────────────────────────
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -84,7 +282,6 @@ class ProfileController extends GetxController {
     try {
       final uid = _auth.currentUser!.uid;
       final fileName = 'profile_$uid.jpg';
-
       await _supabase.storage
           .from('profile-images')
           .upload(
@@ -92,11 +289,9 @@ class ProfileController extends GetxController {
             File(picked.path),
             fileOptions: const FileOptions(upsert: true),
           );
-
       final imageUrl = _supabase.storage
           .from('profile-images')
           .getPublicUrl(fileName);
-
       await _updateField('profileImage', imageUrl);
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
       _showSuccess('Profile photo updated!');
@@ -107,6 +302,7 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ── Upload Cover Image ────────────────────────────────
   Future<void> pickAndUploadCover() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -118,7 +314,6 @@ class ProfileController extends GetxController {
     try {
       final uid = _auth.currentUser!.uid;
       final fileName = 'cover_$uid.jpg';
-
       await _supabase.storage
           .from('profile-images')
           .upload(
@@ -126,11 +321,9 @@ class ProfileController extends GetxController {
             File(picked.path),
             fileOptions: const FileOptions(upsert: true),
           );
-
       final coverUrl = _supabase.storage
           .from('profile-images')
           .getPublicUrl(fileName);
-
       await _updateField('coverImage', coverUrl);
       userModel.value = userModel.value?.copyWith(coverImage: coverUrl);
       _showSuccess('Cover photo updated!');
@@ -141,6 +334,7 @@ class ProfileController extends GetxController {
     }
   }
 
+  // ── About ─────────────────────────────────────────────
   void showEditAboutDialog() {
     final ctrl = TextEditingController(text: userAbout);
     _showEditDialog(
@@ -153,8 +347,8 @@ class ProfileController extends GetxController {
     );
   }
 
+  // ── Education ─────────────────────────────────────────
   void showAddEducationDialog() => _openEducationDialog();
-
   void showEditEducationDialog(int index) =>
       _openEducationDialog(index: index, existing: education[index]);
 
@@ -190,19 +384,15 @@ class ProfileController extends GetxController {
           endYear: endCtrl.text,
         );
         final updated = [...education];
-        if (index == null) {
-          updated.add(edu);
-        } else {
-          updated[index] = edu;
-        }
+        index == null ? updated.add(edu) : updated[index] = edu;
         await _updateField('education', updated.map((e) => e.toMap()).toList());
         userModel.value = userModel.value?.copyWith(education: updated);
       },
     );
   }
 
+  // ── Experience ────────────────────────────────────────
   void showAddExperienceDialog() => _openExperienceDialog();
-
   void showEditExperienceDialog(int index) =>
       _openExperienceDialog(index: index, existing: experience[index]);
 
@@ -238,11 +428,7 @@ class ProfileController extends GetxController {
           description: descCtrl.text,
         );
         final updated = [...experience];
-        if (index == null) {
-          updated.add(exp);
-        } else {
-          updated[index] = exp;
-        }
+        index == null ? updated.add(exp) : updated[index] = exp;
         await _updateField(
           'experience',
           updated.map((e) => e.toMap()).toList(),
@@ -252,6 +438,7 @@ class ProfileController extends GetxController {
     );
   }
 
+  // ── Skills ────────────────────────────────────────────
   void showAddSkillDialog() {
     final skillCtrl = TextEditingController();
     _showEditDialog(
@@ -272,11 +459,13 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
+  // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
     await _auth.signOut();
     Get.offAllNamed(Routes.SPLASH);
   }
 
+  // ── Shared Dialog Helper ──────────────────────────────
   void _showEditDialog({
     required String title,
     required List<Widget> fields,
