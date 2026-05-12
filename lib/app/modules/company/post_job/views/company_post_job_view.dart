@@ -190,7 +190,9 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                 decoration: BoxDecoration(
                   color: const Color(0xffDEE8F8),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColor.kblue.withOpacity(0.25)),
+                  border: Border.all(
+                    color: AppColor.kblue.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: ClipOval(
                   child: controller.isUploadingLogo.value
@@ -281,7 +283,9 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
-          borderSide: BorderSide(color: AppColor.eblack.withOpacity(0.04)),
+          borderSide: BorderSide(
+            color: AppColor.eblack.withValues(alpha: 0.04),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(7),
@@ -334,7 +338,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
         decoration: BoxDecoration(
           color: AppColor.kwhite,
           borderRadius: BorderRadius.circular(7),
-          border: Border.all(color: AppColor.eblack.withOpacity(0.04)),
+          border: Border.all(color: AppColor.eblack.withValues(alpha: 0.04)),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
