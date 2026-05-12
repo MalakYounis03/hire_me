@@ -21,13 +21,14 @@ class ChatTile extends StatelessWidget {
         InkWell(
           onTap: () {
             Get.to(
-              () => ChatDetailsView(
-                chatName: chat.otherName(currentUserId),
-                avatarUrl: chat.avatarUrl,
-                seekerId: chat.seekerId,
-                companyId: chat.companyId,
-              ),
-              arguments: {'chatId': chat.id},
+              () => const ChatDetailsView(),
+              arguments: {
+                'chatId': chat.id,
+                'chatName': chat.otherName(currentUserId),
+                'avatarUrl': chat.avatarUrl,
+                'seekerId': chat.seekerId,
+                'companyId': chat.companyId,
+              },
               transition: Transition.rightToLeft,
             );
           },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,9 @@ class CompanyChatDetailsController extends GetxController {
   final RxString selectedMessageId = ''.obs;
   bool isMe(String senderId) => senderId == currentUserId;
 
+  StreamSubscription? _messageSub;
+  StreamSubscription? _seenSub;
+
   @override
   void onInit() {
     super.onInit();
@@ -42,7 +47,7 @@ class CompanyChatDetailsController extends GetxController {
   }
 
   void _listenToMessages() {
-    _chatService.getMessages(chatId).listen((msgs) {
+    _messageSub = _chatService.getMessages(chatId).listen((msgs) {
       messages.value = msgs;
       isLoading.value = false;
       _markSeen();
@@ -113,7 +118,7 @@ class CompanyChatDetailsController extends GetxController {
   void _listenToOtherSeen() {
     final otherId = currentUserId == seekerId ? companyId : seekerId;
 
-    FirebaseDatabase.instance
+    _seenSub = FirebaseDatabase.instance
         .ref()
         .child('chats/$chatId/meta/lastSeenBy/$otherId')
         .onValue
@@ -133,6 +138,8 @@ class CompanyChatDetailsController extends GetxController {
 
   @override
   void onClose() {
+    _messageSub?.cancel();
+    _seenSub?.cancel();
     messageController.dispose();
     scrollController.dispose();
     super.onClose();
