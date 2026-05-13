@@ -55,8 +55,8 @@ import '../modules/job_seeker/search_jobs/bindings/job_seeker_search_jobs_bindin
 import '../modules/job_seeker/search_jobs/views/job_seeker_search_jobs_view.dart';
 import '../modules/pdf_viewer/bindings/pdf_viewer_binding.dart';
 import '../modules/pdf_viewer/views/pdf_viewer_view.dart';
-import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
-import '../modules/main_wrapper/views/main_wrapper_view.dart';
+import '../modules/job_seeker/jobseeker_main_wrapper/bindings/main_wrapper_binding.dart';
+import '../modules/job_seeker/jobseeker_main_wrapper/views/main_wrapper_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../services/storage_service.dart';
