@@ -61,6 +61,7 @@ exports.onNewApplication = onDocumentCreated(
       logger.warn(`No FCM token for company ${companyId}`);
       return;
     }
+    logger.info(`FCM token found for company ${companyId} (len=${fcmToken.length})`);
 
     const message = {
       notification: {
