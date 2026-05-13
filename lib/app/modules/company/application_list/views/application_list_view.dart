@@ -30,6 +30,7 @@ class ApplicationListView extends GetView<ApplicationListController> {
               _StatusFilterBar(
                 selectedStatus: controller.selectedStatus.value,
                 onSelect: (s) => controller.selectedStatus.value = s,
+                isReadOnly: controller.selectedStatus.value != 'Pending',
               ),
             Expanded(
               child: controller.activeTab.value == 'jobs'
@@ -206,7 +207,10 @@ class ApplicationListView extends GetView<ApplicationListController> {
                       itemCount: job.applicants.length,
                       itemBuilder: (_, applicantIndex) {
                         final applicant = job.applicants[applicantIndex];
-                        return ApplicantTile(applicant: applicant);
+                        return ApplicantTile(
+                          applicant: applicant,
+                          readOnly: controller.selectedStatus.value != 'Pending',
+                        );
                       },
                     ),
                   ],
@@ -293,13 +297,15 @@ class _TabBar extends StatelessWidget {
 class _StatusFilterBar extends StatelessWidget {
   final String selectedStatus;
   final void Function(String) onSelect;
+  final bool isReadOnly;
 
   const _StatusFilterBar({
     required this.selectedStatus,
     required this.onSelect,
+    required this.isReadOnly,
   });
 
-  static const _tabs = ['All', 'Pending', 'Accepted', 'Rejected'];
+  static const _tabs = ['Pending', 'Accepted', 'Rejected'];
 
   @override
   Widget build(BuildContext context) {

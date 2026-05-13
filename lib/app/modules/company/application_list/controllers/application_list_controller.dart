@@ -17,15 +17,17 @@ class ApplicationListController extends GetxController {
   final jobsCount = 0.obs;
   final applicantsCount = 0.obs;
   final activeTab = 'applications'.obs;
-  final selectedStatus = 'All'.obs;
+  final selectedStatus = 'Pending'.obs;
 
   List<JobWithApplicants> get filteredJobs {
-    if (selectedStatus.value == 'All') return jobs;
     return jobs
         .map((job) {
-          final filtered = job.applicants
-              .where((a) => a.status == selectedStatus.value)
-              .toList();
+          final filtered = job.applicants.where((a) {
+            if (selectedStatus.value == 'Pending') {
+              return a.status != 'Accepted' && a.status != 'Rejected';
+            }
+            return a.status == selectedStatus.value;
+          }).toList();
           return JobWithApplicants(
             jobId: job.jobId,
             jobTitle: job.jobTitle,
@@ -99,6 +101,7 @@ class ApplicationListController extends GetxController {
                       avatarUrl: data['avatarUrl'] as String? ?? '',
                       status: data['status'] as String? ?? 'pending',
                       appliedAt: data['appliedAt'] as String? ?? '',
+                      updatedAt: data['updatedAt'] as String? ?? '',
                       applicantFcmToken: data['applicantFcmToken'] as String? ?? '',
                     ),
                   );
@@ -126,19 +129,12 @@ class ApplicationListController extends GetxController {
     _jobsSub = _firestore
         .collection('jobs')
         .where('companyId', isEqualTo: companyId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
         .listen(
           (snapshot) {
             if (isClosed) return;
 
-            if (snapshot.docs.isEmpty) {
-              companyJobs.value = [];
-              isJobsLoading.value = false;
-              return;
-            }
-
-            companyJobs.value = snapshot.docs.map((doc) {
+            final loaded = snapshot.docs.map((doc) {
               final model = CompanyJobModel.fromMap(doc.id, doc.data());
               return CompanyJobModel(
                 id: model.id,
@@ -154,6 +150,13 @@ class ApplicationListController extends GetxController {
               );
             }).toList();
 
+            loaded.sort((a, b) {
+              final aTime = a.createdAt?.millisecondsSinceEpoch ?? 0;
+              final bTime = b.createdAt?.millisecondsSinceEpoch ?? 0;
+              return bTime.compareTo(aTime);
+            });
+
+            companyJobs.value = loaded;
             isJobsLoading.value = false;
           },
           onError: (e) {
