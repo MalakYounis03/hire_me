@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class CompanyMainWrapperController extends GetxController {
-  final currentIndex = 0.obs;
+  final currentIndex = 3.obs;
 
   @override
   void onInit() {
@@ -22,7 +22,39 @@ class CompanyMainWrapperController extends GetxController {
     currentIndex.value = index;
   }
 
-  void onPostJobPressed() {
-    currentIndex.value = 2;
+  void goToDashboard() {
+    currentIndex.value = 3;
+  }
+
+  void goToPostJob() {
+    currentIndex.value = 4;
   }
 }
+// import 'package:get/get.dart';
+
+// class CompanyMainWrapperController extends GetxController {
+//   final currentIndex = 0.obs;
+
+//   @override
+//   void onInit() {
+//     super.onInit();
+
+//     final args = Get.arguments;
+
+//     if (args is Map<String, dynamic>) {
+//       final initialIndex = args['initialIndex'];
+
+//       if (initialIndex is int && initialIndex >= 0 && initialIndex <= 4) {
+//         currentIndex.value = initialIndex;
+//       }
+//     }
+//   }
+
+//   void changePage(int index) {
+//     currentIndex.value = index;
+//   }
+
+//   void onPostJobPressed() {
+//     currentIndex.value = 2;
+//   }
+// }
