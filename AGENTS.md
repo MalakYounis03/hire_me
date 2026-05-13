@@ -13,11 +13,11 @@ flutter build apk --release                       # Release APK
 firebase deploy --only functions                  # Deploy Cloud Functions
 ```
 
-CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub` → `build apk --release` → Firebase App Distribution. Flutter `3.41.6`, Java 17.
+CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub` → `build apk --release` → upload APK as artifact → Firebase App Distribution. Flutter `3.41.6`, Java 17.
 
 ## Setup
 
-- `.env` at project root (asset, gitignored). Required: `SUPABASE_URL`, `SUPABASE_ANON_KEY`.
+- `.env` at project root (required: `SUPABASE_URL`, `SUPABASE_ANON_KEY`). Listed in `pubspec.yaml` assets (bundled with app).
 - `flutterfire configure --project=hireme-a59e6` generates `lib/firebase_options.dart` + `android/app/google-services.json`.
 - **Do not edit:** `firebase_options.dart`, `google-services.json`, `.env` (denied in `opencode.json`).
 - Cloud Functions at `functions/` (Node 20, firebase-functions v5). Deploy from project root.
@@ -25,12 +25,14 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 ## Architecture
 
 - **State/routing:** GetX. Import `app/routes/app_pages.dart` only — `app_routes.dart` is `part of 'app_pages.dart'`. Use `Routes.*` constants.
-- **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Each sub-feature: `bindings/`, `controllers/`, `views/`. (Job seeker's main wrapper is at `job_seeker/jobseeker_main_wrapper/`.)
+- **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Each sub-feature: `bindings/`, `controllers/`, `views/`. Job seeker's main wrapper at `job_seeker/jobseeker_main_wrapper/`.
 - **Data layer:** `lib/app/data/repositories/notification_repository.dart` only. Models inline per-module (`model/` dirs).
 - **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (initialized with `AuthFlowType.pkce`).
-- **Notifications:** FCM tokens stored in `companies/{companyId}` (company) and `jobSeekers/{jobSeekerId}` (job seeker) via Cloud Functions triggers on application create/update and RTDB message create. Tap routing: `application_update` → `JOB_SEEKER_NOTIFICATIONS`, `new_application` → `APPLICATION_LIST`, `chat_message` → role-based chat details.
-- **RTDB chat path:** `chats/{companyId}_{jobSeekerId}` with messages at `chats/{chatId}/messages/`.
-- **Entrypoint (`lib/main.dart`):** Background handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `Future.wait(Firebase.initializeApp, Supabase.initialize)` (note: `Firebase.apps.isEmpty` guard since background isolate may init first) → `Get.putAsync(StorageService)` → `Get.putAsync(NotificationService)` → `runApp(GetMaterialApp)`.
+- **Notifications:** FCM tokens stored in `companies/{companyId}` and `jobSeekers/{jobSeekerId}` via Cloud Functions triggers on application create/update and RTDB message create. In-app notifications in Firestore `notifications/{userId}/items/`. Tap routing: `application_update` → `JOB_SEEKER_NOTIFICATIONS`, `new_application` → `APPLICATION_LIST`, `chat_message` → role-based chat details.
+- **RTDB chat path:** `chats/{chatId}/messages/` with chat metadata (participants, lastMessage, unread counts) at `chats/{chatId}`.
+- **Entrypoint (`lib/main.dart`):** Background handler (`@pragma('vm:entry-point')`) at line 13 → `dotenv.load` → `Future.wait(Firebase.initializeApp, Supabase.initialize)` with `Firebase.apps.isEmpty` guard (background isolate may init first) → `Get.putAsync(StorageService)` → `Get.putAsync(NotificationService)` → `runApp(GetMaterialApp)`.
+- **`AppUserRole` enum** (company, job_seeker) + `normalizeRole()` in `storage_service.dart`.
+- `NotificationService.currentScreen` (`RxString`) suppresses foreground notifications when already on the relevant screen.
 
 ### Session & Role Guard
 
@@ -50,6 +52,11 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 
 - Manual fakes only — no mockito/mocktail (not in `pubspec.yaml`). No Firebase/Supabase init needed in tests.
 - Call `Get.reset()` in `tearDown` for GetX isolation.
+- 4 test files exist: `widget_test.dart` (placeholder), `auth_login_controller_test.dart`, `job_seeker_dashboard_controller_test.dart`, `application_review_controller_test.dart`.
+
+## Skills (local)
+
+- `hireme_skills/` contains 3 OpenCode skills used for scaffolding and review: `flutter-getx-controller`, `flutter-code-review`, `flutter-pr`.
 
 ## Quirks
 

@@ -11,12 +11,15 @@ class CompanyDashboardController extends GetxController {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _jobsSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _applicationsSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _notificationsSubscription;
 
   final isLoading = true.obs;
 
   final totalJobs = 0.obs;
   final totalApplicants = 0.obs;
   final acceptedApplicants = 0.obs;
+  final unreadCount = 0.obs;
 
   final recentApplicants = <CompanyRecentApplicant>[].obs;
 
@@ -107,6 +110,16 @@ class CompanyDashboardController extends GetxController {
             isLoading.value = false;
           },
         );
+
+    _notificationsSubscription = _firestore
+        .collection('notifications')
+        .doc(uid)
+        .collection('items')
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .listen((snapshot) {
+      unreadCount.value = snapshot.docs.length;
+    });
   }
 
   String formatDate(dynamic timestamp) {
@@ -126,6 +139,7 @@ class CompanyDashboardController extends GetxController {
   void onClose() {
     _jobsSubscription?.cancel();
     _applicationsSubscription?.cancel();
+    _notificationsSubscription?.cancel();
     super.onClose();
   }
 }

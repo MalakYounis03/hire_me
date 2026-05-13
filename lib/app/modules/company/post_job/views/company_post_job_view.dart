@@ -169,11 +169,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
               ),
             ),
           ),
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
-          ),
+          const SizedBox(width: 20),
         ],
       ),
     );
