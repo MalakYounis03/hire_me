@@ -51,16 +51,24 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _getFcmToken() async {
-    final token = await _messaging.getToken();
-    if (token != null) {
-      await _saveTokenToFirestore(token);
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await _saveTokenToFirestore(token);
+      }
+    } catch (e) {
+      debugPrint('FCM token retrieval failed: $e');
     }
   }
 
   Future<void> saveFcmToken() async {
-    final token = await _messaging.getToken();
-    if (token != null) {
-      await _saveTokenToFirestore(token);
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await _saveTokenToFirestore(token);
+      }
+    } catch (e) {
+      debugPrint('FCM token retrieval failed: $e');
     }
   }
 

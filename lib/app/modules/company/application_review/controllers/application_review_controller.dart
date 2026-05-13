@@ -15,6 +15,7 @@ class ApplicationReviewController extends GetxController {
 
   final isProcessing = false.obs;
   final companyName = ''.obs;
+  final readOnly = false.obs;
 
   String get companyId => _auth.currentUser?.uid ?? '';
 
@@ -40,24 +41,32 @@ class ApplicationReviewController extends GetxController {
   }
 
   void _initializeApplicant() {
-    if (Get.arguments != null && Get.arguments is ApplicationReviewModel) {
-      applicant = (Get.arguments as ApplicationReviewModel).obs;
-    } else {
-      applicant = ApplicationReviewModel(
-        id: '0',
-        jobSeekerId: '0',
-        name: 'Unknown',
-        jobTitle: 'Unknown',
-        location: 'Unknown',
-        email: 'Unknown',
-        skills: 'Unknown',
-        experience: 'Unknown',
-        education: 'Unknown',
-        cvUrl: '',
-        appliedAt: '',
-        applicantFcmToken: '',
-      ).obs;
+    if (Get.arguments != null) {
+      if (Get.arguments is Map<String, dynamic>) {
+        final args = Get.arguments as Map<String, dynamic>;
+        applicant = (args['application'] as ApplicationReviewModel).obs;
+        readOnly.value = args['readOnly'] as bool? ?? false;
+        return;
+      }
+      if (Get.arguments is ApplicationReviewModel) {
+        applicant = (Get.arguments as ApplicationReviewModel).obs;
+        return;
+      }
     }
+    applicant = ApplicationReviewModel(
+      id: '0',
+      jobSeekerId: '0',
+      name: 'Unknown',
+      jobTitle: 'Unknown',
+      location: 'Unknown',
+      email: 'Unknown',
+      skills: 'Unknown',
+      experience: 'Unknown',
+      education: 'Unknown',
+      cvUrl: '',
+      appliedAt: '',
+      applicantFcmToken: '',
+    ).obs;
   }
 
   /// Accepts the application, updates its status in Firestore, creates a new
@@ -75,8 +84,10 @@ class ApplicationReviewController extends GetxController {
 
     try {
       // 1. Update application status to Accepted in Firestore
+      final updatedAt = DateTime.now().toIso8601String();
       await _firestore.collection('applications').doc(applicationId).set({
         'status': 'Accepted',
+        'updatedAt': updatedAt,
       }, SetOptions(merge: true));
 
       if (isClosed) return;
@@ -168,6 +179,7 @@ class ApplicationReviewController extends GetxController {
     try {
       await _firestore.collection('applications').doc(applicationId).set({
         'status': 'Rejected',
+        'updatedAt': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
 
       if (isClosed) return;
