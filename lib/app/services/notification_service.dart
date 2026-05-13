@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import '../routes/app_pages.dart';
+import 'storage_service.dart';
 
 class NotificationService extends GetxService {
   static final RxString currentScreen = ''.obs;
@@ -80,9 +81,7 @@ class NotificationService extends GetxService {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
     try {
-      final userDoc = await _firestore.collection('users').doc(uid).get();
-      final role = userDoc.data()?['role'] as String?;
-
+      final role = StorageService.to.userRole;
       if (role == 'job_seeker') {
         await _firestore.collection('jobSeekers').doc(uid).set({
           'fcmToken': token,

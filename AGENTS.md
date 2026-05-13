@@ -25,7 +25,7 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 ## Architecture
 
 - **State/routing:** GetX. Import `app/routes/app_pages.dart` only — `app_routes.dart` is `part of 'app_pages.dart'`. Use `Routes.*` constants.
-- **Modules:** `lib/app/modules/{auth, company, job_seeker, main_wrapper, pdf_viewer, profile}`. Each sub-feature: `bindings/`, `controllers/`, `views/`.
+- **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Each sub-feature: `bindings/`, `controllers/`, `views/`. (Job seeker's main wrapper is at `job_seeker/jobseeker_main_wrapper/`.)
 - **Data layer:** `lib/app/data/repositories/notification_repository.dart` only. Models inline per-module (`model/` dirs).
 - **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (initialized with `AuthFlowType.pkce`).
 - **Notifications:** FCM tokens stored in `companies/{companyId}` (company) and `jobSeekers/{jobSeekerId}` (job seeker) via Cloud Functions triggers on application create/update and RTDB message create. Tap routing: `application_update` → `JOB_SEEKER_NOTIFICATIONS`, `new_application` → `APPLICATION_LIST`, `chat_message` → role-based chat details.
@@ -55,6 +55,6 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 
 - **Broken fonts:** `" Poppins"`, `" Inter"`, `" Segoe.UI"` have leading spaces in `app_text_style.dart` — won't match `Poppins`/`Inter`/`Segoe.UI` in `pubspec.yaml`. (`Montserrat` and `Roboto` are correct.)
 - `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has **no** `GetPage` entry in `app_pages.dart`.
-- `Routes.JOB_SEEKER_SEARCH_JOBS` has **no** `RoleGuardMiddleware` — public access.
+- `Routes.JOB_SEEKER_SEARCH_JOBS` (resolves to `/job-seeker/search-jobs`) is registered at `/search-jobs` in `app_pages.dart` — path mismatch. Also has **no** `RoleGuardMiddleware` — public access.
 - Unlinked modules (bindings/controllers/views exist, zero `GetPage` entries): `auth/role_selector/`.
 - `pubspec.yaml` uses `package:flutter_lints/flutter.yaml` — no custom lint rules.
