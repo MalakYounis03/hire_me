@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../../../core/utils/app_color.dart';
 import '../../application_list/views/application_list_view.dart';
 import '../../company_chat/views/company_chat_view.dart';
 import '../../company_profile/views/company_profile_view.dart';
 import '../../dashboard/views/company_dashboard_view.dart';
+import '../../post_job/views/company_post_job_view.dart';
 import '../controllers/company_main_wrapper_controller.dart';
 
 class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
@@ -19,13 +21,12 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
           children: const [
             CompanyDashboardView(),
             ApplicationListView(),
+            CompanyPostJobView(showBackButton: false),
             CompanyChatView(),
             CompanyProfileView(),
           ],
         ),
       ),
-
-      // الـ FAB في المنتصف لـ Post Job
       floatingActionButton: FloatingActionButton(
         onPressed: controller.onPostJobPressed,
         backgroundColor: AppColor.kblue,
@@ -34,7 +35,6 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
         child: Icon(Icons.add_rounded, color: AppColor.kwhite, size: 30),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: AppColor.kwhite,
@@ -57,37 +57,26 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Dashboard
                   _buildNavItem(
                     index: 0,
                     icon: Icons.home_outlined,
                     activeIcon: Icons.home_rounded,
-                    label: 'Home',
                   ),
-                  // Applications
                   _buildNavItem(
                     index: 1,
                     icon: Icons.description_outlined,
                     activeIcon: Icons.description_rounded,
-                    label: 'Applications',
                   ),
-
-                  // مكان فارغ للـ FAB في المنتصف
                   const SizedBox(width: 48),
-
-                  // Chat
-                  _buildNavItem(
-                    index: 2,
-                    icon: Icons.chat_bubble_outline_rounded,
-                    activeIcon: Icons.chat_bubble_rounded,
-                    label: 'Chat',
-                  ),
-                  // Profile
                   _buildNavItem(
                     index: 3,
+                    icon: Icons.chat_bubble_outline_rounded,
+                    activeIcon: Icons.chat_bubble_rounded,
+                  ),
+                  _buildNavItem(
+                    index: 4,
                     icon: Icons.person_outline_rounded,
                     activeIcon: Icons.person_rounded,
-                    label: 'Profile',
                   ),
                 ],
               ),
@@ -102,32 +91,35 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
     required int index,
     required IconData icon,
     required IconData activeIcon,
-    required String label,
   }) {
     return Obx(() {
       final isSelected = controller.currentIndex.value == index;
+
       return GestureDetector(
         onTap: () => controller.changePage(index),
         behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColor.kblue.withValues(alpha: 0.1)
-                    : Colors.transparent,
-                shape: BoxShape.circle,
+        child: SizedBox(
+          width: 52,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColor.kblue.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isSelected ? activeIcon : icon,
+                  size: 26,
+                  color: isSelected ? AppColor.kblue : AppColor.greyLight,
+                ),
               ),
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                size: 26,
-                color: isSelected ? AppColor.kblue : AppColor.greyLight,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });
