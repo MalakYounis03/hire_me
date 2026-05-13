@@ -121,7 +121,7 @@ class JobSeekerApplyJobController extends GetxController {
       };
       await _firestore.collection('applications').add(data);
 
-      Get.offNamed(Routes.JOB_SEEKER_CONGRATULATIONS);
+      Get.offNamed(Routes.jobSeekerCongratulations);
     } catch (e) {
       _showError('Failed to apply: $e');
     } finally {

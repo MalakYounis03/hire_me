@@ -74,6 +74,6 @@ class OnboardingController extends GetxController {
 
   Future<void> _goToSelectUser() async {
     await StorageService.to.markOnboardingComplete();
-    Get.offAllNamed(Routes.AUTH_SELECT_USER);
+    Get.offAllNamed(Routes.authSelectUser);
   }
 }

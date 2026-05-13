@@ -3,79 +3,82 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
 
-  static const SPLASH = _Paths.SPLASH;
-  static const ONBOARDING = _Paths.ONBOARDING;
-  static const AUTH_SELECT_USER = _Paths.AUTH_SELECT_USER;
-  static const AUTH_LOGIN = _Paths.AUTH_LOGIN;
-  static const AUTH_REGISTER = _Paths.AUTH_REGISTER;
-  static const AUTH_FORGOT_PASSWORD = _Paths.AUTH_FORGOT_PASSWORD;
+  static const splash = _Paths.splash;
+  static const onboarding = _Paths.onboarding;
+  static const authSelectUser = _Paths.authSelectUser;
+  static const authLogin = _Paths.authLogin;
+  static const authRegister = _Paths.authRegister;
+  static const authForgotPassword = _Paths.authForgotPassword;
 
-  static const PROFILE = _Paths.PROFILE;
+  static const profile = _Paths.profile;
 
-  static const JOB_SEEKER_DASHBOARD = _Paths.JOB_SEEKER + _Paths.DASHBOARD;
-  static const JOB_SEEKER_CONGRATULATIONS =
-      _Paths.JOB_SEEKER + _Paths.JOB_SEEKER_CONGRATULATIONS;
-  static const JOB_SEEKER_JOB_DETAILS = _Paths.JOB_SEEKER + _Paths.JOB_DETAILS;
-  static const JOB_SEEKER_APPLY_JOB = _Paths.JOB_SEEKER + _Paths.APPLY_JOB;
-  static const JOB_SEEKER_MY_APPLICATIONS =
-      _Paths.JOB_SEEKER + _Paths.MY_APPLICATIONS;
+  static const jobSeekerDashboard = _Paths.jobSeeker + _Paths.dashboard;
+  static const jobSeekerCongratulations =
+      _Paths.jobSeeker + _Paths.jobSeekerCongratulations;
+  static const jobSeekerJobDetails = _Paths.jobSeeker + _Paths.jobDetails;
+  static const jobSeekerApplyJob = _Paths.jobSeeker + _Paths.applyJob;
+  static const jobSeekerMyApplications =
+      _Paths.jobSeeker + _Paths.myApplications;
 
-  static const COMPANY_DASHBOARD = _Paths.COMPANY + _Paths.DASHBOARD;
-  static const COMPANY_POST_JOB = _Paths.COMPANY + _Paths.POST_JOB;
-  static const COMPANY_APPLICANTS = _Paths.COMPANY + _Paths.APPLICANTS;
-  static const JOB_SEEKER_MAIN_FIELDS = _Paths.JOB_SEEKER + _Paths.MAIN_FIELDS;
-  static const JOB_SEEKER_NOTIFICATIONS =
-      _Paths.JOB_SEEKER + _Paths.NOTIFICATIONS;
-  static const JOB_SEEKER_SAVED_JOBS = _Paths.JOB_SEEKER + _Paths.SAVED_JOBS;
-  static const JOB_SEEKER_CHAT = _Paths.JOB_SEEKER + _Paths.CHAT;
-  static const JOB_SEEKER_CHAT_DETAILS =
-      _Paths.JOB_SEEKER + _Paths.CHAT_DETAILS;
-  static const MAIN_WRAPPER = _Paths.MAIN_WRAPPER;
+  static const companyDashboard = _Paths.company + _Paths.dashboard;
+  static const companyPostJob = _Paths.company + _Paths.postJob;
+  static const companyApplicants = _Paths.company + _Paths.applicants;
 
-  static const APPLICATION_REVIEW = _Paths.APPLICATION_REVIEW;
-  static const APPLICATION_LIST = _Paths.APPLICATION_LIST;
-  static const COMPANY_MAIN_WRAPPER = _Paths.COMPANY_MAIN_WRAPPER;
-  static const COMPANY_CHAT = _Paths.COMPANY_CHAT;
-  static const COMPANY_PROFILE = _Paths.COMPANY_PROFILE;
-  static const COMPANY_CHAT_DETAILS = _Paths.COMPANY_CHAT_DETAILS;
-  static const COMPANY_NOTIFICATIONS = _Paths.COMPANY_NOTIFICATIONS;
-  static const JOB_SEEKER_SEARCH_JOBS = _Paths.JOB_SEEKER + _Paths.SEARCH_JOBS;
-  static const PDF_VIEWER = _Paths.PDF_VIEWER;
+  static const jobSeekerMainFields = _Paths.jobSeeker + _Paths.mainFields;
+  static const jobSeekerNotifications = _Paths.jobSeeker + _Paths.notifications;
+  static const jobSeekerSavedJobs = _Paths.jobSeeker + _Paths.savedJobs;
+  static const jobSeekerChat = _Paths.jobSeeker + _Paths.chat;
+  static const jobSeekerChatDetails = _Paths.jobSeeker + _Paths.chatDetails;
+  static const jobSeekerSearchJobs = _Paths.jobSeeker + _Paths.searchJobs;
+
+  static const mainWrapper = _Paths.mainWrapper;
+
+  static const applicationReview = _Paths.applicationReview;
+  static const applicationList = _Paths.applicationList;
+
+  static const companyMainWrapper = _Paths.companyMainWrapper;
+  static const companyChat = _Paths.companyChat;
+  static const companyProfile = _Paths.companyProfile;
+  static const companyChatDetails = _Paths.companyChatDetails;
+  static const companyNotifications = _Paths.companyNotifications;
+
+  static const pdfViewer = _Paths.pdfViewer;
 }
 
 abstract class _Paths {
   _Paths._();
 
-  static const SPLASH = '/splash';
-  static const ONBOARDING = '/onboarding';
-  static const AUTH_SELECT_USER = '/select-user';
-  static const AUTH_LOGIN = '/login';
-  static const AUTH_REGISTER = '/register';
-  static const AUTH_FORGOT_PASSWORD = '/forgot-password';
-  static const JOB_SEEKER = '/job-seeker';
+  static const splash = '/splash';
+  static const onboarding = '/onboarding';
+  static const authSelectUser = '/select-user';
+  static const authLogin = '/login';
+  static const authRegister = '/register';
+  static const authForgotPassword = '/forgot-password';
 
-  static const JOB_SEEKER_CONGRATULATIONS = '/congratulations';
-  static const COMPANY = '/company';
-  static const DASHBOARD = '/dashboard';
-  static const JOB_DETAILS = '/job-details';
-  static const APPLY_JOB = '/apply-job';
-  static const PROFILE = '/profile';
-  static const MY_APPLICATIONS = '/my-applications';
-  static const POST_JOB = '/post-job';
-  static const APPLICANTS = '/applicants';
-  static const MAIN_FIELDS = '/main-fields';
-  static const NOTIFICATIONS = '/notifications';
-  static const SAVED_JOBS = '/saved-jobs';
-  static const CHAT = '/chat';
-  static const CHAT_DETAILS = '/chat-details';
-  static const MAIN_WRAPPER = '/main-wrapper';
-  static const APPLICATION_REVIEW = '/application-review';
-  static const APPLICATION_LIST = '/application-list';
-  static const COMPANY_MAIN_WRAPPER = '/company-main-wrapper';
-  static const COMPANY_CHAT = '/company-chat';
-  static const COMPANY_PROFILE = '/company-profile';
-  static const COMPANY_CHAT_DETAILS = '/company-chat-details';
-  static const COMPANY_NOTIFICATIONS = '/company-notifications';
-  static const SEARCH_JOBS = '/search-jobs';
-  static const PDF_VIEWER = '/pdf-viewer';
+  static const jobSeeker = '/job-seeker';
+  static const company = '/company';
+
+  static const dashboard = '/dashboard';
+  static const jobSeekerCongratulations = '/congratulations';
+  static const jobDetails = '/job-details';
+  static const applyJob = '/apply-job';
+  static const profile = '/profile';
+  static const myApplications = '/my-applications';
+  static const postJob = '/post-job';
+  static const applicants = '/applicants';
+  static const mainFields = '/main-fields';
+  static const notifications = '/notifications';
+  static const savedJobs = '/saved-jobs';
+  static const chat = '/chat';
+  static const chatDetails = '/chat-details';
+  static const mainWrapper = '/main-wrapper';
+  static const applicationReview = '/application-review';
+  static const applicationList = '/application-list';
+  static const companyMainWrapper = '/company-main-wrapper';
+  static const companyChat = '/company-chat';
+  static const companyProfile = '/company-profile';
+  static const companyChatDetails = '/company-chat-details';
+  static const companyNotifications = '/company-notifications';
+  static const searchJobs = '/search-jobs';
+  static const pdfViewer = '/pdf-viewer';
 }

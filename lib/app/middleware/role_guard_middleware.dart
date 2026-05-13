@@ -12,7 +12,7 @@ class RoleGuardMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? _) {
     if (!Get.isRegistered<StorageService>()) {
-      return const RouteSettings(name: Routes.AUTH_LOGIN);
+      return const RouteSettings(name: Routes.authLogin);
     }
 
     final storage = StorageService.to;
@@ -20,19 +20,19 @@ class RoleGuardMiddleware extends GetMiddleware {
 
     if (currentUser == null || !storage.isLoggedIn) {
       storage.clearAuthSession();
-      return const RouteSettings(name: Routes.AUTH_LOGIN);
+      return const RouteSettings(name: Routes.authLogin);
     }
 
     final role = StorageService.normalizeRole(storage.userRole);
     if (role == null) {
       storage.clearAuthSession();
-      return const RouteSettings(name: Routes.AUTH_LOGIN);
+      return const RouteSettings(name: Routes.authLogin);
     }
 
     if (role != requiredRole) {
       final targetRoute = role == AppUserRole.company.value
-          ? Routes.COMPANY_MAIN_WRAPPER
-          : Routes.MAIN_WRAPPER;
+          ? Routes.companyMainWrapper
+          : Routes.mainWrapper;
       return RouteSettings(name: targetRoute);
     }
 

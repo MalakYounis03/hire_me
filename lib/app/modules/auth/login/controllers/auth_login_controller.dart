@@ -60,11 +60,11 @@ class AuthLoginController extends GetxController {
   }
 
   void onForgotPasswordPressed() {
-    Get.toNamed(Routes.AUTH_FORGOT_PASSWORD);
+    Get.toNamed(Routes.authForgotPassword);
   }
 
   void onCreateAccountPressed() {
-    Get.toNamed(Routes.AUTH_SELECT_USER);
+    Get.toNamed(Routes.authSelectUser);
   }
 
   bool _isValid() {
@@ -112,7 +112,7 @@ class AuthLoginController extends GetxController {
       role: role,
       accessToken: await user.getIdToken(),
       companyId: role == AppUserRole.company.value ? user.uid : null,
-      jobSeekerId: role == AppUserRole.job_seeker.value ? user.uid : null,
+      jobSeekerId: role == AppUserRole.jobSeeker.value ? user.uid : null,
     );
 
     await Get.find<NotificationService>().saveFcmToken();
@@ -124,9 +124,9 @@ class AuthLoginController extends GetxController {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (role == AppUserRole.company.value) {
-      Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
+      Get.offAllNamed(Routes.companyMainWrapper);
     } else {
-      Get.offAllNamed(Routes.MAIN_WRAPPER);
+      Get.offAllNamed(Routes.mainWrapper);
     }
 
     // Intentionally NOT calling _setLoading(false) here.
