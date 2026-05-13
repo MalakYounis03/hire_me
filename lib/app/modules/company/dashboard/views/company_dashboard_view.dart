@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../routes/app_pages.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../controllers/company_dashboard_controller.dart';
 
@@ -30,10 +31,46 @@ class CompanyDashboardView extends GetView<CompanyDashboardController> {
         //   size: 20,
         // ),
         actions: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
+          GestureDetector(
+            onTap: () => Get.toNamed(Routes.COMPANY_NOTIFICATIONS),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.notifications_none_rounded,
+                  color: AppColor.kwhite,
+                  size: 26,
+                ),
+                Obx(
+                  () => controller.unreadCount > 0
+                      ? Positioned(
+                          right: -3,
+                          top: -3,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 18,
+                              minHeight: 18,
+                            ),
+                            child: Text(
+                              '${controller.unreadCount.value}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
           ),
           const SizedBox(width: 18),
         ],
