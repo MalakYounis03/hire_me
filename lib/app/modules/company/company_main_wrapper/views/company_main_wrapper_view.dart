@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_list/views/application_list_view.dart';
-import 'package:hire_me/app/modules/company/company_chat/views/company_chat_view.dart';
-import 'package:hire_me/app/modules/company/company_profile/views/company_profile_view.dart';
-import 'package:hire_me/app/modules/company/dashboard/views/company_dashboard_view.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../application_list/views/application_list_view.dart';
+import '../../company_chat/views/company_chat_view.dart';
+import '../../company_profile/views/company_profile_view.dart';
+import '../../dashboard/views/company_dashboard_view.dart';
 import '../controllers/company_main_wrapper_controller.dart';
 
 class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
@@ -40,7 +40,7 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
           color: AppColor.kwhite,
           boxShadow: [
             BoxShadow(
-              color: AppColor.kblack.withOpacity(0.04),
+              color: AppColor.kblack.withValues(alpha: 0.04),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -117,7 +117,7 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColor.kblue.withOpacity(0.1)
+                    ? AppColor.kblue.withValues(alpha: 0.1)
                     : Colors.transparent,
                 shape: BoxShape.circle,
               ),

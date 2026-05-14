@@ -5,7 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
+import '../../../../routes/app_pages.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JobSeekerApplyJobController extends GetxController {
@@ -20,8 +21,10 @@ class JobSeekerApplyJobController extends GetxController {
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
 
-  Map<String, dynamic> get job {
-    return Get.arguments as Map<String, dynamic>? ?? {};
+  JobModel? get job {
+    final args = Get.arguments;
+    if (args is JobModel) return args;
+    return null;
   }
 
   @override
@@ -30,6 +33,12 @@ class JobSeekerApplyJobController extends GetxController {
     final user = _auth.currentUser;
     if (user != null) {
       emailController.text = user.email ?? '';
+    }
+    if (job == null) {
+      _showError('Job data not found');
+      Future.delayed(const Duration(milliseconds: 300), () {
+        Get.back();
+      });
     }
   }
 
@@ -59,10 +68,38 @@ class JobSeekerApplyJobController extends GetxController {
       return;
     }
 
+    final currentJob = job;
+    if (currentJob == null) {
+      _showError('Job data not found');
+      return;
+    }
+
+    final uid = _auth.currentUser?.uid ?? '';
+    if (uid.isEmpty) {
+      _showError('Please login first');
+      return;
+    }
+
+    final existing = await _firestore
+        .collection('applications')
+        .where('seekerId', isEqualTo: uid)
+        .where('jobId', isEqualTo: currentJob.id)
+        .limit(1)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      _showError('You have already applied to this job');
+      return;
+    }
+
+    final file = File(cvFilePath.value);
+    if (!file.existsSync()) {
+      _showError('CV file not found. Please upload again');
+      return;
+    }
+
     isLoading.value = true;
     try {
-      final uid = _auth.currentUser!.uid;
-      final file = File(cvFilePath.value);
       final fileName =
           '${uid}_${DateTime.now().millisecondsSinceEpoch}_${cvFileName.value}';
 
@@ -70,18 +107,19 @@ class JobSeekerApplyJobController extends GetxController {
 
       final cvUrl = _supabase.storage.from('cv').getPublicUrl(fileName);
 
-      await _firestore.collection('applications').add({
-        'jobId': job['id'] ?? '',
-        'jobTitle': job['title'] ?? '',
-        'companyId': job['companyId'] ?? '',
-        'companyName': job['company'] ?? '',
-        'applicantId': uid,
-        'applicantName': nameController.text.trim(),
-        'applicantEmail': emailController.text.trim(),
+      final data = <String, dynamic>{
+        'jobId': currentJob.id,
+        'jobTitle': currentJob.title,
+        'companyId': currentJob.companyId,
+        'companyName': currentJob.companyName,
+        'seekerId': uid,
+        'seekerName': nameController.text.trim(),
+        'email': emailController.text.trim(),
         'cvUrl': cvUrl,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      };
+      await _firestore.collection('applications').add(data);
 
       Get.offNamed(Routes.JOB_SEEKER_CONGRATULATIONS);
     } catch (e) {

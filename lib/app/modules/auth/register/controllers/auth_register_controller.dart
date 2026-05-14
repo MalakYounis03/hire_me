@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/app/services/storage_service.dart';
+import '../../../../routes/app_pages.dart';
+import '../../../../services/notification_service.dart';
+import '../../../../services/storage_service.dart';
 
 class AuthRegisterController extends GetxController {
   final nameController = TextEditingController();
@@ -39,18 +40,22 @@ class AuthRegisterController extends GetxController {
         password: passwordController.text.trim(),
       );
 
-      await _saveUserToFirestore(credential.user!.uid);
+      final user = credential.user;
+      if (user == null) {
+        _showError('Unable to create account. Please try again.');
+        return;
+      }
+
+      await _saveUserToFirestore(user.uid);
       await _storage.saveAuthSession(
-        userId: credential.user!.uid,
+        userId: user.uid,
         role: _role,
-        accessToken: await credential.user!.getIdToken(),
-        companyId: _role == AppUserRole.company.value
-            ? credential.user!.uid
-            : null,
-        jobSeekerId: _role == AppUserRole.job_seeker.value
-            ? credential.user!.uid
-            : null,
+        accessToken: await user.getIdToken(),
+        companyId: _role == AppUserRole.company.value ? user.uid : null,
+        jobSeekerId: _role == AppUserRole.job_seeker.value ? user.uid : null,
       );
+
+      await Get.find<NotificationService>().saveFcmToken();
 
       _navigateAfterRegister();
     } on FirebaseAuthException catch (e) {

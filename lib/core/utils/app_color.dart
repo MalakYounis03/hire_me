@@ -8,15 +8,16 @@ abstract class AppColor {
   static Color greyVeryLight = const Color(0xFFE3E3E3);
   static Color kwhite = const Color(0xffFFFFFF);
   static Color offWhite = const Color(0xffCBD6FF);
-  static Color Ewhite = const Color(0xffF1F4FF);
-  static Color Eblack = const Color(0xff000000);
-  static Color light_themeGrey = const Color(0xff585c60);
-  static Color light_themeBlue = const Color(0xff0A66C2);
   static Color ewhite = const Color(0xffF1F4FF);
   static Color eblack = const Color(0xff000000);
+  static Color lightThemeGrey = const Color(0xff585c60);
+  static Color lightThemeBlue = const Color(0xff0A66C2);
   static const white = Colors.white;
   static const background = Color(0xFFF5F7FA);
   static const textPrimary = Color(0xFF1A1A2E);
   static const textSecondary = Color(0xFF8A8FA8);
   static const divider = Color(0xFFEEF0F5);
+  static const kdanger = Color(0xFFD32F2F);
+  static const ksuccess = Color(0xFF388E3C);
+  static const kshadow = Color(0x14000000);
 }

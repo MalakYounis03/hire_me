@@ -1,140 +1,194 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/core/utils/app_text_style.dart';
-import 'package:hire_me/app/data/models/job_model.dart';
+import 'package:get/get.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
 
 class JobCardWidget extends StatelessWidget {
-  final Job job;
-  const JobCardWidget({super.key, required this.job});
+  final JobModel job;
+  final bool isSaved;
+  final VoidCallback onSaveTap;
+
+  const JobCardWidget({
+    super.key,
+    required this.job,
+    required this.isSaved,
+    required this.onSaveTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // ✅ الأبعاد الثابتة من فيجما لضمان عدم الانضغاط
-      width: 391,
-      height: 256,
-      margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
-      padding: const EdgeInsets.all(20), // Padding متناسق
-      decoration: BoxDecoration(
-        color: AppColor.kwhite,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.Eblack.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 1. الجزء العلوي (Logo + Info + Bookmark)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: AppColor.Ewhite,
-                  borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(Routes.JOB_SEEKER_JOB_DETAILS, arguments: job);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 9),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppColor.kwhite,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.eblack.withValues(alpha: .04),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _logoBox(),
+
+                const SizedBox(width: 12),
+
+                Expanded(child: _jobMainInfo()),
+
+                IconButton(
+                  onPressed: onSaveTap,
+                  icon: Icon(
+                    isSaved
+                        ? Icons.bookmark_rounded
+                        : Icons.bookmark_border_rounded,
+                    color: AppColor.kblue,
+                    size: 27,
+                  ),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(job.logoUrl, fit: BoxFit.contain),
-                ),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              child: Divider(
+                color: AppColor.kblue.withValues(alpha: 0.32),
+                thickness: 1,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.title,
-                      style: CustomTextstyle.Poppinssemibold.copyWith(
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ), // مسافة بسيطة جداً بين العنوان والشركة
-                    Text(
-                      job.companyName,
-                      style: TextStyle(color: AppColor.greydark, fontSize: 13),
-                    ),
-                  ],
+            ),
+
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 16,
+                  color: AppColor.kblue,
                 ),
-              ),
-              Icon(
-                Icons.bookmark_border_rounded,
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    job.location.isNotEmpty ? job.location : 'Not specified',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppColor.greydark, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              job.salary.isNotEmpty ? job.salary : 'Salary not specified',
+              style: TextStyle(
                 color: AppColor.kblue,
-                size: 26,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
               ),
-            ],
-          ),
-
-          // ✅ الخط الفاصل الأزرق كما في الفيجما
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            child: Divider(
-              color: AppColor.kblue, // أزرق شفاف جداً
-              thickness: 1,
             ),
-          ),
 
-          // 2. الموقع والسعر (بدون كونتينر للسعر وبمسافات متناسقة)
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, size: 16, color: AppColor.kblue),
-              const SizedBox(width: 6),
-              Text(
-                job.location,
-                style: TextStyle(color: AppColor.greydark, fontSize: 12),
-              ),
-            ],
-          ),
+            const SizedBox(height: 12),
 
-          const SizedBox(height: 8), // مسافة محددة بين الموقع والسعر
-          // ✅ السعر كنص حر بارز بلون أزرق
-          Text(
-            job.salary,
-            style: TextStyle(
-              color: AppColor.kblue,
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
+            Row(
+              children: [
+                _badge(_formatJobType(job.jobType), isPrimary: false),
+                const SizedBox(width: 8),
+                _badge(job.workMode, isPrimary: true),
+              ],
             ),
-          ),
-          const SizedBox(height: 5),
-          // 3. أزرار الحالة (Pill Shape)
-          Row(
-            children: [
-              _buildBadge(job.type, true),
-              const SizedBox(width: 8),
-              _buildBadge("Remote", false),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // ويجت البادج مع إمكانية تغيير اللون إذا لزم الأمر
-  Widget _buildBadge(String text, bool isPrimary) {
+  Widget _logoBox() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      width: 50,
+      height: 50,
       decoration: BoxDecoration(
-        color: AppColor.kblue, // لون موحد حسب لقطة المحاكي الأخيرة
+        color: AppColor.ewhite,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: job.logoUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: job.logoUrl,
+                fit: BoxFit.contain,
+                errorWidget: (context, url, error) => Icon(
+                  Icons.business_rounded,
+                  color: AppColor.kblue,
+                  size: 28,
+                ),
+              )
+            : Icon(Icons.business_rounded, color: AppColor.kblue, size: 28),
+      ),
+    );
+  }
+
+  Widget _jobMainInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          job.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: CustomTextstyle.poppinsSemiBold.copyWith(
+            fontSize: 16,
+            color: AppColor.eblack,
+          ),
+        ),
+
+        const SizedBox(height: 2),
+
+        Text(
+          job.companyName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: AppColor.greydark, fontSize: 13),
+        ),
+      ],
+    );
+  }
+
+  Widget _badge(String text, {required bool isPrimary}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+      decoration: BoxDecoration(
+        color: isPrimary ? AppColor.kblue : AppColor.kwhite,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColor.kblue),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: AppColor.kwhite,
+          color: isPrimary ? AppColor.kwhite : AppColor.kblue,
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
+  }
+
+  String _formatJobType(String value) {
+    if (value == 'FullTime') return 'Full time';
+    if (value == 'PartTime') return 'Part time';
+    return value;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
-import 'package:hire_me/app/modules/company/application_review/model/application_review_model.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../model/application_review_model.dart';
 import '../controllers/application_review_controller.dart';
 import 'widgets/review_app_bar.dart';
 import 'widgets/profile_card.dart';
@@ -12,7 +12,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.Ewhite,
+      backgroundColor: AppColor.ewhite,
       appBar: const ReviewAppBar(),
       body: Obx(() {
         final applicant = controller.applicant.value;
@@ -48,7 +48,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.kblack.withOpacity(0.05),
+                      color: AppColor.kblack.withValues(alpha: 0.05),
                       blurRadius: 14,
                       offset: const Offset(0, -4),
                     ),
@@ -62,9 +62,8 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                         child: OutlinedButton.icon(
                           onPressed: controller.isProcessing.value
                               ? null
-                              : () => controller.rejectApplication(
-                                    applicant.id,
-                                  ),
+                              : () =>
+                                    controller.rejectApplication(applicant.id),
                           icon: const Icon(Icons.cancel_outlined, size: 18),
                           label: const Text(
                             'Reject',
@@ -92,12 +91,12 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                           onPressed: controller.isProcessing.value
                               ? null
                               : () => controller.acceptApplication(
-                                    applicant.id,
-                                    applicant.jobSeekerId,
-                                    applicant.name,
-                                    controller.companyId,
-                                    controller.companyName.value,
-                                  ),
+                                  applicant.id,
+                                  applicant.jobSeekerId,
+                                  applicant.name,
+                                  controller.companyId,
+                                  controller.companyName.value,
+                                ),
                           icon: const Icon(
                             Icons.check_circle_outline,
                             size: 18,
@@ -152,7 +151,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
         border: Border.all(color: AppColor.greyVeryLight),
         boxShadow: [
           BoxShadow(
-            color: AppColor.kblack.withOpacity(0.03),
+            color: AppColor.kblack.withValues(alpha: 0.03),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

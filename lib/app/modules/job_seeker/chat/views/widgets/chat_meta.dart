@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:hire_me/app/core/helper/data_helper.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/unread_badge.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
+import '../../../../../../core/helper/data_helper.dart';
+import 'unread_badge.dart';
 
 class ChatMeta extends StatelessWidget {
   final DateTime time;

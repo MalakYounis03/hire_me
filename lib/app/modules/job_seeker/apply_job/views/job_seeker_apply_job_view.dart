@@ -57,16 +57,6 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
         ),
       ),
       centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: Icon(
-            Icons.notifications_outlined,
-            color: Colors.white,
-            size: 26,
-          ),
-        ),
-      ],
     );
   }
 
@@ -122,7 +112,7 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

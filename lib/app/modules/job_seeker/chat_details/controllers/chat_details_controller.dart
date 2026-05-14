@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/model/chat_details_model.dart';
+import '../../../../services/notification_service.dart';
+import '../../chat/services/chat_services.dart';
+import '../model/chat_details_model.dart';
 
 class ChatDetailsController extends GetxController {
   final String chatId;
@@ -22,19 +25,23 @@ class ChatDetailsController extends GetxController {
   });
 
   final ChatService _chatService = ChatService();
-  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
   final messageController = TextEditingController();
   final scrollController = ScrollController();
   final RxBool hasText = false.obs;
   final RxBool isLoading = true.obs;
   final RxList<ChatDetailsModel> messages = <ChatDetailsModel>[].obs;
-  final RxInt otherLastSeen = 0.obs; // ✅ آخر وقت شاف فيه الثاني
-  final RxString selectedMessageId = ''.obs; // ✅
+  final RxInt otherLastSeen = 0.obs;
+  final RxString selectedMessageId = ''.obs;
   bool isMe(String senderId) => senderId == currentUserId;
+
+  StreamSubscription? _messageSub;
+  StreamSubscription? _seenSub;
 
   @override
   void onInit() {
     super.onInit();
+    NotificationService.currentScreen.value = 'chat_details';
     _listenToMessages();
     _markChatAsRead();
     _markSeen();
@@ -42,12 +49,11 @@ class ChatDetailsController extends GetxController {
   }
 
   void _listenToMessages() {
-    _chatService.getMessages(chatId).listen((msgs) {
+    _messageSub = _chatService.getMessages(chatId).listen((msgs) {
       messages.value = msgs;
       isLoading.value = false;
       _markSeen();
 
-      // ✅ سكرول للأسفل لما تيجي رسائل جديدة
       Future.delayed(const Duration(milliseconds: 100), () {
         if (scrollController.hasClients) {
           scrollController.animateTo(
@@ -114,7 +120,7 @@ class ChatDetailsController extends GetxController {
   void _listenToOtherSeen() {
     final otherId = currentUserId == seekerId ? companyId : seekerId;
 
-    FirebaseDatabase.instance
+    _seenSub = FirebaseDatabase.instance
         .ref()
         .child('chats/$chatId/meta/lastSeenBy/$otherId')
         .onValue
@@ -134,6 +140,9 @@ class ChatDetailsController extends GetxController {
 
   @override
   void onClose() {
+    NotificationService.currentScreen.value = '';
+    _messageSub?.cancel();
+    _seenSub?.cancel();
     messageController.dispose();
     scrollController.dispose();
     super.onClose();

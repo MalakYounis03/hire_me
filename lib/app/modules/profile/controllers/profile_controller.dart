@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/modules/profile/models/user_model.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
-import 'package:hire_me/core/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,6 +14,7 @@ class ProfileController extends GetxController {
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
+  final openToOptions = <String>[].obs;
 
   // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
@@ -21,6 +22,7 @@ class ProfileController extends GetxController {
   final _supabase = Supabase.instance.client;
   final _picker = ImagePicker();
 
+  // ── Getters ───────────────────────────────────────────
   String get userName => userModel.value?.name ?? '';
   String get userTitle => userModel.value?.title ?? '';
   String get userUniversity => userModel.value?.university ?? '';
@@ -31,6 +33,9 @@ class ProfileController extends GetxController {
   List<EducationModel> get education => userModel.value?.education ?? [];
   List<ExperienceModel> get experience => userModel.value?.experience ?? [];
   List<String> get skills => userModel.value?.skills ?? [];
+  List<LanguageModel> get languages => userModel.value?.languages ?? [];
+  List<LinkModel> get links => userModel.value?.links ?? [];
+  bool get isOpenToWork => openToOptions.isNotEmpty;
 
   @override
   void onInit() {
@@ -38,6 +43,7 @@ class ProfileController extends GetxController {
     loadProfile();
   }
 
+  // ── Load Profile ──────────────────────────────────────
   Future<void> loadProfile() async {
     isLoading.value = true;
     try {
@@ -46,10 +52,21 @@ class ProfileController extends GetxController {
 
       if (doc.exists) {
         userModel.value = UserModel.fromMap(doc.data()!);
+
+        if (userModel.value?.name.isEmpty ?? true) {
+          final userDoc = await _firestore.collection('users').doc(uid).get();
+          final name = userDoc.data()?['name'] ?? '';
+          if (name.isNotEmpty) {
+            await _updateField('name', name);
+            userModel.value = userModel.value?.copyWith(name: name);
+          }
+        }
+
+        final saved = List<String>.from(doc.data()?['openToOptions'] ?? []);
+        openToOptions.assignAll(saved);
       } else {
         final userDoc = await _firestore.collection('users').doc(uid).get();
         final name = userDoc.data()?['name'] ?? '';
-
         final newUser = UserModel(
           uid: uid,
           email: _auth.currentUser?.email ?? '',
@@ -66,7 +83,498 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Upload Profile Image ───────────────────────────────
+  // ── Open To Work ──────────────────────────────────────
+  void showOpenToBottomSheet() {
+    final allOptions = ['Open to Work', 'Freelance', 'Internship'];
+    final tempSelected = <String>[...openToOptions].obs;
+
+    Get.bottomSheet(
+      Obx(
+        () => Container(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE0E0E0),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Open to',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A1A2E),
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                "Let recruiters know what opportunities you're looking for",
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+              const SizedBox(height: 20),
+              ...allOptions.map((option) {
+                final isSelected = tempSelected.contains(option);
+                return GestureDetector(
+                  onTap: () => isSelected
+                      ? tempSelected.remove(option)
+                      : tempSelected.add(option),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFFE8EDF9)
+                          : const Color(0xFFF5F7FF),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : Colors.transparent,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                : const Color(0xFFE8EDF9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            _optionIcon(option),
+                            color: isSelected
+                                ? const Color(0xFF1A3794)
+                                : const Color(0xFF8A8A9A),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Text(
+                          option,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? const Color(0xFF1A3794)
+                                : const Color(0xFF1A1A2E),
+                          ),
+                        ),
+                        const Spacer(),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: isSelected
+                              ? const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Color(0xFF1A3794),
+                                  size: 22,
+                                  key: ValueKey('check'),
+                                )
+                              : const Icon(
+                                  Icons.circle_outlined,
+                                  color: Color(0xFFCCCCCC),
+                                  size: 22,
+                                  key: ValueKey('empty'),
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _saveOpenTo(List<String>.from(tempSelected));
+                    Get.back();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1A3794),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Future<void> _saveOpenTo(List<String> selected) async {
+    openToOptions.assignAll(selected);
+    await _updateField('openToOptions', selected);
+  }
+
+  IconData _optionIcon(String option) {
+    switch (option) {
+      case 'Open to Work':
+        return Icons.work_outline_rounded;
+      case 'Freelance':
+        return Icons.laptop_outlined;
+      case 'Internship':
+        return Icons.school_outlined;
+      default:
+        return Icons.circle_outlined;
+    }
+  }
+
+  // ── Add Section Bottom Sheet ──────────────────────────
+  void showAddSectionBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0E0E0),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Add section',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1A2E),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Languages
+            _sectionOption(
+              icon: Icons.language_rounded,
+              label: 'Languages',
+              subtitle: 'Add languages you speak',
+              onTap: () {
+                Get.back();
+                showAddLanguageDialog();
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Links
+            _sectionOption(
+              icon: Icons.link_rounded,
+              label: 'Links',
+              subtitle: 'LinkedIn, GitHub, Portfolio...',
+              onTap: () {
+                Get.back();
+                showAddLinkDialog();
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _sectionOption({
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F7FF),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8EDF9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: const Color(0xFF1A3794), size: 22),
+            ),
+            const SizedBox(width: 14),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: Color(0xFF8A8A9A),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Languages ─────────────────────────────────────────
+  void showAddLanguageDialog() => _openLanguageDialog();
+  void showEditLanguageDialog(int index) =>
+      _openLanguageDialog(index: index, existing: languages[index]);
+
+  Future<void> deleteLanguage(int index) async {
+    final updated = [...languages]..removeAt(index);
+    await _updateField('languages', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(languages: updated);
+  }
+
+  void _openLanguageDialog({int? index, LanguageModel? existing}) {
+    final nameCtrl = TextEditingController(text: existing?.name ?? '');
+    final levels = ['Beginner', 'Intermediate', 'Fluent', 'Native'];
+    final selectedLevel =
+        (existing?.level.isNotEmpty == true ? existing!.level : levels[0]).obs;
+
+    Get.dialog(
+      AlertDialog(
+        title: Text(index == null ? 'Add Language' : 'Edit Language'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _dialogField(nameCtrl, 'Language (e.g. Arabic, English)'),
+            const SizedBox(height: 8),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Level',
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: levels.map((lvl) {
+                  final isSelected = selectedLevel.value == lvl;
+                  return GestureDetector(
+                    onTap: () => selectedLevel.value = lvl,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : const Color(0xFFE8EDF9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        lvl,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF1A3794),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.trim().isEmpty) return;
+              final lang = LanguageModel(
+                name: nameCtrl.text.trim(),
+                level: selectedLevel.value,
+              );
+              final updated = [...languages];
+              index == null ? updated.add(lang) : updated[index] = lang;
+              await _updateField(
+                'languages',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(languages: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Links ─────────────────────────────────────────────
+  void showAddLinkDialog() => _openLinkDialog();
+  void showEditLinkDialog(int index) =>
+      _openLinkDialog(index: index, existing: links[index]);
+
+  Future<void> deleteLink(int index) async {
+    final updated = [...links]..removeAt(index);
+    await _updateField('links', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(links: updated);
+  }
+
+  void _openLinkDialog({int? index, LinkModel? existing}) {
+    final urlCtrl = TextEditingController(text: existing?.url ?? '');
+    final types = ['LinkedIn', 'GitHub', 'Portfolio', 'Other'];
+    final selectedType =
+        (existing?.type.isNotEmpty == true ? existing!.type : types[0]).obs;
+
+    Get.dialog(
+      AlertDialog(
+        title: Text(index == null ? 'Add Link' : 'Edit Link'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Type',
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: types.map((t) {
+                  final isSelected = selectedType.value == t;
+                  return GestureDetector(
+                    onTap: () => selectedType.value = t,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : const Color(0xFFE8EDF9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        t,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF1A3794),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _dialogField(urlCtrl, 'https://...'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (urlCtrl.text.trim().isEmpty) return;
+              final link = LinkModel(
+                type: selectedType.value,
+                url: urlCtrl.text.trim(),
+              );
+              final updated = [...links];
+              index == null ? updated.add(link) : updated[index] = link;
+              await _updateField(
+                'links',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(links: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Upload Profile Image ──────────────────────────────
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -77,20 +585,19 @@ class ProfileController extends GetxController {
     isUploadingImage.value = true;
     try {
       final uid = _auth.currentUser!.uid;
-      final file = File(picked.path);
       final fileName = 'profile_$uid.jpg';
-
       await _supabase.storage
           .from('profile-images')
-          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
-
+          .upload(
+            fileName,
+            File(picked.path),
+            fileOptions: const FileOptions(upsert: true),
+          );
       final imageUrl = _supabase.storage
           .from('profile-images')
           .getPublicUrl(fileName);
-
       await _updateField('profileImage', imageUrl);
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
-
       _showSuccess('Profile photo updated!');
     } catch (e) {
       _showError('Failed to upload photo: $e');
@@ -110,20 +617,19 @@ class ProfileController extends GetxController {
     isUploadingCover.value = true;
     try {
       final uid = _auth.currentUser!.uid;
-      final file = File(picked.path);
       final fileName = 'cover_$uid.jpg';
-
       await _supabase.storage
           .from('profile-images')
-          .upload(fileName, file, fileOptions: const FileOptions(upsert: true));
-
+          .upload(
+            fileName,
+            File(picked.path),
+            fileOptions: const FileOptions(upsert: true),
+          );
       final coverUrl = _supabase.storage
           .from('profile-images')
           .getPublicUrl(fileName);
-
       await _updateField('coverImage', coverUrl);
       userModel.value = userModel.value?.copyWith(coverImage: coverUrl);
-
       _showSuccess('Cover photo updated!');
     } catch (e) {
       _showError('Failed to upload cover: $e');
@@ -132,298 +638,129 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Add Education ─────────────────────────────────────
-  Future<void> addEducation(EducationModel edu) async {
-    final updated = [...education, edu];
-    await _updateField('education', updated.map((e) => e.toMap()).toList());
-    userModel.value = userModel.value?.copyWith(education: updated);
-  }
-
-  // ── Add Experience ────────────────────────────────────
-  Future<void> addExperience(ExperienceModel exp) async {
-    final updated = [...experience, exp];
-    await _updateField('experience', updated.map((e) => e.toMap()).toList());
-    userModel.value = userModel.value?.copyWith(experience: updated);
-  }
-
-  // ── Add Skill ─────────────────────────────────────────
-  Future<void> addSkill(String skill) async {
-    if (skill.trim().isEmpty) return;
-    final updated = [...skills, skill.trim()];
-    await _updateField('skills', updated);
-    userModel.value = userModel.value?.copyWith(skills: updated);
-  }
-
-  // ── Remove Skill ──────────────────────────────────────
-  Future<void> removeSkill(int index) async {
-    final updated = [...skills]..removeAt(index);
-    await _updateField('skills', updated);
-    userModel.value = userModel.value?.copyWith(skills: updated);
-  }
-
-  // ── Dialogs ───────────────────────────────────────────
-  void showAddEducationDialog() {
-    final schoolCtrl = TextEditingController();
-    final degreeCtrl = TextEditingController();
-    final fieldCtrl = TextEditingController();
-    final startCtrl = TextEditingController();
-    final endCtrl = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Add Education'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(schoolCtrl, 'School / University'),
-              _dialogField(degreeCtrl, 'Degree'),
-              _dialogField(fieldCtrl, 'Field of Study'),
-              _dialogField(startCtrl, 'Start Year'),
-              _dialogField(endCtrl, 'End Year'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (schoolCtrl.text.isNotEmpty) {
-                addEducation(
-                  EducationModel(
-                    school: schoolCtrl.text,
-                    degree: degreeCtrl.text,
-                    field: fieldCtrl.text,
-                    startYear: startCtrl.text,
-                    endYear: endCtrl.text,
-                  ),
-                );
-                Get.back();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showAddExperienceDialog() {
-    final companyCtrl = TextEditingController();
-    final positionCtrl = TextEditingController();
-    final startCtrl = TextEditingController();
-    final endCtrl = TextEditingController();
-    final descCtrl = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Add Experience'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(companyCtrl, 'Company'),
-              _dialogField(positionCtrl, 'Position'),
-              _dialogField(startCtrl, 'Start Date'),
-              _dialogField(endCtrl, 'End Date'),
-              _dialogField(descCtrl, 'Description', maxLines: 3),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (companyCtrl.text.isNotEmpty) {
-                addExperience(
-                  ExperienceModel(
-                    company: companyCtrl.text,
-                    position: positionCtrl.text,
-                    startDate: startCtrl.text,
-                    endDate: endCtrl.text,
-                    description: descCtrl.text,
-                  ),
-                );
-                Get.back();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showAddSkillDialog() {
-    final skillCtrl = TextEditingController();
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Add Skill'),
-        content: _dialogField(skillCtrl, 'Skill name'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              addSkill(skillCtrl.text);
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Edit About ────────────────────────────────────────
+  // ── About ─────────────────────────────────────────────
   void showEditAboutDialog() {
-    final aboutCtrl = TextEditingController(text: userAbout);
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Edit About'),
-        content: _dialogField(aboutCtrl, 'About yourself...', maxLines: 4),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () async {
-              await _updateField('about', aboutCtrl.text.trim());
-              userModel.value = userModel.value?.copyWith(
-                about: aboutCtrl.text.trim(),
-              );
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+    final ctrl = TextEditingController(text: userAbout);
+    _showEditDialog(
+      title: 'Edit About',
+      fields: [_dialogField(ctrl, 'About yourself...', maxLines: 4)],
+      onSave: () async {
+        await _updateField('about', ctrl.text.trim());
+        userModel.value = userModel.value?.copyWith(about: ctrl.text.trim());
+      },
     );
   }
 
-  // ── Edit Education ────────────────────────────────────
-  void showEditEducationDialog(int index) {
-    final e = education[index];
-    final schoolCtrl = TextEditingController(text: e.school);
-    final degreeCtrl = TextEditingController(text: e.degree);
-    final fieldCtrl = TextEditingController(text: e.field);
-    final startCtrl = TextEditingController(text: e.startYear);
-    final endCtrl = TextEditingController(text: e.endYear);
+  // ── Education ─────────────────────────────────────────
+  void showAddEducationDialog() => _openEducationDialog();
+  void showEditEducationDialog(int index) =>
+      _openEducationDialog(index: index, existing: education[index]);
 
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Edit Education'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(schoolCtrl, 'School / University'),
-              _dialogField(degreeCtrl, 'Degree'),
-              _dialogField(fieldCtrl, 'Field of Study'),
-              _dialogField(startCtrl, 'Start Year'),
-              _dialogField(endCtrl, 'End Year'),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () async {
-              final updated = [...education];
-              updated[index] = EducationModel(
-                school: schoolCtrl.text,
-                degree: degreeCtrl.text,
-                field: fieldCtrl.text,
-                startYear: startCtrl.text,
-                endYear: endCtrl.text,
-              );
-              await _updateField(
-                'education',
-                updated.map((e) => e.toMap()).toList(),
-              );
-              userModel.value = userModel.value?.copyWith(education: updated);
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Edit Experience ───────────────────────────────────
-  void showEditExperienceDialog(int index) {
-    final e = experience[index];
-    final companyCtrl = TextEditingController(text: e.company);
-    final positionCtrl = TextEditingController(text: e.position);
-    final startCtrl = TextEditingController(text: e.startDate);
-    final endCtrl = TextEditingController(text: e.endDate);
-    final descCtrl = TextEditingController(text: e.description);
-
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Edit Experience'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              _dialogField(companyCtrl, 'Company'),
-              _dialogField(positionCtrl, 'Position'),
-              _dialogField(startCtrl, 'Start Date'),
-              _dialogField(endCtrl, 'End Date'),
-              _dialogField(descCtrl, 'Description', maxLines: 3),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () async {
-              final updated = [...experience];
-              updated[index] = ExperienceModel(
-                company: companyCtrl.text,
-                position: positionCtrl.text,
-                startDate: startCtrl.text,
-                endDate: endCtrl.text,
-                description: descCtrl.text,
-              );
-              await _updateField(
-                'experience',
-                updated.map((e) => e.toMap()).toList(),
-              );
-              userModel.value = userModel.value?.copyWith(experience: updated);
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3794),
-            ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Delete Education ──────────────────────────────────
   Future<void> deleteEducation(int index) async {
     final updated = [...education]..removeAt(index);
     await _updateField('education', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(education: updated);
   }
 
-  // ── Delete Experience ─────────────────────────────────
+  void _openEducationDialog({int? index, EducationModel? existing}) {
+    final schoolCtrl = TextEditingController(text: existing?.school ?? '');
+    final degreeCtrl = TextEditingController(text: existing?.degree ?? '');
+    final fieldCtrl = TextEditingController(text: existing?.field ?? '');
+    final startCtrl = TextEditingController(text: existing?.startYear ?? '');
+    final endCtrl = TextEditingController(text: existing?.endYear ?? '');
+
+    _showEditDialog(
+      title: index == null ? 'Add Education' : 'Edit Education',
+      fields: [
+        _dialogField(schoolCtrl, 'School / University'),
+        _dialogField(degreeCtrl, 'Degree'),
+        _dialogField(fieldCtrl, 'Field of Study'),
+        _dialogField(startCtrl, 'Start Year'),
+        _dialogField(endCtrl, 'End Year'),
+      ],
+      onSave: () async {
+        if (schoolCtrl.text.isEmpty) return;
+        final edu = EducationModel(
+          school: schoolCtrl.text,
+          degree: degreeCtrl.text,
+          field: fieldCtrl.text,
+          startYear: startCtrl.text,
+          endYear: endCtrl.text,
+        );
+        final updated = [...education];
+        index == null ? updated.add(edu) : updated[index] = edu;
+        await _updateField('education', updated.map((e) => e.toMap()).toList());
+        userModel.value = userModel.value?.copyWith(education: updated);
+      },
+    );
+  }
+
+  // ── Experience ────────────────────────────────────────
+  void showAddExperienceDialog() => _openExperienceDialog();
+  void showEditExperienceDialog(int index) =>
+      _openExperienceDialog(index: index, existing: experience[index]);
+
   Future<void> deleteExperience(int index) async {
     final updated = [...experience]..removeAt(index);
     await _updateField('experience', updated.map((e) => e.toMap()).toList());
     userModel.value = userModel.value?.copyWith(experience: updated);
+  }
+
+  void _openExperienceDialog({int? index, ExperienceModel? existing}) {
+    final companyCtrl = TextEditingController(text: existing?.company ?? '');
+    final positionCtrl = TextEditingController(text: existing?.position ?? '');
+    final startCtrl = TextEditingController(text: existing?.startDate ?? '');
+    final endCtrl = TextEditingController(text: existing?.endDate ?? '');
+    final descCtrl = TextEditingController(text: existing?.description ?? '');
+
+    _showEditDialog(
+      title: index == null ? 'Add Experience' : 'Edit Experience',
+      fields: [
+        _dialogField(companyCtrl, 'Company'),
+        _dialogField(positionCtrl, 'Position'),
+        _dialogField(startCtrl, 'Start Date'),
+        _dialogField(endCtrl, 'End Date'),
+        _dialogField(descCtrl, 'Description', maxLines: 3),
+      ],
+      onSave: () async {
+        if (companyCtrl.text.isEmpty) return;
+        final exp = ExperienceModel(
+          company: companyCtrl.text,
+          position: positionCtrl.text,
+          startDate: startCtrl.text,
+          endDate: endCtrl.text,
+          description: descCtrl.text,
+        );
+        final updated = [...experience];
+        index == null ? updated.add(exp) : updated[index] = exp;
+        await _updateField(
+          'experience',
+          updated.map((e) => e.toMap()).toList(),
+        );
+        userModel.value = userModel.value?.copyWith(experience: updated);
+      },
+    );
+  }
+
+  // ── Skills ────────────────────────────────────────────
+  void showAddSkillDialog() {
+    final skillCtrl = TextEditingController();
+    _showEditDialog(
+      title: 'Add Skill',
+      fields: [_dialogField(skillCtrl, 'Skill name')],
+      onSave: () async {
+        if (skillCtrl.text.trim().isEmpty) return;
+        final updated = [...skills, skillCtrl.text.trim()];
+        await _updateField('skills', updated);
+        userModel.value = userModel.value?.copyWith(skills: updated);
+      },
+    );
+  }
+
+  Future<void> removeSkill(int index) async {
+    final updated = [...skills]..removeAt(index);
+    await _updateField('skills', updated);
+    userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
   // ── Logout ────────────────────────────────────────────
@@ -432,7 +769,35 @@ class ProfileController extends GetxController {
     Get.offAllNamed(Routes.SPLASH);
   }
 
-  // ── Private Helpers ───────────────────────────────────
+  // ── Shared Dialog Helper ──────────────────────────────
+  void _showEditDialog({
+    required String title,
+    required List<Widget> fields,
+    required Future<void> Function() onSave,
+  }) {
+    Get.dialog(
+      AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: fields),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              await onSave();
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _updateField(String field, dynamic value) async {
     final uid = _auth.currentUser!.uid;
     await _firestore.collection('jobSeekers').doc(uid).update({field: value});
