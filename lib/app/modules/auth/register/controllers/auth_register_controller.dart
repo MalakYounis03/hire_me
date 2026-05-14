@@ -24,7 +24,7 @@ class AuthRegisterController extends GetxController {
   String get _role {
     final args = Get.arguments as Map<String, dynamic>? ?? {};
     return StorageService.normalizeRole(args['role'] as String?) ??
-        AppUserRole.job_seeker.value;
+        AppUserRole.jobSeeker.value;
   }
 
   void toggleObscurePassword() => obscurePassword.toggle();
@@ -52,7 +52,7 @@ class AuthRegisterController extends GetxController {
         role: _role,
         accessToken: await user.getIdToken(),
         companyId: _role == AppUserRole.company.value ? user.uid : null,
-        jobSeekerId: _role == AppUserRole.job_seeker.value ? user.uid : null,
+        jobSeekerId: _role == AppUserRole.jobSeeker.value ? user.uid : null,
       );
 
       await Get.find<NotificationService>().saveFcmToken();
@@ -69,7 +69,7 @@ class AuthRegisterController extends GetxController {
     }
   }
 
-  void onLoginPressed() => Get.offAllNamed(Routes.AUTH_LOGIN);
+  void onLoginPressed() => Get.offAllNamed(Routes.authLogin);
 
   bool _isValid() {
     if (nameController.text.trim().isEmpty) {
@@ -118,9 +118,9 @@ class AuthRegisterController extends GetxController {
 
   void _navigateAfterRegister() {
     if (_role == 'company') {
-      Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
+      Get.offAllNamed(Routes.companyMainWrapper);
     } else {
-      Get.offAllNamed(Routes.MAIN_WRAPPER);
+      Get.offAllNamed(Routes.mainWrapper);
     }
   }
 

@@ -109,6 +109,24 @@ exports.onNewApplication = onDocumentCreated(
       return;
     }
 
+    // Write notification to Firestore unconditionally (in-app badge/list)
+    try {
+      await db
+        .collection('notifications').doc(companyId).collection('items')
+        .add({
+          type: 'new_application',
+          title: 'New Application Received 📋',
+          body: `${applicantName} applied for ${jobTitle}`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for company ${companyId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
+
+    // FCM push is best-effort — do not gate anything on it
     let fcmToken;
     try {
       const companyDoc = await db.collection('companies').doc(companyId).get();
@@ -122,6 +140,7 @@ exports.onNewApplication = onDocumentCreated(
       logger.warn(`No FCM token for company ${companyId}`);
       return;
     }
+    logger.info(`FCM token found for company ${companyId} (len=${fcmToken.length})`);
 
     const message = {
       notification: {
@@ -150,22 +169,6 @@ exports.onNewApplication = onDocumentCreated(
     } catch (err) {
       logger.error('Failed to send FCM push', err);
     }
-
-    try {
-      await db
-        .collection('notifications').doc(companyId).collection('items')
-        .add({
-          type: 'new_application',
-          title: 'New Application Received 📋',
-          body: `${applicantName} applied for ${jobTitle}`,
-          applicationId,
-          isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-      logger.info(`Notification document written for company ${companyId}`);
-    } catch (err) {
-      logger.error('Failed to write notification document', err);
-    }
   },
 );
 
@@ -191,6 +194,24 @@ exports.onApplicationAccepted = onDocumentUpdated(
       return;
     }
 
+    // Write notification to Firestore unconditionally
+    try {
+      await db
+        .collection('notifications').doc(jobSeekerId).collection('items')
+        .add({
+          type: 'application_update',
+          title: 'Application Accepted! 🎉',
+          body: `Your application for ${jobTitle} has been accepted`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
+
+    // FCM push is best-effort
     let fcmToken;
     try {
       const seekerDoc = await db.collection('jobSeekers').doc(jobSeekerId).get();
@@ -225,22 +246,6 @@ exports.onApplicationAccepted = onDocumentUpdated(
     } catch (err) {
       logger.error('Failed to send FCM push', err);
     }
-
-    try {
-      await db
-        .collection('notifications').doc(jobSeekerId).collection('items')
-        .add({
-          type: 'application_update',
-          title: 'Application Accepted! 🎉',
-          body: `Your application for ${jobTitle} has been accepted`,
-          applicationId,
-          isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
-    } catch (err) {
-      logger.error('Failed to write notification document', err);
-    }
   },
 );
 
@@ -266,6 +271,24 @@ exports.onApplicationRejected = onDocumentUpdated(
       return;
     }
 
+    // Write notification to Firestore unconditionally
+    try {
+      await db
+        .collection('notifications').doc(jobSeekerId).collection('items')
+        .add({
+          type: 'application_update',
+          title: 'Application Update',
+          body: `Unfortunately, your application for ${jobTitle} was not accepted`,
+          applicationId,
+          isRead: false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
+    } catch (err) {
+      logger.error('Failed to write notification document', err);
+    }
+
+    // FCM push is best-effort
     let fcmToken;
     try {
       const seekerDoc = await db.collection('jobSeekers').doc(jobSeekerId).get();
@@ -299,22 +322,6 @@ exports.onApplicationRejected = onDocumentUpdated(
       );
     } catch (err) {
       logger.error('Failed to send FCM push', err);
-    }
-
-    try {
-      await db
-        .collection('notifications').doc(jobSeekerId).collection('items')
-        .add({
-          type: 'application_update',
-          title: 'Application Update',
-          body: `Unfortunately, your application for ${jobTitle} was not accepted`,
-          applicationId,
-          isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-      logger.info(`Notification document written for job seeker ${jobSeekerId}`);
-    } catch (err) {
-      logger.error('Failed to write notification document', err);
     }
   },
 );
@@ -369,7 +376,6 @@ exports.onNewChatMessage = onValueCreated(
         fcmToken = seekerDoc.data()?.fcmToken;
       } catch (err) {
         logger.error(`Failed to read jobSeeker doc for ${seekerId}`, err);
-        return;
       }
     } else if (senderId === seekerId) {
       receiverId = companyId;
@@ -379,7 +385,6 @@ exports.onNewChatMessage = onValueCreated(
         fcmToken = companyDoc.data()?.fcmToken;
       } catch (err) {
         logger.error(`Failed to read company doc for ${companyId}`, err);
-        return;
       }
     } else {
       logger.warn(
@@ -393,14 +398,34 @@ exports.onNewChatMessage = onValueCreated(
       return;
     }
 
-    if (!fcmToken) {
-      logger.warn(`No FCM token for receiver ${receiverId}`);
-      return;
-    }
-
     const messageText = data.text || '';
     if (!messageText) {
       logger.warn('Empty message text, skipping notification');
+      return;
+    }
+
+    // Write notification to Firestore unconditionally
+    if (receiverId) {
+      try {
+        await db
+          .collection('notifications').doc(receiverId).collection('items')
+          .add({
+            type: 'chat_message',
+            title: senderDisplayName,
+            body: messageText,
+            chatId,
+            isRead: false,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        logger.info(`Notification document written for receiver ${receiverId}`);
+      } catch (err) {
+        logger.error('Failed to write notification document', err);
+      }
+    }
+
+    // FCM push is best-effort
+    if (!fcmToken) {
+      logger.warn(`No FCM token for receiver ${receiverId}`);
       return;
     }
 
@@ -422,22 +447,6 @@ exports.onNewChatMessage = onValueCreated(
       logger.info(`Chat notification sent to ${receiverId} from ${senderId}`);
     } catch (err) {
       logger.error('Failed to send chat notification', err);
-    }
-
-    try {
-      await db
-        .collection('notifications').doc(receiverId).collection('items')
-        .add({
-          type: 'chat_message',
-          title: senderDisplayName,
-          body: messageText,
-          chatId,
-          isRead: false,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-      logger.info(`Notification document written for receiver ${receiverId}`);
-    } catch (err) {
-      logger.error('Failed to write notification document', err);
     }
   },
 );

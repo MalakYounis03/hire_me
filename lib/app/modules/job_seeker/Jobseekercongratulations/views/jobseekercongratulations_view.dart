@@ -18,7 +18,7 @@ class JobSeekerCongratulationsView
         elevation: 0,
         leading: GestureDetector(
           onTap: () => Get.offAllNamed(
-            Routes.MAIN_WRAPPER,
+            Routes.mainWrapper,
             arguments: {'initialIndex': 2},
           ),
           child: const Icon(Icons.arrow_back, color: Colors.white),
@@ -78,7 +78,7 @@ class JobSeekerCongratulationsView
                 height: 44,
                 child: ElevatedButton(
                   onPressed: () => Get.offAllNamed(
-                    Routes.MAIN_WRAPPER,
+                    Routes.mainWrapper,
                     arguments: {'initialIndex': 3},
                   ),
                   style: ElevatedButton.styleFrom(

@@ -55,8 +55,8 @@ import '../modules/job_seeker/search_jobs/bindings/job_seeker_search_jobs_bindin
 import '../modules/job_seeker/search_jobs/views/job_seeker_search_jobs_view.dart';
 import '../modules/pdf_viewer/bindings/pdf_viewer_binding.dart';
 import '../modules/pdf_viewer/views/pdf_viewer_view.dart';
-import '../modules/main_wrapper/bindings/main_wrapper_binding.dart';
-import '../modules/main_wrapper/views/main_wrapper_view.dart';
+import '../modules/job_seeker/jobseeker_main_wrapper/bindings/main_wrapper_binding.dart';
+import '../modules/job_seeker/jobseeker_main_wrapper/views/main_wrapper_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../services/storage_service.dart';
@@ -66,97 +66,97 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
+  static const initial = Routes.splash;
 
   static final routes = [
     GetPage(
-      name: Routes.SPLASH,
+      name: Routes.splash,
       page: () => const AuthSplashView(),
       binding: AuthSplashBinding(),
     ),
     GetPage(
-      name: Routes.ONBOARDING,
+      name: Routes.onboarding,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
     ),
     GetPage(
-      name: Routes.AUTH_SELECT_USER,
+      name: Routes.authSelectUser,
       page: () => const AuthSelectUserView(),
       binding: AuthSelectUserBinding(),
     ),
     GetPage(
-      name: Routes.AUTH_LOGIN,
+      name: Routes.authLogin,
       page: () => const AuthLoginView(),
       binding: AuthLoginBinding(),
     ),
     GetPage(
-      name: Routes.AUTH_REGISTER,
+      name: Routes.authRegister,
       page: () => const AuthRegisterView(),
       binding: AuthRegisterBinding(),
     ),
     GetPage(
-      name: Routes.AUTH_FORGOT_PASSWORD,
+      name: Routes.authForgotPassword,
       page: () => const AuthForgotPasswordView(),
       binding: AuthForgotPasswordBinding(),
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_DASHBOARD,
+      name: Routes.jobSeekerDashboard,
       page: () => const JobSeekerDashboardView(),
       binding: JobSeekerDashboardBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_CONGRATULATIONS,
+      name: Routes.jobSeekerCongratulations,
       page: () => const JobSeekerCongratulationsView(),
       binding: JobSeekerCongratulationsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_JOB_DETAILS,
+      name: Routes.jobSeekerJobDetails,
       page: () => const JobSeekerJobDetailsView(),
       binding: JobSeekerJobDetailsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_APPLY_JOB,
+      name: Routes.jobSeekerApplyJob,
       page: () => const JobSeekerApplyJobView(),
       binding: JobSeekerApplyJobBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.PROFILE,
+      name: Routes.profile,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_MY_APPLICATIONS,
+      name: Routes.jobSeekerMyApplications,
       page: () => const JobSeekerMyApplicationsView(),
       binding: JobSeekerMyApplicationsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_NOTIFICATIONS,
+      name: Routes.jobSeekerNotifications,
       page: () => const JobSeekerNotificationsView(),
       binding: JobSeekerNotificationsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.COMPANY_DASHBOARD,
+      name: Routes.companyDashboard,
       page: () => const CompanyDashboardView(),
       binding: CompanyDashboardBinding(),
       middlewares: [
@@ -164,7 +164,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: Routes.COMPANY_POST_JOB,
+      name: Routes.companyPostJob,
       page: () => const CompanyPostJobView(),
       binding: CompanyPostJobBinding(),
       middlewares: [
@@ -172,47 +172,47 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_MAIN_FIELDS,
+      name: Routes.jobSeekerMainFields,
       page: () => const JobSeekerMainFieldsView(),
       binding: JobSeekerMainFieldsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_SAVED_JOBS,
+      name: Routes.jobSeekerSavedJobs,
       page: () => const JobSeekerSavedJobsView(),
       binding: JobSeekerSavedJobsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_CHAT,
+      name: Routes.jobSeekerChat,
       page: () => const ChatView(),
       binding: ChatBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: Routes.JOB_SEEKER_CHAT_DETAILS,
+      name: Routes.jobSeekerChatDetails,
       page: () => const ChatDetailsView(),
       binding: ChatDetailsBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: _Paths.MAIN_WRAPPER,
+      name: Routes.mainWrapper,
       page: () => const MainWrapperView(),
       binding: MainWrapperBinding(),
       middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.job_seeker.value),
+        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
       ],
     ),
     GetPage(
-      name: _Paths.APPLICATION_REVIEW,
+      name: Routes.applicationReview,
       page: () => const ApplicationReviewView(),
       binding: ApplicationReviewBinding(),
       middlewares: [
@@ -220,7 +220,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.APPLICATION_LIST,
+      name: Routes.applicationList,
       page: () => const ApplicationListView(),
       binding: ApplicationListBinding(),
       middlewares: [
@@ -228,7 +228,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.COMPANY_MAIN_WRAPPER,
+      name: Routes.companyMainWrapper,
       page: () => const CompanyMainWrapperView(),
       binding: CompanyMainWrapperBinding(),
       middlewares: [
@@ -236,7 +236,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.COMPANY_CHAT,
+      name: Routes.companyChat,
       page: () => const CompanyChatView(),
       binding: CompanyChatBinding(),
       middlewares: [
@@ -244,7 +244,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.COMPANY_PROFILE,
+      name: Routes.companyProfile,
       page: () => const CompanyProfileView(),
       binding: CompanyProfileBinding(),
       middlewares: [
@@ -252,7 +252,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.COMPANY_CHAT_DETAILS,
+      name: Routes.companyChatDetails,
       page: () => const CompanyChatDetailsView(),
       binding: CompanyChatDetailsBinding(),
       middlewares: [
@@ -260,7 +260,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.COMPANY_NOTIFICATIONS,
+      name: Routes.companyNotifications,
       page: () => const CompanyNotificationsView(),
       binding: CompanyNotificationsBinding(),
       middlewares: [
@@ -268,12 +268,12 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.SEARCH_JOBS,
+      name: Routes.jobSeekerSearchJobs,
       page: () => const JobSeekerSearchJobsView(),
       binding: JobSeekerSearchJobsBinding(),
     ),
     GetPage(
-      name: _Paths.PDF_VIEWER,
+      name: Routes.pdfViewer,
       page: () => const PdfViewerView(),
       binding: PdfViewerBinding(),
     ),

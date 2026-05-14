@@ -15,6 +15,7 @@ class ApplicationReviewController extends GetxController {
 
   final isProcessing = false.obs;
   final companyName = ''.obs;
+  final readOnly = false.obs;
 
   String get companyId => _auth.currentUser?.uid ?? '';
 
@@ -40,24 +41,32 @@ class ApplicationReviewController extends GetxController {
   }
 
   void _initializeApplicant() {
-    if (Get.arguments != null && Get.arguments is ApplicationReviewModel) {
-      applicant = (Get.arguments as ApplicationReviewModel).obs;
-    } else {
-      applicant = ApplicationReviewModel(
-        id: '0',
-        jobSeekerId: '0',
-        name: 'Unknown',
-        jobTitle: 'Unknown',
-        location: 'Unknown',
-        email: 'Unknown',
-        skills: 'Unknown',
-        experience: 'Unknown',
-        education: 'Unknown',
-        cvUrl: '',
-        appliedAt: '',
-        applicantFcmToken: '',
-      ).obs;
+    if (Get.arguments != null) {
+      if (Get.arguments is Map<String, dynamic>) {
+        final args = Get.arguments as Map<String, dynamic>;
+        applicant = (args['application'] as ApplicationReviewModel).obs;
+        readOnly.value = args['readOnly'] as bool? ?? false;
+        return;
+      }
+      if (Get.arguments is ApplicationReviewModel) {
+        applicant = (Get.arguments as ApplicationReviewModel).obs;
+        return;
+      }
     }
+    applicant = ApplicationReviewModel(
+      id: '0',
+      jobSeekerId: '0',
+      name: 'Unknown',
+      jobTitle: 'Unknown',
+      location: 'Unknown',
+      email: 'Unknown',
+      skills: 'Unknown',
+      experience: 'Unknown',
+      education: 'Unknown',
+      cvUrl: '',
+      appliedAt: '',
+      applicantFcmToken: '',
+    ).obs;
   }
 
   /// Accepts the application, updates its status in Firestore, creates a new
@@ -75,8 +84,10 @@ class ApplicationReviewController extends GetxController {
 
     try {
       // 1. Update application status to Accepted in Firestore
+      final updatedAt = DateTime.now().toIso8601String();
       await _firestore.collection('applications').doc(applicationId).set({
         'status': 'Accepted',
+        'updatedAt': updatedAt,
       }, SetOptions(merge: true));
 
       if (isClosed) return;
@@ -92,19 +103,22 @@ class ApplicationReviewController extends GetxController {
 
       // 2. Write in-app notification document to Firestore for the job seeker
       await _firestore
-          .collection('notifications').doc(jobSeekerId).collection('items')
+          .collection('notifications')
+          .doc(jobSeekerId)
+          .collection('items')
           .add({
-        'type': 'application_update',
-        'title': 'Application Accepted!',
-        'body': 'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
-        'applicationId': applicationId,
-        'jobTitle': applicant.value.jobTitle,
-        'companyName': resolvedCompanyName,
-        'status': 'Accepted',
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'icon': 'notifications',
-      });
+            'type': 'application_update',
+            'title': 'Application Accepted!',
+            'body':
+                'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
+            'applicationId': applicationId,
+            'jobTitle': applicant.value.jobTitle,
+            'companyName': resolvedCompanyName,
+            'status': 'Accepted',
+            'isRead': false,
+            'createdAt': FieldValue.serverTimestamp(),
+            'icon': 'notifications',
+          });
 
       if (isClosed) return;
 
@@ -142,7 +156,7 @@ class ApplicationReviewController extends GetxController {
 
       // 5. Route to company chat details
       Get.offNamed(
-        Routes.COMPANY_CHAT_DETAILS,
+        Routes.companyChatDetails,
         arguments: {
           'chatId': chatId,
           'chatName': jobSeekerName,
@@ -168,24 +182,28 @@ class ApplicationReviewController extends GetxController {
     try {
       await _firestore.collection('applications').doc(applicationId).set({
         'status': 'Rejected',
+        'updatedAt': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
 
       if (isClosed) return;
 
       await _firestore
-          .collection('notifications').doc(applicant.value.jobSeekerId).collection('items')
+          .collection('notifications')
+          .doc(applicant.value.jobSeekerId)
+          .collection('items')
           .add({
-        'type': 'application_update',
-        'title': 'Application Update',
-        'body': 'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
-        'applicationId': applicationId,
-        'jobTitle': applicant.value.jobTitle,
-        'companyName': companyName.value,
-        'status': 'Rejected',
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'icon': 'notifications',
-      });
+            'type': 'application_update',
+            'title': 'Application Update',
+            'body':
+                'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
+            'applicationId': applicationId,
+            'jobTitle': applicant.value.jobTitle,
+            'companyName': companyName.value,
+            'status': 'Rejected',
+            'isRead': false,
+            'createdAt': FieldValue.serverTimestamp(),
+            'icon': 'notifications',
+          });
 
       if (isClosed) return;
 
@@ -205,7 +223,7 @@ class ApplicationReviewController extends GetxController {
         ? cvUrl!
         : 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    Get.toNamed(Routes.PDF_VIEWER, arguments: url);
+    Get.toNamed(Routes.pdfViewer, arguments: url);
   }
 
   void _showError(String message) {

@@ -53,12 +53,16 @@ class CompanyChatView extends GetView<CompanyChatController> {
                         if (uid != null) {
                           final firestore = FirebaseFirestore.instance;
                           final role = StorageService.to.userRole;
-                          final roleCollection = role == AppUserRole.company.value
+                          final roleCollection =
+                              role == AppUserRole.company.value
                               ? 'companies'
                               : 'jobSeekers';
-                          await firestore.collection(roleCollection).doc(uid).set({
-                            'fcmToken': FieldValue.delete(),
-                          }, SetOptions(merge: true));
+                          await firestore
+                              .collection(roleCollection)
+                              .doc(uid)
+                              .set({
+                                'fcmToken': FieldValue.delete(),
+                              }, SetOptions(merge: true));
                           await firestore.collection('users').doc(uid).set({
                             'fcmToken': FieldValue.delete(),
                           }, SetOptions(merge: true));
@@ -66,7 +70,7 @@ class CompanyChatView extends GetView<CompanyChatController> {
                         }
                         await StorageService.to.clearAuthSession();
                         await auth.signOut();
-                        Get.offAllNamed(Routes.AUTH_LOGIN);
+                        Get.offAllNamed(Routes.authLogin);
                       },
                     ),
                   ],
