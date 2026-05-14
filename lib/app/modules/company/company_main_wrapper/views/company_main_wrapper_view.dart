@@ -19,6 +19,7 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
       bottomNavigationBar: Obx(
         () => _CompanyBottomNavBar(
           currentIndex: controller.currentIndex.value,
+          unreadChats: controller.unreadChats.value,
           onTap: controller.changePage,
         ),
       ),
@@ -47,9 +48,14 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
 
 class _CompanyBottomNavBar extends StatelessWidget {
   final int currentIndex;
+  final int unreadChats;
   final void Function(int index) onTap;
 
-  const _CompanyBottomNavBar({required this.currentIndex, required this.onTap});
+  const _CompanyBottomNavBar({
+    required this.currentIndex,
+    required this.unreadChats,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +82,14 @@ class _CompanyBottomNavBar extends StatelessWidget {
               icon: Icons.account_balance_outlined,
               activeIcon: Icons.account_balance_rounded,
             ),
-            _navItem(
-              index: 1,
-              icon: Icons.chat_bubble_outline_rounded,
-              activeIcon: Icons.chat_bubble_rounded,
+            Badge(
+              isLabelVisible: unreadChats > 0,
+              label: Text('$unreadChats'),
+              child: _navItem(
+                index: 1,
+                icon: Icons.chat_bubble_outline_rounded,
+                activeIcon: Icons.chat_bubble_rounded,
+              ),
             ),
             _navItem(
               index: 2,
