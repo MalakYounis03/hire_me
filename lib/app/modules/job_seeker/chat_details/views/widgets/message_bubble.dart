@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/views/widgets/avatar.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/model/chat_details_model.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
+import '../../../chat/views/widgets/avatar.dart';
+import '../../model/chat_details_model.dart';
 
 class MessageBubble extends StatelessWidget {
   final ChatDetailsModel message;
@@ -62,7 +63,7 @@ class MessageBubble extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),

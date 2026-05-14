@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/models/user_model.dart';
+import 'package:hire_me/app/modules/profile/models/user_model.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
@@ -22,7 +22,7 @@ class ProfileView extends GetView<ProfileController> {
         ),
         title: Text(
           AppString.profile,
-          style: CustomTextstyle.Intersemiboldwhite,
+          style: CustomTextstyle.interSemiBoldWhite,
         ),
         centerTitle: true,
         actions: [
@@ -54,6 +54,29 @@ class ProfileView extends GetView<ProfileController> {
               _buildEducationCard(),
               const SizedBox(height: 10),
               _buildSkillsCard(),
+              const SizedBox(height: 10),
+              // Languages — تظهر بس لو في بيانات
+              Obx(
+                () => controller.languages.isNotEmpty
+                    ? Column(
+                        children: [
+                          _buildLanguagesCard(),
+                          const SizedBox(height: 10),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              // Links — تظهر بس لو في بيانات
+              Obx(
+                () => controller.links.isNotEmpty
+                    ? Column(
+                        children: [
+                          _buildLinksCard(),
+                          const SizedBox(height: 10),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
               const SizedBox(height: 20),
             ],
           ),
@@ -76,11 +99,7 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-<<<<<<< HEAD
-              // ── Cover ──
-=======
               // Cover
->>>>>>> 25acee7 (my work)
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -119,7 +138,7 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
 
-              // ── Avatar ──
+              // Avatar
               Positioned(
                 bottom: -36,
                 left: 16,
@@ -128,41 +147,51 @@ class ProfileView extends GetView<ProfileController> {
                   return Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // الصورة نفسها — بدون GestureDetector هون
-                      CircleAvatar(
-                        radius: 44,
-                        backgroundColor: showBadge
-                            ? const Color(0xFF22C55E)
-                            : Colors.white,
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.white,
-                          child: controller.isUploadingImage.value
-                              ? CircularProgressIndicator(color: AppColor.kblue)
-                              : CircleAvatar(
-                                  radius: 38,
-                                  backgroundColor: const Color(0xFFE8EDF9),
-                                  backgroundImage:
-                                      controller.userImage.isNotEmpty
-                                      ? NetworkImage(controller.userImage)
-                                      : null,
-                                  child: controller.userImage.isEmpty
-                                      ? Icon(
-                                          Icons.person_rounded,
-                                          size: 38,
-                                          color: AppColor.kblue,
-                                        )
-                                      : null,
-                                ),
+                      Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: showBadge
+                              ? const Color(0xFF22C55E)
+                              : Colors.white,
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: controller.isUploadingImage.value
+                                ? CircularProgressIndicator(
+                                    color: AppColor.kblue,
+                                  )
+                                : CircleAvatar(
+                                    radius: 38,
+                                    backgroundColor: const Color(0xFFE8EDF9),
+                                    backgroundImage:
+                                        controller.userImage.isNotEmpty
+                                        ? NetworkImage(controller.userImage)
+                                        : null,
+                                    child: controller.userImage.isEmpty
+                                        ? Icon(
+                                            Icons.person_rounded,
+                                            size: 38,
+                                            color: AppColor.kblue,
+                                          )
+                                        : null,
+                                  ),
+                          ),
                         ),
                       ),
-
-                      // ── زر + منفصل تماماً ──
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: controller.pickAndUploadImage, // ← هون بس
+                          behavior: HitTestBehavior.opaque,
+                          onTap: controller.pickAndUploadImage,
                           child: Container(
                             width: 26,
                             height: 26,
@@ -179,8 +208,6 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                         ),
                       ),
-
-                      // ── Open to Work badge ──
                       if (showBadge)
                         Positioned(
                           bottom: -10,
@@ -231,7 +258,7 @@ class ProfileView extends GetView<ProfileController> {
                     controller.userName.isEmpty
                         ? 'Your Name'
                         : controller.userName.toUpperCase(),
-                    style: CustomTextstyle.Intermeduim,
+                    style: CustomTextstyle.interMedium,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -240,7 +267,7 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userTitle,
-                          style: CustomTextstyle.Interregular400,
+                          style: CustomTextstyle.interRegular400,
                         ),
                 ),
                 const SizedBox(height: 2),
@@ -249,7 +276,7 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userUniversity,
-                          style: CustomTextstyle.Interregular400,
+                          style: CustomTextstyle.interRegular400,
                         ),
                 ),
                 const SizedBox(height: 2),
@@ -258,15 +285,10 @@ class ProfileView extends GetView<ProfileController> {
                       ? const SizedBox.shrink()
                       : Text(
                           controller.userLocation,
-                          style: CustomTextstyle.Roboto300,
+                          style: CustomTextstyle.roboto300,
                         ),
                 ),
                 const SizedBox(height: 14),
-<<<<<<< HEAD
-
-                // ── Action Buttons ──
-=======
->>>>>>> 25acee7 (my work)
                 Row(
                   children: [
                     Flexible(
@@ -302,7 +324,7 @@ class ProfileView extends GetView<ProfileController> {
                                   controller.isOpenToWork
                                       ? 'Open to Work'
                                       : 'Open to',
-                                  style: CustomTextstyle.Interregular500,
+                                  style: CustomTextstyle.interRegular500,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -312,13 +334,14 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     const SizedBox(width: 8),
+                    // ── Add section ── مربوط هلق
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: controller.showAddSectionBottomSheet,
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
+                        side: BorderSide(color: AppColor.lightThemeGrey),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
@@ -326,7 +349,7 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                       child: Text(
                         'Add section',
-                        style: CustomTextstyle.Interregular500grey,
+                        style: CustomTextstyle.interRegular500Grey,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -336,13 +359,13 @@ class ProfileView extends GetView<ProfileController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        side: BorderSide(color: AppColor.light_themeGrey),
+                        side: BorderSide(color: AppColor.lightThemeGrey),
                         minimumSize: const Size(36, 36),
                         padding: EdgeInsets.zero,
                       ),
                       child: Icon(
                         Icons.more_horiz,
-                        color: AppColor.light_themeGrey,
+                        color: AppColor.lightThemeGrey,
                         size: 20,
                       ),
                     ),
@@ -442,6 +465,44 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+  // ── Languages Card ────────────────────────────────────
+  Widget _buildLanguagesCard() {
+    return _sectionCard(
+      title: 'Languages',
+      icon: Icons.language_rounded,
+      onEdit: null,
+      child: Obx(
+        () => Column(
+          children: [
+            ...controller.languages.asMap().entries.map(
+              (e) => _languageItem(e.value, e.key),
+            ),
+            _addButton('Add Language', controller.showAddLanguageDialog),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Links Card ────────────────────────────────────────
+  Widget _buildLinksCard() {
+    return _sectionCard(
+      title: 'Links',
+      icon: Icons.link_rounded,
+      onEdit: null,
+      child: Obx(
+        () => Column(
+          children: [
+            ...controller.links.asMap().entries.map(
+              (e) => _linkItem(e.value, e.key),
+            ),
+            _addButton('Add Link', controller.showAddLinkDialog),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ── Section Card ──────────────────────────────────────
   Widget _sectionCard({
     required String title,
@@ -494,10 +555,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-<<<<<<< HEAD
   // ── Education Item ────────────────────────────────────
-=======
->>>>>>> 25acee7 (my work)
   Widget _educationItem(EducationModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -544,10 +602,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-<<<<<<< HEAD
   // ── Experience Item ───────────────────────────────────
-=======
->>>>>>> 25acee7 (my work)
   Widget _experienceItem(ExperienceModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -594,6 +649,98 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+  // ── Language Item ─────────────────────────────────────
+  Widget _languageItem(LanguageModel e, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          _iconBox(Icons.language_rounded),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  e.name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  e.level,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _itemActions(
+            onEdit: () => controller.showEditLanguageDialog(index),
+            onDelete: () => controller.deleteLanguage(index),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Link Item ─────────────────────────────────────────
+  Widget _linkItem(LinkModel e, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          _iconBox(_linkIcon(e.type)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  e.type,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  e.url,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF1A3794),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          _itemActions(
+            onEdit: () => controller.showEditLinkDialog(index),
+            onDelete: () => controller.deleteLink(index),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _linkIcon(String type) {
+    switch (type) {
+      case 'GitHub':
+        return Icons.code_rounded;
+      case 'LinkedIn':
+        return Icons.work_outline_rounded;
+      case 'Portfolio':
+        return Icons.web_rounded;
+      default:
+        return Icons.link_rounded;
+    }
+  }
+
   // ── Skill Chip ────────────────────────────────────────
   Widget _skillChip(String skill, int index) {
     return Container(
@@ -637,10 +784,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-<<<<<<< HEAD
   // ── Mini Helpers ──────────────────────────────────────
-=======
->>>>>>> 25acee7 (my work)
   Widget _iconBox(IconData icon) => Container(
     width: 40,
     height: 40,

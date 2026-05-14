@@ -1,17 +1,22 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/model/chat_model.dart';
-import 'package:hire_me/app/modules/job_seeker/chat/services/chat_services.dart';
+
+import '../model/chat_model.dart';
+import '../services/chat_services.dart';
 
 class ChatController extends GetxController {
   final ChatService _chatService = ChatService();
-  final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   final searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
   final RxList<ChatModel> allChats = <ChatModel>[].obs;
   final RxBool isLoading = true.obs;
+  StreamSubscription? _chatsSub;
 
   @override
   void onInit() {
@@ -21,7 +26,7 @@ class ChatController extends GetxController {
   }
 
   void _listenToChats() {
-    _chatService
+    _chatsSub = _chatService
         .getChats(currentUserId)
         .listen(
           (chats) {
@@ -29,7 +34,7 @@ class ChatController extends GetxController {
             isLoading.value = false;
           },
           onError: (e) {
-            print('Error: $e'); // ✅
+            log('Error: $e'); // ✅
           },
         );
   }
@@ -52,6 +57,7 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
+    _chatsSub?.cancel();
     searchController.dispose();
     super.onClose();
   }

@@ -1,168 +1,168 @@
 import 'package:flutter/widgets.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'app_color.dart';
 
 abstract class CustomTextstyle {
-  static final Poppinsbold = TextStyle(
+  static final poppinsBold = TextStyle(
     fontSize: 26,
     fontWeight: FontWeight.bold,
     color: AppColor.kblack,
     fontFamily: " Poppins",
   );
 
-  static final Interbold = TextStyle(
+  static final interBold = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
     color: AppColor.kblue,
     fontFamily: " Inter",
   );
-  static final Montserratmedium = TextStyle(
+  static final montserratMedium = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w500,
     color: AppColor.greyLight,
     fontFamily: "Montserrat",
   );
-  static final Interregular = TextStyle(
+  static final interRegular = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.w400,
     color: AppColor.kwhite,
     fontFamily: " Inter",
   );
-  static final Intersemibold = TextStyle(
+  static final interSemiBold = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: AppColor.greydark,
     fontFamily: " Inter",
   );
-  static final Poppinsbold2 = TextStyle(
+  static final poppinsBold2 = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
     color: AppColor.kblue,
     fontFamily: " Poppins",
   );
-  static final Poppinssemibold = TextStyle(
+  static final poppinsSemiBold = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColor.eblack,
     fontFamily: " Poppins",
   );
-  static final Poppins500 = TextStyle(
+  static final poppins500 = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w500,
     color: AppColor.kblue,
     fontFamily: " Poppins",
   );
-  static final Poppins500grey = TextStyle(
+  static final poppins500Grey = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w500,
     color: Color(0xff949090),
     fontFamily: " Poppins",
   );
-  static final Poppinssemiboldwhite = TextStyle(
+  static final poppinsSemiBoldWhite = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColor.kwhite,
     fontFamily: " Poppins",
   );
-  static final Interregularblack = TextStyle(
+  static final interRegularBlack = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final Interregularblue = TextStyle(
+  static final interRegularBlue = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColor.kblue,
     fontFamily: " Inter",
   );
-  static final Poppins500or = TextStyle(
+  static final poppins500Or = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w500,
     color: AppColor.eblack,
     fontFamily: " Poppins",
   );
-  static final InterregularOrange = TextStyle(
+  static final interRegularOrange = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: AppColor.kblue,
+    color: Color(0xffF16E12),
     fontFamily: " Inter",
   );
-  static final Poppinssemibold500 = TextStyle(
+  static final poppinsSemiBold500 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
     color: AppColor.eblack,
     fontFamily: " Poppins",
   );
-  static final Intersemiboldwhite = TextStyle(
+  static final interSemiBoldWhite = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w600,
     color: AppColor.kwhite,
     fontFamily: " Inter",
   );
-  static final Intermeduim = TextStyle(
-    fontSize: 24,
+  static final interMedium = TextStyle(
+    fontSize: 30,
     fontWeight: FontWeight.w500,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final Roboto = TextStyle(
+  static final roboto = TextStyle(
     fontSize: 17,
     fontWeight: FontWeight.w500,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: "Roboto",
   );
-  static final Interregular400 = TextStyle(
+  static final interRegular400 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w400,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final Roboto300 = TextStyle(
+  static final roboto300 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w300,
-    color: AppColor.light_themeGrey,
+    color: AppColor.lightThemeGrey,
     fontFamily: "Roboto",
   );
-  static final Interregular700 = TextStyle(
+  static final interRegular700 = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w700,
-    color: AppColor.light_themeBlue,
+    color: AppColor.lightThemeBlue,
     fontFamily: " Inter",
   );
-  static final Interregular500 = TextStyle(
+  static final interRegular500 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
     color: AppColor.kwhite,
     fontFamily: " Inter",
   );
-  static final Interregular500grey = TextStyle(
+  static final interRegular500Grey = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    color: AppColor.light_themeGrey,
+    color: AppColor.lightThemeGrey,
     fontFamily: " Inter",
   );
-  static final Interregularblackbold = TextStyle(
+  static final interRegularBlackBold = TextStyle(
     fontSize: 17,
     fontWeight: FontWeight.w700,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final Interregular18 = TextStyle(
+  static final interRegular18 = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w400,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final Intersemiboldblackk = TextStyle(
+  static final interSemiBoldBlackk = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Inter",
   );
-  static final SegoeUI = TextStyle(
+  static final segoeUi = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w400,
-    color: AppColor.Eblack,
+    color: AppColor.eblack,
     fontFamily: " Segoe.UI",
   );
 }

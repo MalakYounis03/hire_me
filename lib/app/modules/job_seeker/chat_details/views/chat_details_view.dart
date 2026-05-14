@@ -1,51 +1,41 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/chat_details_appbar.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_input.dart';
-import 'package:hire_me/app/modules/job_seeker/chat_details/views/widgets/message_list.dart';
-import 'package:hire_me/core/utils/app_color.dart';
+import 'widgets/chat_details_appbar.dart';
+import 'widgets/message_input.dart';
+import 'widgets/message_list.dart';
+import '../../../../../core/utils/app_color.dart';
 
 import '../controllers/chat_details_controller.dart';
 
 class ChatDetailsView extends StatelessWidget {
-  final String chatName;
-  final String avatarUrl;
-  final String seekerId;
-  final String companyId;
-
-  const ChatDetailsView({
-    super.key,
-    required this.chatName,
-    required this.seekerId,
-    required this.companyId,
-    this.avatarUrl = '',
-  });
+  const ChatDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ///todo
-    final controller = Get.put(
-      ChatDetailsController(
-        chatName: chatName,
-        chatAvatarUrl: avatarUrl,
-        chatId: Get.arguments?['chatId'] ?? '', // ✅ null check
-        seekerId: seekerId,
-        companyId: companyId,
-      ),
-      tag: chatName,
+    final args = Get.arguments;
+    final chatId = args is Map<String, dynamic>
+        ? (args['chatId'] as String? ?? '')
+        : args is String
+            ? args
+            : '';
+    final controller = Get.find<ChatDetailsController>(
+      tag: chatId.isNotEmpty ? chatId : null,
     );
 
     return Scaffold(
       backgroundColor: AppColor.background,
-      appBar: ChatDetailsAppbar(name: chatName, avatarUrl: avatarUrl),
+      appBar: ChatDetailsAppbar(
+        name: controller.chatName,
+        avatarUrl: controller.chatAvatarUrl,
+      ),
       body: Column(
         children: [
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(), // ✅
+                  child: CircularProgressIndicator(),
                 );
               }
               return MessagesList(controller: controller);

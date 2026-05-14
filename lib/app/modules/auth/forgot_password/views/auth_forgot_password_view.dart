@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
+import '../../../../../core/utils/app_color.dart';
+import '../../../../../core/utils/app_text_style.dart';
 import '../controllers/auth_forgot_password_controller.dart';
 
 class AuthForgotPasswordView extends GetView<AuthForgotPasswordController> {
@@ -108,12 +108,12 @@ class AuthForgotPasswordView extends GetView<AuthForgotPasswordController> {
   Widget _buildTitle({required String title, required String subtitle}) {
     return Column(
       children: [
-        Text(title, style: CustomTextstyle.Poppinsbold2),
+        Text(title, style: CustomTextstyle.poppinsBold2),
         const SizedBox(height: 16),
         Text(
           subtitle,
           textAlign: TextAlign.center,
-          style: CustomTextstyle.Poppinssemibold,
+          style: CustomTextstyle.poppinsSemiBold,
         ),
       ],
     );
@@ -139,7 +139,7 @@ class AuthForgotPasswordView extends GetView<AuthForgotPasswordController> {
           ),
           child: isLoading.value
               ? const CircularProgressIndicator(color: Colors.white)
-              : Text(label, style: CustomTextstyle.Poppinssemiboldwhite),
+              : Text(label, style: CustomTextstyle.poppinsSemiBoldWhite),
         ),
       ),
     );

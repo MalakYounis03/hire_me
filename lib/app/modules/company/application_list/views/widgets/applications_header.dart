@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class ApplicantsHeader extends StatelessWidget {
   final int jobsCount;
   final int applicantsCount;
+  final VoidCallback? onJobsTap;
+  final VoidCallback? onApplicationsTap;
 
   const ApplicantsHeader({
     required this.jobsCount,
     required this.applicantsCount,
+    this.onJobsTap,
+    this.onApplicationsTap,
     super.key,
   });
 
@@ -39,14 +44,19 @@ class ApplicantsHeader extends StatelessWidget {
               spacing: 10,
               runSpacing: 8,
               children: [
-                _InfoPill(
-                  icon: Icons.work_outline_rounded,
-                  text: '$jobsCount ${jobsCount == 1 ? 'job' : 'jobs'}',
+                GestureDetector(
+                  onTap: onJobsTap,
+                  child: _InfoPill(
+                    icon: Icons.work_outline_rounded,
+                    text: '$jobsCount ${jobsCount == 1 ? 'job' : 'jobs'}',
+                  ),
                 ),
-                _InfoPill(
-                  icon: Icons.group_outlined,
-                  text:
-                      '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
+                GestureDetector(
+                  onTap: onApplicationsTap,
+                  child: _InfoPill(
+                    icon: Icons.group_outlined,
+                    text: '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
+                  ),
                 ),
               ],
             ),
@@ -68,9 +78,9 @@ class _InfoPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColor.kwhite.withOpacity(0.14),
+        color: AppColor.kwhite.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColor.kwhite.withOpacity(0.25)),
+        border: Border.all(color: AppColor.kwhite.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

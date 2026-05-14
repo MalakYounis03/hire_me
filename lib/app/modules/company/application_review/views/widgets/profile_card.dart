@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hire_me/app/core/utils/app_color.dart';
+
+import '../../../../../../core/utils/app_color.dart';
 
 class ProfileCard extends StatelessWidget {
   final String name;
@@ -24,7 +25,7 @@ class ProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: AppColor.kblack.withOpacity(0.03),
+            color: AppColor.kblack.withValues(alpha: 0.03),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -34,7 +35,7 @@ class ProfileCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 46,
-            backgroundColor: AppColor.kblue.withOpacity(0.1),
+            backgroundColor: AppColor.kblue.withValues(alpha: 0.1),
             backgroundImage: NetworkImage(
               avatarUrl.isNotEmpty
                   ? avatarUrl
