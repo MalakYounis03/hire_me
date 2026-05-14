@@ -393,7 +393,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
   }
 
   void _goToMainWrapper(int index) {
-    Get.offAllNamed(Routes.MAIN_WRAPPER, arguments: {'initialIndex': index});
+    Get.offAllNamed(Routes.mainWrapper, arguments: {'initialIndex': index});
   }
 }
 // import 'package:flutter/material.dart';

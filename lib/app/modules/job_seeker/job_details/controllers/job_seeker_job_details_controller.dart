@@ -88,7 +88,7 @@ class JobSeekerJobDetailsController extends GetxController {
       return;
     }
 
-    Get.toNamed(Routes.JOB_SEEKER_APPLY_JOB, arguments: currentJob);
+    Get.toNamed(Routes.jobSeekerApplyJob, arguments: currentJob);
   }
 
   String formatJobType(String value) {

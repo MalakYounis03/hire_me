@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import '../routes/app_pages.dart';
+import 'storage_service.dart';
 
 class NotificationService extends GetxService {
   static final RxString currentScreen = ''.obs;
@@ -51,16 +52,24 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _getFcmToken() async {
-    final token = await _messaging.getToken();
-    if (token != null) {
-      await _saveTokenToFirestore(token);
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await _saveTokenToFirestore(token);
+      }
+    } catch (e) {
+      debugPrint('FCM token retrieval failed: $e');
     }
   }
 
   Future<void> saveFcmToken() async {
-    final token = await _messaging.getToken();
-    if (token != null) {
-      await _saveTokenToFirestore(token);
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await _saveTokenToFirestore(token);
+      }
+    } catch (e) {
+      debugPrint('FCM token retrieval failed: $e');
     }
   }
 
@@ -72,9 +81,7 @@ class NotificationService extends GetxService {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
     try {
-      final userDoc = await _firestore.collection('users').doc(uid).get();
-      final role = userDoc.data()?['role'] as String?;
-
+      final role = StorageService.to.userRole;
       if (role == 'job_seeker') {
         await _firestore.collection('jobSeekers').doc(uid).set({
           'fcmToken': token,
@@ -161,10 +168,10 @@ class NotificationService extends GetxService {
     final type = data['type'];
     switch (type) {
       case 'application_update':
-        Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS);
+        Get.toNamed(Routes.jobSeekerApplyJob);
         break;
       case 'new_application':
-        Get.toNamed(Routes.APPLICATION_LIST);
+        Get.toNamed(Routes.applicationList);
         break;
       case 'chat_message':
         final chatId = data['chatId'] as String?;
@@ -175,9 +182,9 @@ class NotificationService extends GetxService {
         _firestore.collection('users').doc(uid).get().then((doc) {
           final role = doc.data()?['role'] as String?;
           if (role == 'job_seeker') {
-            Get.toNamed(Routes.JOB_SEEKER_CHAT_DETAILS, arguments: chatId);
+            Get.toNamed(Routes.jobSeekerChatDetails, arguments: chatId);
           } else if (role == 'company') {
-            Get.toNamed(Routes.COMPANY_CHAT_DETAILS, arguments: chatId);
+            Get.toNamed(Routes.companyChatDetails, arguments: chatId);
           }
         });
         break;

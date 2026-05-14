@@ -1,14 +1,33 @@
 import 'package:get/get.dart';
-import '../../../../routes/app_pages.dart';
 
 class CompanyMainWrapperController extends GetxController {
-  var currentIndex = 0.obs;
+  final currentIndex = 2.obs; // Dashboard default
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    final args = Get.arguments;
+
+    if (args is Map<String, dynamic>) {
+      final initialIndex = args['initialIndex'];
+
+      if (initialIndex is int && initialIndex >= 0 && initialIndex <= 3) {
+        currentIndex.value = initialIndex;
+      }
+    }
+  }
 
   void changePage(int index) {
+    if (index == currentIndex.value) return;
     currentIndex.value = index;
   }
 
-  void onPostJobPressed() {
-    Get.toNamed(Routes.COMPANY_POST_JOB);
+  void goToDashboard() {
+    currentIndex.value = 2;
+  }
+
+  void goToPostJob() {
+    currentIndex.value = 3;
   }
 }

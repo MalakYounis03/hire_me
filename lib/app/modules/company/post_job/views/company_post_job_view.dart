@@ -8,7 +8,9 @@ import 'package:hire_me/core/utils/app_text_style.dart';
 import '../controllers/company_post_job_controller.dart';
 
 class CompanyPostJobView extends GetView<CompanyPostJobController> {
-  const CompanyPostJobView({super.key});
+  final bool showBackButton;
+
+  const CompanyPostJobView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +22,13 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
             _buildAppBar(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 30),
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 110),
                 child: Form(
                   key: controller.formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildCompanyLogo(),
-
                       const SizedBox(height: 22),
 
                       _label(
@@ -148,14 +149,16 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: AppColor.kwhite,
-              size: 20,
-            ),
-          ),
+          showBackButton
+              ? GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: AppColor.kwhite,
+                    size: 20,
+                  ),
+                )
+              : const SizedBox(width: 20),
           Expanded(
             child: Text(
               'Post a Job',
@@ -166,11 +169,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
               ),
             ),
           ),
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
-          ),
+          const SizedBox(width: 20),
         ],
       ),
     );
@@ -481,11 +480,12 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
     );
   }
 }
+// import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 
-// import 'package:hire_me/app/core/utils/app_color.dart';
-// import 'package:hire_me/app/core/utils/app_text_style.dart';
+// import 'package:hire_me/core/utils/app_color.dart';
+// import 'package:hire_me/core/utils/app_text_style.dart';
 
 // import '../controllers/company_post_job_controller.dart';
 
@@ -642,7 +642,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //             child: Text(
 //               'Post a Job',
 //               textAlign: TextAlign.center,
-//               style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+//               style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
 //                 fontSize: 18,
 //                 color: AppColor.kwhite,
 //               ),
@@ -663,24 +663,37 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //       child: Column(
 //         children: [
 //           Obx(
-//             () => Container(
-//               width: 72,
-//               height: 72,
-//               decoration: BoxDecoration(
-//                 color: const Color(0xffDEE8F8),
-//                 shape: BoxShape.circle,
-//                 border: Border.all(color: AppColor.kblue.withOpacity(0.25)),
-//               ),
-//               child: ClipOval(
-//                 child: controller.companyLogoUrl.value.isNotEmpty
-//                     ? Image.network(
-//                         controller.companyLogoUrl.value,
-//                         fit: BoxFit.cover,
-//                         errorBuilder: (context, error, stackTrace) {
-//                           return _logoPlaceholder();
-//                         },
-//                       )
-//                     : _logoPlaceholder(),
+//             () => GestureDetector(
+//               onTap: controller.isUploadingLogo.value
+//                   ? null
+//                   : controller.pickAndUploadCompanyLogo,
+//               child: Container(
+//                 width: 72,
+//                 height: 72,
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xffDEE8F8),
+//                   shape: BoxShape.circle,
+//                   border: Border.all(
+//                     color: AppColor.kblue.withValues(alpha: 0.25),
+//                   ),
+//                 ),
+//                 child: ClipOval(
+//                   child: controller.isUploadingLogo.value
+//                       ? Center(
+//                           child: CircularProgressIndicator(
+//                             color: AppColor.kblue,
+//                             strokeWidth: 2,
+//                           ),
+//                         )
+//                       : controller.companyLogoUrl.value.isNotEmpty
+//                       ? CachedNetworkImage(
+//                           imageUrl: controller.companyLogoUrl.value,
+//                           fit: BoxFit.cover,
+//                           errorWidget: (context, url, error) =>
+//                               _logoPlaceholder(),
+//                         )
+//                       : _logoPlaceholder(),
+//                 ),
 //               ),
 //             ),
 //           ),
@@ -688,7 +701,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //           Text(
 //             'Company logo',
 //             style: TextStyle(
-//               color: AppColor.Eblack,
+//               color: AppColor.eblack,
 //               fontSize: 13,
 //               fontWeight: FontWeight.w600,
 //             ),
@@ -710,7 +723,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //         Text(
 //           text,
 //           style: TextStyle(
-//             color: AppColor.Eblack,
+//             color: AppColor.eblack,
 //             fontSize: 13,
 //             fontWeight: FontWeight.w700,
 //           ),
@@ -736,7 +749,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //         }
 //         return null;
 //       },
-//       style: TextStyle(color: AppColor.Eblack, fontSize: 13),
+//       style: TextStyle(color: AppColor.eblack, fontSize: 13),
 //       decoration: InputDecoration(
 //         hintText: hint,
 //         hintStyle: TextStyle(color: AppColor.greyLight, fontSize: 12),
@@ -752,7 +765,9 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //         ),
 //         enabledBorder: OutlineInputBorder(
 //           borderRadius: BorderRadius.circular(7),
-//           borderSide: BorderSide(color: AppColor.Eblack.withOpacity(0.04)),
+//           borderSide: BorderSide(
+//             color: AppColor.eblack.withValues(alpha: 0.04),
+//           ),
 //         ),
 //         focusedBorder: OutlineInputBorder(
 //           borderRadius: BorderRadius.circular(7),
@@ -805,7 +820,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //         decoration: BoxDecoration(
 //           color: AppColor.kwhite,
 //           borderRadius: BorderRadius.circular(7),
-//           border: Border.all(color: AppColor.Eblack.withOpacity(0.04)),
+//           border: Border.all(color: AppColor.eblack.withValues(alpha: 0.04)),
 //         ),
 //         child: DropdownButtonHideUnderline(
 //           child: DropdownButton<String>(
@@ -823,7 +838,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
 //                 child: Text(
 //                   field.name,
 //                   style: TextStyle(
-//                     color: AppColor.Eblack,
+//                     color: AppColor.eblack,
 //                     fontSize: 13,
 //                     fontWeight: FontWeight.w500,
 //                   ),

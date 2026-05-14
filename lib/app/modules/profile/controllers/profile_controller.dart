@@ -156,7 +156,9 @@ class ProfileController extends GetxController {
                           height: 38,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                ? const Color(
+                                    0xFF1A3794,
+                                  ).withValues(alpha: 0.12)
                                 : const Color(0xFFE8EDF9),
                             shape: BoxShape.circle,
                           ),
@@ -760,6 +762,12 @@ class ProfileController extends GetxController {
     final updated = [...skills]..removeAt(index);
     await _updateField('skills', updated);
     userModel.value = userModel.value?.copyWith(skills: updated);
+  }
+
+  // ── Logout ────────────────────────────────────────────
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.splash);
   }
 
   // ── Shared Dialog Helper ──────────────────────────────

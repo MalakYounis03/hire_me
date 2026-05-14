@@ -32,7 +32,7 @@ class JobSeekerMyApplicationsController extends GetxController {
 
     _appSub = _firestore
         .collection('applications')
-        .where('applicantId', isEqualTo: uid)
+        .where('seekerId', isEqualTo: uid)
         .snapshots()
         .listen((snapshot) {
           final map = <String, Map<String, dynamic>>{};
