@@ -179,10 +179,10 @@ class NotificationService extends GetxService {
     debugPrint('🔵 Navigate from notification type: $type');
     switch (type) {
       case 'application_update':
-        Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS);
+        Get.toNamed(Routes.jobSeekerApplyJob);
         break;
       case 'new_application':
-        Get.toNamed(Routes.APPLICATION_LIST);
+        Get.toNamed(Routes.applicationList);
         break;
       case 'chat_message':
         final chatId = data['chatId'] as String?;
@@ -193,9 +193,9 @@ class NotificationService extends GetxService {
         _firestore.collection('users').doc(uid).get().then((doc) {
           final role = doc.data()?['role'] as String?;
           if (role == 'job_seeker') {
-            Get.toNamed(Routes.JOB_SEEKER_CHAT_DETAILS, arguments: chatId);
+            Get.toNamed(Routes.jobSeekerChatDetails, arguments: chatId);
           } else if (role == 'company') {
-            Get.toNamed(Routes.COMPANY_CHAT_DETAILS, arguments: chatId);
+            Get.toNamed(Routes.companyChatDetails, arguments: chatId);
           }
         });
         break;

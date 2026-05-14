@@ -103,19 +103,22 @@ class ApplicationReviewController extends GetxController {
 
       // 2. Write in-app notification document to Firestore for the job seeker
       await _firestore
-          .collection('notifications').doc(jobSeekerId).collection('items')
+          .collection('notifications')
+          .doc(jobSeekerId)
+          .collection('items')
           .add({
-        'type': 'application_update',
-        'title': 'Application Accepted!',
-        'body': 'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
-        'applicationId': applicationId,
-        'jobTitle': applicant.value.jobTitle,
-        'companyName': resolvedCompanyName,
-        'status': 'Accepted',
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'icon': 'notifications',
-      });
+            'type': 'application_update',
+            'title': 'Application Accepted!',
+            'body':
+                'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
+            'applicationId': applicationId,
+            'jobTitle': applicant.value.jobTitle,
+            'companyName': resolvedCompanyName,
+            'status': 'Accepted',
+            'isRead': false,
+            'createdAt': FieldValue.serverTimestamp(),
+            'icon': 'notifications',
+          });
 
       if (isClosed) return;
 
@@ -153,7 +156,7 @@ class ApplicationReviewController extends GetxController {
 
       // 5. Route to company chat details
       Get.offNamed(
-        Routes.COMPANY_CHAT_DETAILS,
+        Routes.companyChatDetails,
         arguments: {
           'chatId': chatId,
           'chatName': jobSeekerName,
@@ -185,19 +188,22 @@ class ApplicationReviewController extends GetxController {
       if (isClosed) return;
 
       await _firestore
-          .collection('notifications').doc(applicant.value.jobSeekerId).collection('items')
+          .collection('notifications')
+          .doc(applicant.value.jobSeekerId)
+          .collection('items')
           .add({
-        'type': 'application_update',
-        'title': 'Application Update',
-        'body': 'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
-        'applicationId': applicationId,
-        'jobTitle': applicant.value.jobTitle,
-        'companyName': companyName.value,
-        'status': 'Rejected',
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'icon': 'notifications',
-      });
+            'type': 'application_update',
+            'title': 'Application Update',
+            'body':
+                'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
+            'applicationId': applicationId,
+            'jobTitle': applicant.value.jobTitle,
+            'companyName': companyName.value,
+            'status': 'Rejected',
+            'isRead': false,
+            'createdAt': FieldValue.serverTimestamp(),
+            'icon': 'notifications',
+          });
 
       if (isClosed) return;
 
@@ -217,7 +223,7 @@ class ApplicationReviewController extends GetxController {
         ? cvUrl!
         : 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    Get.toNamed(Routes.PDF_VIEWER, arguments: url);
+    Get.toNamed(Routes.pdfViewer, arguments: url);
   }
 
   void _showError(String message) {

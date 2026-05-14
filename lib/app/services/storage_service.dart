@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum AppUserRole { company, job_seeker }
+enum AppUserRole { company, jobSeeker }
 
 extension AppUserRoleX on AppUserRole {
-  String get value => this == AppUserRole.company ? 'company' : 'job_seeker';
+  String get value => this == AppUserRole.company ? 'company' : 'jobSeeker';
 }
 
 class StorageService extends GetxService {
@@ -33,7 +33,7 @@ class StorageService extends GetxService {
       case 'job_seeker':
       case 'jobseeker':
       case 'job seeker':
-        return AppUserRole.job_seeker.value;
+        return AppUserRole.jobSeeker.value;
       default:
         return null;
     }

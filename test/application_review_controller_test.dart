@@ -129,30 +129,33 @@ class _FakeApplicationReviewController {
     required _FakeRTDB rtdb,
     ApplicationReviewModel? initialApplicant,
     String initialCompanyName = '',
-  })  : _firestore = firestore,
-        _rtdb = rtdb {
-    applicant = (initialApplicant ??
-            ApplicationReviewModel(
-              id: '0',
-              jobSeekerId: '0',
-              name: 'Unknown',
-              jobTitle: 'Unknown',
-              location: 'Unknown',
-              email: 'Unknown',
-              skills: 'Unknown',
-              experience: 'Unknown',
-              education: 'Unknown',
-              cvUrl: '',
-              appliedAt: '',
-              applicantFcmToken: '',
-            ))
-        .obs;
+  }) : _firestore = firestore,
+       _rtdb = rtdb {
+    applicant =
+        (initialApplicant ??
+                ApplicationReviewModel(
+                  id: '0',
+                  jobSeekerId: '0',
+                  name: 'Unknown',
+                  jobTitle: 'Unknown',
+                  location: 'Unknown',
+                  email: 'Unknown',
+                  skills: 'Unknown',
+                  experience: 'Unknown',
+                  education: 'Unknown',
+                  cvUrl: '',
+                  appliedAt: '',
+                  applicantFcmToken: '',
+                ))
+            .obs;
     companyName.value = initialCompanyName;
   }
 
   // Simulates: Get.toNamed(route, arguments: args)
   void _navigate(String route, {dynamic arguments}) {
-    _navigationHistory.add(_NavigationRecord(route: route, arguments: arguments));
+    _navigationHistory.add(
+      _NavigationRecord(route: route, arguments: arguments),
+    );
   }
 
   // Simulates: Get.back()
@@ -176,11 +179,9 @@ class _FakeApplicationReviewController {
 
     try {
       // 1. Update application status to Accepted in Firestore
-      _firestore.collection('applications').setDoc(
-        applicationId,
-        {'status': 'Accepted'},
-        merge: true,
-      );
+      _firestore.collection('applications').setDoc(applicationId, {
+        'status': 'Accepted',
+      }, merge: true);
 
       // Fallback: fetch company name if not available yet
       String resolvedCompanyName = companyName;
@@ -219,7 +220,7 @@ class _FakeApplicationReviewController {
 
       // 4. Route to company chat details
       _navigate(
-        Routes.COMPANY_CHAT_DETAILS,
+        Routes.companyChatDetails,
         arguments: {
           'chatId': chatId,
           'chatName': jobSeekerName,
@@ -237,11 +238,9 @@ class _FakeApplicationReviewController {
     isProcessing.value = true;
 
     try {
-      _firestore.collection('applications').setDoc(
-        applicationId,
-        {'status': 'Rejected'},
-        merge: true,
-      );
+      _firestore.collection('applications').setDoc(applicationId, {
+        'status': 'Rejected',
+      }, merge: true);
 
       _goBack();
     } finally {
@@ -298,72 +297,77 @@ void main() {
   // ── 1. acceptApplication() updates Firestore status to "Accepted" ──
 
   group('acceptApplication — Firestore status', () {
-    test('should update application status to "Accepted" in Firestore',
-        () async {
-      await controller.acceptApplication(
-        testApplicationId,
-        testJobSeekerId,
-        testJobSeekerName,
-        testCompanyId,
-        testCompanyName,
-      );
+    test(
+      'should update application status to "Accepted" in Firestore',
+      () async {
+        await controller.acceptApplication(
+          testApplicationId,
+          testJobSeekerId,
+          testJobSeekerName,
+          testCompanyId,
+          testCompanyName,
+        );
 
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+        final appData = fakeFirestore
+            .collection('applications')
+            .getDocData(testApplicationId);
 
-      expect(appData, isNotNull);
-      expect(appData!['status'], 'Accepted');
-    });
+        expect(appData, isNotNull);
+        expect(appData!['status'], 'Accepted');
+      },
+    );
 
-    test('should use merge when updating status (preserves other fields)',
-        () async {
-      // Pre-populate with existing application data
-      fakeFirestore.collection('applications').setDoc(
-        testApplicationId,
-        {
+    test(
+      'should use merge when updating status (preserves other fields)',
+      () async {
+        // Pre-populate with existing application data
+        fakeFirestore.collection('applications').setDoc(testApplicationId, {
           'seekerId': testJobSeekerId,
           'seekerName': testJobSeekerName,
           'jobId': 'job-789',
           'status': 'pending',
-        },
-      );
+        });
 
-      await controller.acceptApplication(
-        testApplicationId,
-        testJobSeekerId,
-        testJobSeekerName,
-        testCompanyId,
-        testCompanyName,
-      );
+        await controller.acceptApplication(
+          testApplicationId,
+          testJobSeekerId,
+          testJobSeekerName,
+          testCompanyId,
+          testCompanyName,
+        );
 
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+        final appData = fakeFirestore
+            .collection('applications')
+            .getDocData(testApplicationId);
 
-      expect(appData!['status'], 'Accepted');
-      // Merge should preserve existing fields
-      expect(appData['seekerId'], testJobSeekerId);
-      expect(appData['jobId'], 'job-789');
-    });
+        expect(appData!['status'], 'Accepted');
+        // Merge should preserve existing fields
+        expect(appData['seekerId'], testJobSeekerId);
+        expect(appData['jobId'], 'job-789');
+      },
+    );
   });
 
   // ── 2. acceptApplication() creates correct chat node in RTDB ──
 
   group('acceptApplication — RTDB chat creation', () {
-    test('should create chat document at chats/{companyId}_{jobSeekerId}',
-        () async {
-      await controller.acceptApplication(
-        testApplicationId,
-        testJobSeekerId,
-        testJobSeekerName,
-        testCompanyId,
-        testCompanyName,
-      );
+    test(
+      'should create chat document at chats/{companyId}_{jobSeekerId}',
+      () async {
+        await controller.acceptApplication(
+          testApplicationId,
+          testJobSeekerId,
+          testJobSeekerName,
+          testCompanyId,
+          testCompanyName,
+        );
 
-      final expectedChatPath = 'chats/${testCompanyId}_$testJobSeekerId';
-      final chatData = fakeRTDB.store[expectedChatPath];
+        final expectedChatPath = 'chats/${testCompanyId}_$testJobSeekerId';
+        final chatData = fakeRTDB.store[expectedChatPath];
 
-      expect(chatData, isNotNull);
-    });
+        expect(chatData, isNotNull);
+      },
+    );
 
     test('should set correct companyId and seekerId', () async {
       await controller.acceptApplication(
@@ -473,10 +477,7 @@ void main() {
       final chatData =
           fakeRTDB.store['chats/${testCompanyId}_$testJobSeekerId'];
 
-      expect(
-        chatData!['avatarUrl'],
-        testApplicant.avatarUrl,
-      );
+      expect(chatData!['avatarUrl'], testApplicant.avatarUrl);
     });
 
     test('should set lastMessageTime as millisecondsSinceEpoch', () async {
@@ -516,8 +517,11 @@ void main() {
         (e) => e.key.startsWith('chats/$chatId/messages/push_'),
       );
 
-      expect(messageEntries.isNotEmpty, isTrue,
-          reason: 'Expected a message entry under chats/$chatId/messages/');
+      expect(
+        messageEntries.isNotEmpty,
+        isTrue,
+        reason: 'Expected a message entry under chats/$chatId/messages/',
+      );
     });
 
     test('auto-message should have correct text', () async {
@@ -534,8 +538,10 @@ void main() {
         (e) => e.key.contains('/messages/push_'),
       );
 
-      expect(messageEntry.value['text'],
-          'You have been accepted for this position.');
+      expect(
+        messageEntry.value['text'],
+        'You have been accepted for this position.',
+      );
     });
 
     test('auto-message should have senderId = companyId', () async {
@@ -604,7 +610,7 @@ void main() {
       );
 
       final nav = controller.navigationHistory.last;
-      expect(nav.route, Routes.COMPANY_CHAT_DETAILS);
+      expect(nav.route, Routes.companyChatDetails);
     });
 
     test('should pass correct chatId in arguments', () async {
@@ -684,27 +690,26 @@ void main() {
     test('should update application status to "Rejected"', () async {
       await controller.rejectApplication(testApplicationId);
 
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+      final appData = fakeFirestore
+          .collection('applications')
+          .getDocData(testApplicationId);
 
       expect(appData, isNotNull);
       expect(appData!['status'], 'Rejected');
     });
 
     test('should use merge when updating status', () async {
-      fakeFirestore.collection('applications').setDoc(
-        testApplicationId,
-        {
-          'seekerId': testJobSeekerId,
-          'seekerName': testJobSeekerName,
-          'status': 'pending',
-        },
-      );
+      fakeFirestore.collection('applications').setDoc(testApplicationId, {
+        'seekerId': testJobSeekerId,
+        'seekerName': testJobSeekerName,
+        'status': 'pending',
+      });
 
       await controller.rejectApplication(testApplicationId);
 
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+      final appData = fakeFirestore
+          .collection('applications')
+          .getDocData(testApplicationId);
 
       expect(appData!['status'], 'Rejected');
       expect(appData['seekerId'], testJobSeekerId);
@@ -724,8 +729,9 @@ void main() {
     test('should NOT navigate to any route', () async {
       await controller.rejectApplication(testApplicationId);
 
-      final hasRouteNavigation =
-          controller.navigationHistory.any((n) => n.route != null);
+      final hasRouteNavigation = controller.navigationHistory.any(
+        (n) => n.route != null,
+      );
       expect(hasRouteNavigation, isFalse);
     });
   });
@@ -795,88 +801,90 @@ void main() {
       expect(pendingOnly.first['seekerName'], 'Alice');
     });
 
-    test('after acceptApplication, the app is no longer in pending list',
-        () async {
-      // Start with a pending application
-      fakeFirestore.collection('applications').setDoc(
-        testApplicationId,
-        {
+    test(
+      'after acceptApplication, the app is no longer in pending list',
+      () async {
+        // Start with a pending application
+        fakeFirestore.collection('applications').setDoc(testApplicationId, {
           'seekerId': testJobSeekerId,
           'seekerName': testJobSeekerName,
           'jobId': 'job-1',
           'jobTitle': 'Dev',
           'status': 'pending',
-        },
-      );
+        });
 
-      // Accept it
-      await controller.acceptApplication(
-        testApplicationId,
-        testJobSeekerId,
-        testJobSeekerName,
-        testCompanyId,
-        testCompanyName,
-      );
+        // Accept it
+        await controller.acceptApplication(
+          testApplicationId,
+          testJobSeekerId,
+          testJobSeekerName,
+          testCompanyId,
+          testCompanyName,
+        );
 
-      // Simulate the ApplicationListController stream filter
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+        // Simulate the ApplicationListController stream filter
+        final appData = fakeFirestore
+            .collection('applications')
+            .getDocData(testApplicationId);
 
-      // The ApplicationListController uses: .where('status', isEqualTo: 'pending')
-      // After acceptance, status is 'Accepted', so it won't match
-      expect(appData!['status'], isNot('pending'));
-      expect(appData['status'], 'Accepted');
-    });
+        // The ApplicationListController uses: .where('status', isEqualTo: 'pending')
+        // After acceptance, status is 'Accepted', so it won't match
+        expect(appData!['status'], isNot('pending'));
+        expect(appData['status'], 'Accepted');
+      },
+    );
 
-    test('after rejectApplication, the app is no longer in pending list',
-        () async {
-      fakeFirestore.collection('applications').setDoc(
-        testApplicationId,
-        {
+    test(
+      'after rejectApplication, the app is no longer in pending list',
+      () async {
+        fakeFirestore.collection('applications').setDoc(testApplicationId, {
           'seekerId': testJobSeekerId,
           'seekerName': testJobSeekerName,
           'jobId': 'job-1',
           'jobTitle': 'Dev',
           'status': 'pending',
-        },
-      );
+        });
 
-      await controller.rejectApplication(testApplicationId);
+        await controller.rejectApplication(testApplicationId);
 
-      final appData =
-          fakeFirestore.collection('applications').getDocData(testApplicationId);
+        final appData = fakeFirestore
+            .collection('applications')
+            .getDocData(testApplicationId);
 
-      expect(appData!['status'], isNot('pending'));
-      expect(appData['status'], 'Rejected');
-    });
+        expect(appData!['status'], isNot('pending'));
+        expect(appData['status'], 'Rejected');
+      },
+    );
   });
 
   // ── Edge cases ──
 
   group('Edge cases', () {
-    test('acceptApplication with empty companyName falls back to "Company"',
-        () async {
-      final controllerNoName = _FakeApplicationReviewController(
-        firestore: fakeFirestore,
-        rtdb: fakeRTDB,
-        initialApplicant: testApplicant,
-        initialCompanyName: '',
-      );
+    test(
+      'acceptApplication with empty companyName falls back to "Company"',
+      () async {
+        final controllerNoName = _FakeApplicationReviewController(
+          firestore: fakeFirestore,
+          rtdb: fakeRTDB,
+          initialApplicant: testApplicant,
+          initialCompanyName: '',
+        );
 
-      // No company doc in Firestore fallback either
-      await controllerNoName.acceptApplication(
-        testApplicationId,
-        testJobSeekerId,
-        testJobSeekerName,
-        testCompanyId,
-        '',
-      );
+        // No company doc in Firestore fallback either
+        await controllerNoName.acceptApplication(
+          testApplicationId,
+          testJobSeekerId,
+          testJobSeekerName,
+          testCompanyId,
+          '',
+        );
 
-      final chatData =
-          fakeRTDB.store['chats/${testCompanyId}_$testJobSeekerId'];
+        final chatData =
+            fakeRTDB.store['chats/${testCompanyId}_$testJobSeekerId'];
 
-      expect(chatData!['companyName'], 'Company');
-    });
+        expect(chatData!['companyName'], 'Company');
+      },
+    );
 
     test('isProcessing is true during execution and false after', () async {
       // Before
@@ -896,13 +904,15 @@ void main() {
       expect(controller.isProcessing.value, false);
     });
 
-    test('rejectApplication sets isProcessing back to false after completion',
-        () async {
-      expect(controller.isProcessing.value, false);
+    test(
+      'rejectApplication sets isProcessing back to false after completion',
+      () async {
+        expect(controller.isProcessing.value, false);
 
-      await controller.rejectApplication(testApplicationId);
+        await controller.rejectApplication(testApplicationId);
 
-      expect(controller.isProcessing.value, false);
-    });
+        expect(controller.isProcessing.value, false);
+      },
+    );
   });
 }

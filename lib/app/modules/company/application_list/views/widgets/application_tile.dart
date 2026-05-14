@@ -9,7 +9,11 @@ import '../../../../../routes/app_pages.dart';
 class ApplicantTile extends StatelessWidget {
   final ApplicationReviewModel applicant;
   final bool readOnly;
-  const ApplicantTile({required this.applicant, this.readOnly = false, super.key});
+  const ApplicantTile({
+    required this.applicant,
+    this.readOnly = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class ApplicantTile extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () => Get.toNamed(
-          Routes.APPLICATION_REVIEW,
+          Routes.applicationReview,
           arguments: {'application': applicant, 'readOnly': readOnly},
         ),
         borderRadius: BorderRadius.circular(12),

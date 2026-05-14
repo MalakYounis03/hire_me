@@ -464,7 +464,7 @@ class ProfileController extends GetxController {
   // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
     await _auth.signOut();
-    Get.offAllNamed(Routes.SPLASH);
+    Get.offAllNamed(Routes.splash);
   }
 
   // ── Shared Dialog Helper ──────────────────────────────

@@ -60,7 +60,7 @@ class HeaderWidget extends GetView<JobSeekerDashboardController> {
               backgroundColor: Colors.red,
               smallSize: 18,
               child: GestureDetector(
-                onTap: () => Get.toNamed(Routes.JOB_SEEKER_NOTIFICATIONS),
+                onTap: () => Get.toNamed(Routes.jobSeekerNotifications),
                 child: Container(
                   padding: const EdgeInsets.all(9),
                   decoration: BoxDecoration(
