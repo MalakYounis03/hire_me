@@ -52,8 +52,10 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _getFcmToken() async {
+    debugPrint('🔵 Getting FCM token...');
     try {
       final token = await _messaging.getToken();
+      debugPrint('🟢 FCM token retrieved: $token');
       if (token != null) {
         await _saveTokenToFirestore(token);
       }
@@ -79,17 +81,21 @@ class NotificationService extends GetxService {
 
   Future<void> _saveTokenToFirestore(String token) async {
     final uid = _auth.currentUser?.uid;
+    debugPrint('🔵 Saving token for uid: $uid');
     if (uid == null) return;
     try {
       final role = StorageService.to.userRole;
+      debugPrint('🔵 User role: $role');
       if (role == 'job_seeker') {
         await _firestore.collection('jobSeekers').doc(uid).set({
           'fcmToken': token,
         }, SetOptions(merge: true));
+        debugPrint('🟢 Token saved to jobSeekers collection');
       } else if (role == 'company') {
         await _firestore.collection('companies').doc(uid).set({
           'fcmToken': token,
         }, SetOptions(merge: true));
+        debugPrint('🟢 Token saved to companies collection');
       } else {
         debugPrint(
           'Unknown role "$role" for uid $uid — skipping role-specific save',
@@ -99,8 +105,9 @@ class NotificationService extends GetxService {
       await _firestore.collection('users').doc(uid).set({
         'fcmToken': token,
       }, SetOptions(merge: true));
+      debugPrint('🟢 Token saved to users collection');
     } catch (e) {
-      debugPrint('Failed to save FCM token: $e');
+      debugPrint('🔴 Error saving token: $e');
     }
   }
 
@@ -109,6 +116,9 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
+    debugPrint('🔵 Foreground message received: ${message.notification?.title}');
+    debugPrint('🔵 Message type: ${message.data['type']}');
+    debugPrint('🔵 Current screen: ${NotificationService.currentScreen.value}');
     final type = message.data['type'];
     final screen = currentScreen.value;
 
@@ -166,6 +176,7 @@ class NotificationService extends GetxService {
 
   void _navigateFromData(Map<String, dynamic> data) {
     final type = data['type'];
+    debugPrint('🔵 Navigate from notification type: $type');
     switch (type) {
       case 'application_update':
         Get.toNamed(Routes.jobSeekerApplyJob);
