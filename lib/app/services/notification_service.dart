@@ -86,12 +86,12 @@ class NotificationService extends GetxService {
     try {
       final role = StorageService.to.userRole;
       debugPrint('🔵 User role: $role');
-      if (role == 'job_seeker') {
+      if (role == AppUserRole.jobSeeker.value) {
         await _firestore.collection('jobSeekers').doc(uid).set({
           'fcmToken': token,
         }, SetOptions(merge: true));
         debugPrint('🟢 Token saved to jobSeekers collection');
-      } else if (role == 'company') {
+      } else if (role == AppUserRole.company.value) {
         await _firestore.collection('companies').doc(uid).set({
           'fcmToken': token,
         }, SetOptions(merge: true));
@@ -192,9 +192,9 @@ class NotificationService extends GetxService {
         if (uid == null || uid == senderId) break;
         _firestore.collection('users').doc(uid).get().then((doc) {
           final role = doc.data()?['role'] as String?;
-          if (role == 'job_seeker') {
+      if (role == AppUserRole.jobSeeker.value) {
             Get.toNamed(Routes.jobSeekerChatDetails, arguments: chatId);
-          } else if (role == 'company') {
+          } else if (role == AppUserRole.company.value) {
             Get.toNamed(Routes.companyChatDetails, arguments: chatId);
           }
         });
