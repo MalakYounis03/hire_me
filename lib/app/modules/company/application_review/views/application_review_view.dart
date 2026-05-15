@@ -30,6 +30,10 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                     location: applicant.location,
                     avatarUrl: applicant.avatarUrl,
                   ),
+                  if (controller.readOnly.value && applicant.updatedAt.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    _buildStatusBadge(applicant.status, applicant.updatedAt),
+                  ],
                   const SizedBox(height: 16),
                   _buildSectionTitle('Applicant Information'),
                   const SizedBox(height: 10),
@@ -37,96 +41,148 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: AppColor.greyVeryLight),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.kblack.withValues(alpha: 0.05),
-                      blurRadius: 14,
-                      offset: const Offset(0, -4),
+            if (!controller.readOnly.value)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: AppColor.greyVeryLight),
                     ),
-                  ],
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: controller.isProcessing.value
-                              ? null
-                              : () =>
-                                    controller.rejectApplication(applicant.id),
-                          icon: const Icon(Icons.cancel_outlined, size: 18),
-                          label: const Text(
-                            'Reject',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColor.kdanger,
-                            side: BorderSide(
-                              color: AppColor.kdanger,
-                              width: 1.4,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: controller.isProcessing.value
-                              ? null
-                              : () => controller.acceptApplication(
-                                  applicant.id,
-                                  applicant.jobSeekerId,
-                                  applicant.name,
-                                  controller.companyId,
-                                  controller.companyName.value,
-                                ),
-                          icon: const Icon(
-                            Icons.check_circle_outline,
-                            size: 18,
-                          ),
-                          label: const Text(
-                            'Accept',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.kblue,
-                            foregroundColor: AppColor.kwhite,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                        ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.kblack.withValues(alpha: 0.05),
+                        blurRadius: 14,
+                        offset: const Offset(0, -4),
                       ),
                     ],
                   ),
+                  child: SafeArea(
+                    top: false,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: controller.isProcessing.value
+                                ? null
+                                : () => controller.rejectApplication(
+                                    applicant.id),
+                            icon:
+                                const Icon(Icons.cancel_outlined, size: 18),
+                            label: const Text(
+                              'Reject',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColor.kdanger,
+                              side: BorderSide(
+                                color: AppColor.kdanger,
+                                width: 1.4,
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: controller.isProcessing.value
+                                ? null
+                                : () => controller.acceptApplication(
+                                    applicant.id,
+                                    applicant.jobSeekerId,
+                                    applicant.name,
+                                    controller.companyId,
+                                    controller.companyName.value,
+                                  ),
+                            icon: const Icon(
+                              Icons.check_circle_outline,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Accept',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColor.kblue,
+                              foregroundColor: AppColor.kwhite,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
           ],
         );
       }),
+    );
+  }
+
+  Widget _buildStatusBadge(String status, String date) {
+    final isAccepted = status == 'Accepted';
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger)
+            .withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger)
+              .withValues(alpha: 0.25),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isAccepted ? Icons.check_circle : Icons.cancel,
+            color: isAccepted ? AppColor.ksuccess : AppColor.kdanger,
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isAccepted ? 'Accepted' : 'Rejected',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isAccepted ? AppColor.ksuccess : AppColor.kdanger,
+                ),
+              ),
+              Text(
+                date,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColor.greydark,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

@@ -21,7 +21,7 @@ class CompanyChatTile extends StatelessWidget {
         InkWell(
           onTap: () {
             Get.toNamed(
-              Routes.COMPANY_CHAT_DETAILS,
+              Routes.companyChatDetails,
               arguments: {
                 'chatId': chat.id,
                 'chatName': chat.otherName(currentUserId),

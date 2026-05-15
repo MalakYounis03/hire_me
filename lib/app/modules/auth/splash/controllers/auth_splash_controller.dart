@@ -18,7 +18,7 @@ class AuthSplashController extends GetxController {
       final storage = StorageService.to;
 
       if (storage.isFirstTime) {
-        Get.offAllNamed(Routes.ONBOARDING);
+        Get.offAllNamed(Routes.onboarding);
         return;
       }
 
@@ -26,7 +26,7 @@ class AuthSplashController extends GetxController {
 
       if (user == null) {
         await storage.clearAuthSession();
-        Get.offAllNamed(Routes.AUTH_LOGIN);
+        Get.offAllNamed(Routes.authLogin);
         return;
       }
 
@@ -36,7 +36,7 @@ class AuthSplashController extends GetxController {
       if (role == null) {
         await storage.clearAuthSession();
         await FirebaseAuth.instance.signOut();
-        Get.offAllNamed(Routes.AUTH_LOGIN);
+        Get.offAllNamed(Routes.authLogin);
         return;
       }
 
@@ -45,20 +45,20 @@ class AuthSplashController extends GetxController {
         role: role,
         accessToken: await user.getIdToken(),
         companyId: role == AppUserRole.company.value ? user.uid : null,
-        jobSeekerId: role == AppUserRole.job_seeker.value ? user.uid : null,
+        jobSeekerId: role == AppUserRole.jobSeeker.value ? user.uid : null,
       );
 
       if (role == AppUserRole.company.value) {
-        Get.offAllNamed(Routes.COMPANY_MAIN_WRAPPER);
+        Get.offAllNamed(Routes.companyMainWrapper);
       } else {
-        Get.offAllNamed(Routes.MAIN_WRAPPER);
+        Get.offAllNamed(Routes.mainWrapper);
       }
     } catch (_) {
       await FirebaseAuth.instance.signOut();
       if (Get.isRegistered<StorageService>()) {
         await StorageService.to.clearAuthSession();
       }
-      Get.offAllNamed(Routes.AUTH_LOGIN);
+      Get.offAllNamed(Routes.authLogin);
     }
   }
 

@@ -82,7 +82,7 @@ class JobSeekerApplyJobController extends GetxController {
 
     final existing = await _firestore
         .collection('applications')
-        .where('applicantId', isEqualTo: uid)
+        .where('seekerId', isEqualTo: uid)
         .where('jobId', isEqualTo: currentJob.id)
         .limit(1)
         .get();
@@ -107,20 +107,21 @@ class JobSeekerApplyJobController extends GetxController {
 
       final cvUrl = _supabase.storage.from('cv').getPublicUrl(fileName);
 
-      await _firestore.collection('applications').add({
+      final data = <String, dynamic>{
         'jobId': currentJob.id,
         'jobTitle': currentJob.title,
         'companyId': currentJob.companyId,
         'companyName': currentJob.companyName,
-        'applicantId': uid,
-        'applicantName': nameController.text.trim(),
-        'applicantEmail': emailController.text.trim(),
+        'seekerId': uid,
+        'seekerName': nameController.text.trim(),
+        'email': emailController.text.trim(),
         'cvUrl': cvUrl,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      };
+      await _firestore.collection('applications').add(data);
 
-      Get.offNamed(Routes.JOB_SEEKER_CONGRATULATIONS);
+      Get.offNamed(Routes.jobSeekerCongratulations);
     } catch (e) {
       _showError('Failed to apply: $e');
     } finally {

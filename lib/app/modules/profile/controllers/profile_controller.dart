@@ -157,7 +157,9 @@ class ProfileController extends GetxController {
                           height: 38,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                ? const Color(
+                                    0xFF1A3794,
+                                  ).withValues(alpha: 0.12)
                                 : const Color(0xFFE8EDF9),
                             shape: BoxShape.circle,
                           ),
@@ -763,9 +765,16 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
+<<<<<<< HEAD
   Future<void> logout() async {
     await _auth.signOut();
     Get.offAllNamed(Routes.SPLASH);
+=======
+  // ── Logout ────────────────────────────────────────────
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.splash);
+>>>>>>> cb2ffe3d318a40e52ece71e1a4bade94535fec6b
   }
 
   // ── Shared Dialog Helper ──────────────────────────────

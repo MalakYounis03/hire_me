@@ -33,7 +33,7 @@ class AuthForgotPasswordController extends GetxController {
       _showSuccess('Reset link sent! Check your email');
 
       await Future.delayed(const Duration(seconds: 2));
-      Get.offAllNamed(Routes.AUTH_LOGIN);
+      Get.offAllNamed(Routes.authLogin);
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
     } finally {
@@ -50,7 +50,7 @@ class AuthForgotPasswordController extends GetxController {
         newPasswordController.text.trim(),
       );
       _showSuccess('Password updated successfully!');
-      Get.offAllNamed(Routes.AUTH_LOGIN);
+      Get.offAllNamed(Routes.authLogin);
     } on FirebaseAuthException catch (e) {
       _showError(_mapFirebaseError(e.code));
     } finally {

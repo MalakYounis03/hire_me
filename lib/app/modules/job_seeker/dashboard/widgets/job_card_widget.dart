@@ -22,7 +22,7 @@ class JobCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(Routes.JOB_SEEKER_JOB_DETAILS, arguments: job);
+        Get.toNamed(Routes.jobSeekerJobDetails, arguments: job);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 9),
