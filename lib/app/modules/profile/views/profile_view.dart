@@ -20,27 +20,18 @@ class ProfileView extends GetView<ProfileController> {
           onTap: () => Get.back(),
           child: Icon(Icons.arrow_back, color: AppColor.kwhite),
         ),
-        title: Text(
-          AppString.profile,
-          style: CustomTextstyle.interSemiBoldWhite,
-        ),
+        title: Text(AppString.profile, style: CustomTextstyle.interSemiBoldWhite),
         centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: AppColor.kwhite,
-              size: 26,
-            ),
+            child: Icon(Icons.notifications_outlined, color: AppColor.kwhite, size: 26),
           ),
         ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: AppColor.kblue),
-          );
+          return Center(child: CircularProgressIndicator(color: AppColor.kblue));
         }
         return SingleChildScrollView(
           child: Column(
@@ -55,34 +46,12 @@ class ProfileView extends GetView<ProfileController> {
               const SizedBox(height: 10),
               _buildSkillsCard(),
               const SizedBox(height: 10),
-<<<<<<< HEAD
-=======
-              // Languages — تظهر بس لو في بيانات
->>>>>>> main
-              Obx(
-                () => controller.languages.isNotEmpty
-                    ? Column(
-                        children: [
-                          _buildLanguagesCard(),
-                          const SizedBox(height: 10),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
-<<<<<<< HEAD
-=======
-              // Links — تظهر بس لو في بيانات
->>>>>>> main
-              Obx(
-                () => controller.links.isNotEmpty
-                    ? Column(
-                        children: [
-                          _buildLinksCard(),
-                          const SizedBox(height: 10),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              Obx(() => controller.languages.isNotEmpty
+                  ? Column(children: [_buildLanguagesCard(), const SizedBox(height: 10)])
+                  : const SizedBox.shrink()),
+              Obx(() => controller.links.isNotEmpty
+                  ? Column(children: [_buildLinksCard(), const SizedBox(height: 10)])
+                  : const SizedBox.shrink()),
               const SizedBox(height: 20),
             ],
           ),
@@ -93,10 +62,7 @@ class ProfileView extends GetView<ProfileController> {
 
   Widget _buildProfileCard() {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
       margin: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,58 +70,39 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-<<<<<<< HEAD
-=======
-              // Cover
->>>>>>> main
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
                 ),
-                child: Obx(
-                  () => Container(
-                    height: 110,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFB0BEC5),
-                      image: controller.coverImage.isNotEmpty
-                          ? DecorationImage(
-                              image: NetworkImage(controller.coverImage),
-                              fit: BoxFit.cover,
-                            )
-                          : null,
-                    ),
-                    child: controller.isUploadingCover.value
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
-                        : Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: GestureDetector(
-                                onTap: controller.pickAndUploadCover,
-                                child: _cameraIconButton(),
+                child: Obx(() => Container(
+                      height: 110,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB0BEC5),
+                        image: controller.coverImage.isNotEmpty
+                            ? DecorationImage(image: NetworkImage(controller.coverImage), fit: BoxFit.cover)
+                            : null,
+                      ),
+                      child: controller.isUploadingCover.value
+                          ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                          : Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: GestureDetector(
+                                  onTap: controller.pickAndUploadCover,
+                                  child: _cameraIconButton(),
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                ),
+                    )),
               ),
-<<<<<<< HEAD
-=======
-
-              // Avatar
->>>>>>> main
               Positioned(
                 bottom: -36,
                 left: 16,
                 child: Obx(() {
                   final showBadge = controller.isOpenToWork;
-<<<<<<< HEAD
                   return SizedBox(
                     width: 88,
                     height: showBadge ? 108 : 88,
@@ -167,106 +114,23 @@ class ProfileView extends GetView<ProfileController> {
                           height: 88,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: showBadge
-                                ? const Color(0xFF22C55E)
-                                : Colors.white,
+                            color: showBadge ? const Color(0xFF22C55E) : Colors.white,
                           ),
-=======
-                  return Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: 88,
-                        height: 88,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: showBadge
-                              ? const Color(0xFF22C55E)
-                              : Colors.white,
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: controller.isUploadingImage.value
-                                ? CircularProgressIndicator(
-                                    color: AppColor.kblue,
-                                  )
-                                : CircleAvatar(
-                                    radius: 38,
-                                    backgroundColor: const Color(0xFFE8EDF9),
-                                    backgroundImage:
-                                        controller.userImage.isNotEmpty
-                                        ? NetworkImage(controller.userImage)
-                                        : null,
-                                    child: controller.userImage.isEmpty
-                                        ? Icon(
-                                            Icons.person_rounded,
-                                            size: 38,
-                                            color: AppColor.kblue,
-                                          )
-                                        : null,
-                                  ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: controller.pickAndUploadImage,
-                          child: Container(
-                            width: 26,
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: AppColor.kblue,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (showBadge)
-                        Positioned(
-                          bottom: -10,
-                          left: 0,
-                          right: 0,
->>>>>>> main
                           child: Center(
                             child: Container(
                               width: 80,
                               height: 80,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
+                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
                               child: controller.isUploadingImage.value
-                                  ? CircularProgressIndicator(
-                                      color: AppColor.kblue,
-                                    )
+                                  ? CircularProgressIndicator(color: AppColor.kblue)
                                   : CircleAvatar(
                                       radius: 38,
                                       backgroundColor: const Color(0xFFE8EDF9),
-                                      backgroundImage:
-                                          controller.userImage.isNotEmpty
+                                      backgroundImage: controller.userImage.isNotEmpty
                                           ? NetworkImage(controller.userImage)
                                           : null,
                                       child: controller.userImage.isEmpty
-                                          ? Icon(
-                                              Icons.person_rounded,
-                                              size: 38,
-                                              color: AppColor.kblue,
-                                            )
+                                          ? Icon(Icons.person_rounded, size: 38, color: AppColor.kblue)
                                           : null,
                                     ),
                             ),
@@ -286,16 +150,9 @@ class ProfileView extends GetView<ProfileController> {
                                 decoration: BoxDecoration(
                                   color: AppColor.kblue,
                                   shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
+                                  border: Border.all(color: Colors.white, width: 2),
                                 ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
+                                child: const Icon(Icons.add, color: Colors.white, size: 14),
                               ),
                             ),
                           ),
@@ -307,17 +164,11 @@ class ProfileView extends GetView<ProfileController> {
                             right: 0,
                             child: Center(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF22C55E),
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.white, width: 1.5),
                                 ),
                                 child: const Text(
                                   'Open to Work',
@@ -344,121 +195,74 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(
-                  () => Text(
-                    controller.userName.isEmpty
-                        ? 'Your Name'
-                        : controller.userName.toUpperCase(),
-                    style: CustomTextstyle.interMedium,
-                  ),
-                ),
+                Obx(() => Text(
+                      controller.userName.isEmpty ? 'Your Name' : controller.userName.toUpperCase(),
+                      style: CustomTextstyle.interMedium,
+                    )),
                 const SizedBox(height: 4),
-                Obx(
-                  () => controller.userTitle.isEmpty
-                      ? const SizedBox.shrink()
-                      : Text(
-                          controller.userTitle,
-                          style: CustomTextstyle.interRegular400,
-                        ),
-                ),
+                Obx(() => controller.userTitle.isEmpty
+                    ? const SizedBox.shrink()
+                    : Text(controller.userTitle, style: CustomTextstyle.interRegular400)),
                 const SizedBox(height: 2),
-                Obx(
-                  () => controller.userUniversity.isEmpty
-                      ? const SizedBox.shrink()
-                      : Text(
-                          controller.userUniversity,
-                          style: CustomTextstyle.interRegular400,
-                        ),
-                ),
+                Obx(() => controller.userUniversity.isEmpty
+                    ? const SizedBox.shrink()
+                    : Text(controller.userUniversity, style: CustomTextstyle.interRegular400)),
                 const SizedBox(height: 2),
-                Obx(
-                  () => controller.userLocation.isEmpty
-                      ? const SizedBox.shrink()
-                      : Text(
-                          controller.userLocation,
-                          style: CustomTextstyle.roboto300,
-                        ),
-                ),
+                Obx(() => controller.userLocation.isEmpty
+                    ? const SizedBox.shrink()
+                    : Text(controller.userLocation, style: CustomTextstyle.roboto300)),
                 const SizedBox(height: 14),
                 Row(
                   children: [
                     Flexible(
-                      child: Obx(
-                        () => ElevatedButton(
-                          onPressed: controller.showOpenToBottomSheet,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: controller.isOpenToWork
-                                ? const Color(0xFF22C55E)
-                                : AppColor.kblue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                      child: Obx(() => ElevatedButton(
+                            onPressed: controller.showOpenToBottomSheet,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: controller.isOpenToWork
+                                  ? const Color(0xFF22C55E)
+                                  : AppColor.kblue,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              elevation: 0,
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (controller.isOpenToWork) ...[
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                  size: 14,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (controller.isOpenToWork) ...[
+                                  const Icon(Icons.check_circle, color: Colors.white, size: 14),
+                                  const SizedBox(width: 4),
+                                ],
+                                Flexible(
+                                  child: Text(
+                                    controller.isOpenToWork ? 'Open to Work' : 'Open to',
+                                    style: CustomTextstyle.interRegular500,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                const SizedBox(width: 4),
                               ],
-                              Flexible(
-                                child: Text(
-                                  controller.isOpenToWork
-                                      ? 'Open to Work'
-                                      : 'Open to',
-                                  style: CustomTextstyle.interRegular500,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
+                          )),
                     ),
                     const SizedBox(width: 8),
-                    // ── Add section ── مربوط هلق
                     OutlinedButton(
                       onPressed: controller.showAddSectionBottomSheet,
                       style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         side: BorderSide(color: AppColor.lightThemeGrey),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
-                      child: Text(
-                        'Add section',
-                        style: CustomTextstyle.interRegular500Grey,
-                      ),
+                      child: Text('Add section', style: CustomTextstyle.interRegular500Grey),
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton(
                       onPressed: () {},
                       style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         side: BorderSide(color: AppColor.lightThemeGrey),
                         minimumSize: const Size(36, 36),
                         padding: EdgeInsets.zero,
                       ),
-                      child: Icon(
-                        Icons.more_horiz,
-                        color: AppColor.lightThemeGrey,
-                        size: 20,
-                      ),
+                      child: Icon(Icons.more_horiz, color: AppColor.lightThemeGrey, size: 20),
                     ),
                   ],
                 ),
@@ -475,17 +279,9 @@ class ProfileView extends GetView<ProfileController> {
       title: 'About',
       icon: Icons.person_outline_rounded,
       onEdit: controller.showEditAboutDialog,
-      child: Obx(
-        () => controller.userAbout.isEmpty
-            ? const Text(
-                'Add about yourself...',
-                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
-              )
-            : Text(
-                controller.userAbout,
-                style: const TextStyle(fontSize: 13, color: Color(0xFF1A1A2E)),
-              ),
-      ),
+      child: Obx(() => controller.userAbout.isEmpty
+          ? const Text('Add about yourself...', style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)))
+          : Text(controller.userAbout, style: const TextStyle(fontSize: 13, color: Color(0xFF1A1A2E)))),
     );
   }
 
@@ -494,16 +290,12 @@ class ProfileView extends GetView<ProfileController> {
       title: 'Experience',
       icon: Icons.calendar_today_outlined,
       onEdit: null,
-      child: Obx(
-        () => Column(
-          children: [
-            ...controller.experience.asMap().entries.map(
-              (e) => _experienceItem(e.value, e.key),
-            ),
-            _addButton('Add experience', controller.showAddExperienceDialog),
-          ],
-        ),
-      ),
+      child: Obx(() => Column(
+            children: [
+              ...controller.experience.asMap().entries.map((e) => _experienceItem(e.value, e.key)),
+              _addButton('Add experience', controller.showAddExperienceDialog),
+            ],
+          )),
     );
   }
 
@@ -512,16 +304,12 @@ class ProfileView extends GetView<ProfileController> {
       title: 'Education',
       icon: Icons.school_outlined,
       onEdit: null,
-      child: Obx(
-        () => Column(
-          children: [
-            ...controller.education.asMap().entries.map(
-              (e) => _educationItem(e.value, e.key),
-            ),
-            _addButton('Add Education', controller.showAddEducationDialog),
-          ],
-        ),
-      ),
+      child: Obx(() => Column(
+            children: [
+              ...controller.education.asMap().entries.map((e) => _educationItem(e.value, e.key)),
+              _addButton('Add Education', controller.showAddEducationDialog),
+            ],
+          )),
     );
   }
 
@@ -530,76 +318,50 @@ class ProfileView extends GetView<ProfileController> {
       title: 'Skills',
       icon: Icons.description_outlined,
       onEdit: null,
-      child: Obx(
-        () => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (controller.skills.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: controller.skills
-                    .asMap()
-                    .entries
-                    .map((e) => _skillChip(e.value, e.key))
-                    .toList(),
-              ),
-            if (controller.skills.isNotEmpty) const SizedBox(height: 10),
-            _addButton('Add Skills', controller.showAddSkillDialog),
-          ],
-        ),
-      ),
+      child: Obx(() => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (controller.skills.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: controller.skills.asMap().entries.map((e) => _skillChip(e.value, e.key)).toList(),
+                ),
+              if (controller.skills.isNotEmpty) const SizedBox(height: 10),
+              _addButton('Add Skills', controller.showAddSkillDialog),
+            ],
+          )),
     );
   }
 
-<<<<<<< HEAD
-=======
-  // ── Languages Card ────────────────────────────────────
->>>>>>> main
   Widget _buildLanguagesCard() {
     return _sectionCard(
       title: 'Languages',
       icon: Icons.language_rounded,
       onEdit: null,
-      child: Obx(
-        () => Column(
-          children: [
-            ...controller.languages.asMap().entries.map(
-              (e) => _languageItem(e.value, e.key),
-            ),
-            _addButton('Add Language', controller.showAddLanguageDialog),
-          ],
-        ),
-      ),
+      child: Obx(() => Column(
+            children: [
+              ...controller.languages.asMap().entries.map((e) => _languageItem(e.value, e.key)),
+              _addButton('Add Language', controller.showAddLanguageDialog),
+            ],
+          )),
     );
   }
 
-<<<<<<< HEAD
-=======
-  // ── Links Card ────────────────────────────────────────
->>>>>>> main
   Widget _buildLinksCard() {
     return _sectionCard(
       title: 'Links',
       icon: Icons.link_rounded,
       onEdit: null,
-      child: Obx(
-        () => Column(
-          children: [
-            ...controller.links.asMap().entries.map(
-              (e) => _linkItem(e.value, e.key),
-            ),
-            _addButton('Add Link', controller.showAddLinkDialog),
-          ],
-        ),
-      ),
+      child: Obx(() => Column(
+            children: [
+              ...controller.links.asMap().entries.map((e) => _linkItem(e.value, e.key)),
+              _addButton('Add Link', controller.showAddLinkDialog),
+            ],
+          )),
     );
   }
 
-<<<<<<< HEAD
-=======
-  // ── Section Card ──────────────────────────────────────
->>>>>>> main
   Widget _sectionCard({
     required String title,
     required IconData icon,
@@ -607,10 +369,7 @@ class ProfileView extends GetView<ProfileController> {
     VoidCallback? onEdit,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -619,28 +378,16 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(icon, color: AppColor.kblue, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A1A2E),
-                    ),
-                  ),
-                ],
-              ),
+              Row(children: [
+                Icon(icon, color: AppColor.kblue, size: 20),
+                const SizedBox(width: 8),
+                Text(title,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1A1A2E))),
+              ]),
               if (onEdit != null)
                 GestureDetector(
                   onTap: onEdit,
-                  child: const Icon(
-                    Icons.edit_outlined,
-                    color: Color(0xFF8A8A9A),
-                    size: 20,
-                  ),
+                  child: const Icon(Icons.edit_outlined, color: Color(0xFF8A8A9A), size: 20),
                 ),
             ],
           ),
@@ -663,28 +410,12 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.school,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  '${e.degree} · ${e.field}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
-                Text(
-                  '${e.startYear} - ${e.endYear}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
+                Text(e.school,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A1A2E))),
+                Text('${e.degree} · ${e.field}',
+                    style: const TextStyle(fontSize: 13, color: Color(0xFF8A8A9A))),
+                Text('${e.startYear} - ${e.endYear}',
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF8A8A9A))),
               ],
             ),
           ),
@@ -709,28 +440,11 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.position,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  e.company,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
-                Text(
-                  '${e.startDate} - ${e.endDate}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
+                Text(e.position,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A1A2E))),
+                Text(e.company, style: const TextStyle(fontSize: 13, color: Color(0xFF8A8A9A))),
+                Text('${e.startDate} - ${e.endDate}',
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF8A8A9A))),
               ],
             ),
           ),
@@ -743,10 +457,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-<<<<<<< HEAD
-=======
-  // ── Language Item ─────────────────────────────────────
->>>>>>> main
   Widget _languageItem(LanguageModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -758,21 +468,9 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  e.level,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF8A8A9A),
-                  ),
-                ),
+                Text(e.name,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A1A2E))),
+                Text(e.level, style: const TextStyle(fontSize: 13, color: Color(0xFF8A8A9A))),
               ],
             ),
           ),
@@ -785,10 +483,6 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-<<<<<<< HEAD
-=======
-  // ── Link Item ─────────────────────────────────────────
->>>>>>> main
   Widget _linkItem(LinkModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -800,22 +494,11 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.type,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                Text(
-                  e.url,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF1A3794),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(e.type,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A1A2E))),
+                Text(e.url,
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF1A3794)),
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
@@ -830,39 +513,22 @@ class ProfileView extends GetView<ProfileController> {
 
   IconData _linkIcon(String type) {
     switch (type) {
-      case 'GitHub':
-        return Icons.code_rounded;
-      case 'LinkedIn':
-        return Icons.work_outline_rounded;
-      case 'Portfolio':
-        return Icons.web_rounded;
-      default:
-        return Icons.link_rounded;
+      case 'GitHub':    return Icons.code_rounded;
+      case 'LinkedIn':  return Icons.work_outline_rounded;
+      case 'Portfolio': return Icons.web_rounded;
+      default:          return Icons.link_rounded;
     }
   }
 
-<<<<<<< HEAD
-=======
-  // ── Skill Chip ────────────────────────────────────────
->>>>>>> main
   Widget _skillChip(String skill, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8EDF9),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: BoxDecoration(color: const Color(0xFFE8EDF9), borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            skill,
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColor.kblue,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(skill,
+              style: TextStyle(fontSize: 13, color: AppColor.kblue, fontWeight: FontWeight.w500)),
           const SizedBox(width: 6),
           GestureDetector(
             onTap: () => controller.removeSkill(index),
@@ -887,49 +553,32 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   Widget _iconBox(IconData icon) => Container(
-    width: 40,
-    height: 40,
-    decoration: BoxDecoration(
-      color: const Color(0xFFE8EDF9),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Icon(icon, color: AppColor.kblue, size: 22),
-  );
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(color: const Color(0xFFE8EDF9), borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, color: AppColor.kblue, size: 22),
+      );
 
-  Widget _itemActions({
-    required VoidCallback onEdit,
-    required VoidCallback onDelete,
-  }) {
+  Widget _itemActions({required VoidCallback onEdit, required VoidCallback onDelete}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
           onTap: onEdit,
-          child: const Icon(
-            Icons.edit_outlined,
-            size: 18,
-            color: Color(0xFF8A8A9A),
-          ),
+          child: const Icon(Icons.edit_outlined, size: 18, color: Color(0xFF8A8A9A)),
         ),
         const SizedBox(width: 8),
         GestureDetector(
           onTap: onDelete,
-          child: const Icon(
-            Icons.delete_outline,
-            size: 18,
-            color: Color(0xFFEF4444),
-          ),
+          child: const Icon(Icons.delete_outline, size: 18, color: Color(0xFFEF4444)),
         ),
       ],
     );
   }
 
   Widget _cameraIconButton() => Container(
-    padding: const EdgeInsets.all(6),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.8),
-      shape: BoxShape.circle,
-    ),
-    child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColor.kblue),
-  );
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), shape: BoxShape.circle),
+        child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColor.kblue),
+      );
 }
