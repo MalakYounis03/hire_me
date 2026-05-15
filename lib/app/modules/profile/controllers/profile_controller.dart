@@ -4,9 +4,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/app/modules/profile/models/user_model.dart';
+<<<<<<< HEAD
+import 'package:hire_me/app/routes/app_pages.dart';
+=======
+<<<<<<< HEAD
+import 'package:hire_me/app/routes/app_pages.dart';
+=======
 import 'package:hire_me/app/services/storage_service.dart';
+>>>>>>> bff124ca00686bd31eae17638d755222ea7f9c18
+>>>>>>> main
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -35,6 +42,8 @@ class ProfileController extends GetxController {
   List<EducationModel> get education => userModel.value?.education ?? [];
   List<ExperienceModel> get experience => userModel.value?.experience ?? [];
   List<String> get skills => userModel.value?.skills ?? [];
+  List<LanguageModel> get languages => userModel.value?.languages ?? [];
+  List<LinkModel> get links => userModel.value?.links ?? [];
   bool get isOpenToWork => openToOptions.isNotEmpty;
 
   @override
@@ -53,7 +62,6 @@ class ProfileController extends GetxController {
       if (doc.exists) {
         userModel.value = UserModel.fromMap(doc.data()!);
 
-        // fallback للاسم
         if (userModel.value?.name.isEmpty ?? true) {
           final userDoc = await _firestore.collection('users').doc(uid).get();
           final name = userDoc.data()?['name'] ?? '';
@@ -63,7 +71,6 @@ class ProfileController extends GetxController {
           }
         }
 
-        // حمّل openToOptions
         final saved = List<String>.from(doc.data()?['openToOptions'] ?? []);
         openToOptions.assignAll(saved);
       } else {
@@ -88,12 +95,9 @@ class ProfileController extends GetxController {
   // ── Open To Work ──────────────────────────────────────
   void showOpenToBottomSheet() {
     final allOptions = ['Open to Work', 'Freelance', 'Internship'];
-
-    // نسخة مؤقتة observable — بدون StatefulBuilder
     final tempSelected = <String>[...openToOptions].obs;
 
     Get.bottomSheet(
-      // Obx مباشرة بدون StatefulBuilder
       Obx(
         () => Container(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -105,7 +109,6 @@ class ProfileController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Handle
               Center(
                 child: Container(
                   width: 40,
@@ -131,18 +134,12 @@ class ProfileController extends GetxController {
                 style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
               ),
               const SizedBox(height: 20),
-
-              // ── Options ──
               ...allOptions.map((option) {
                 final isSelected = tempSelected.contains(option);
                 return GestureDetector(
-                  onTap: () {
-                    if (isSelected) {
-                      tempSelected.remove(option);
-                    } else {
-                      tempSelected.add(option);
-                    }
-                  },
+                  onTap: () => isSelected
+                      ? tempSelected.remove(option)
+                      : tempSelected.add(option),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(bottom: 10),
@@ -169,9 +166,7 @@ class ProfileController extends GetxController {
                           height: 38,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(
-                                    0xFF1A3794,
-                                  ).withValues(alpha: 0.12)
+                                ? const Color(0xFF1A3794).withOpacity(0.12)
                                 : const Color(0xFFE8EDF9),
                             shape: BoxShape.circle,
                           ),
@@ -218,10 +213,7 @@ class ProfileController extends GetxController {
                   ),
                 );
               }),
-
               const SizedBox(height: 20),
-
-              // ── Save ──
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -272,6 +264,323 @@ class ProfileController extends GetxController {
       default:
         return Icons.circle_outlined;
     }
+  }
+
+  // ── Add Section Bottom Sheet ──────────────────────────
+  void showAddSectionBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0E0E0),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Add section',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A1A2E),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Languages
+            _sectionOption(
+              icon: Icons.language_rounded,
+              label: 'Languages',
+              subtitle: 'Add languages you speak',
+              onTap: () {
+                Get.back();
+                showAddLanguageDialog();
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Links
+            _sectionOption(
+              icon: Icons.link_rounded,
+              label: 'Links',
+              subtitle: 'LinkedIn, GitHub, Portfolio...',
+              onTap: () {
+                Get.back();
+                showAddLinkDialog();
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _sectionOption({
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F7FF),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8EDF9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: const Color(0xFF1A3794), size: 22),
+            ),
+            const SizedBox(width: 14),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A2E),
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF8A8A9A),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: Color(0xFF8A8A9A),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Languages ─────────────────────────────────────────
+  void showAddLanguageDialog() => _openLanguageDialog();
+  void showEditLanguageDialog(int index) =>
+      _openLanguageDialog(index: index, existing: languages[index]);
+
+  Future<void> deleteLanguage(int index) async {
+    final updated = [...languages]..removeAt(index);
+    await _updateField('languages', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(languages: updated);
+  }
+
+  void _openLanguageDialog({int? index, LanguageModel? existing}) {
+    final nameCtrl = TextEditingController(text: existing?.name ?? '');
+    final levels = ['Beginner', 'Intermediate', 'Fluent', 'Native'];
+    final selectedLevel =
+        (existing?.level.isNotEmpty == true ? existing!.level : levels[0]).obs;
+
+    Get.dialog(
+      AlertDialog(
+        title: Text(index == null ? 'Add Language' : 'Edit Language'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _dialogField(nameCtrl, 'Language (e.g. Arabic, English)'),
+            const SizedBox(height: 8),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Level',
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: levels.map((lvl) {
+                  final isSelected = selectedLevel.value == lvl;
+                  return GestureDetector(
+                    onTap: () => selectedLevel.value = lvl,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : const Color(0xFFE8EDF9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        lvl,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF1A3794),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.trim().isEmpty) return;
+              final lang = LanguageModel(
+                name: nameCtrl.text.trim(),
+                level: selectedLevel.value,
+              );
+              final updated = [...languages];
+              index == null ? updated.add(lang) : updated[index] = lang;
+              await _updateField(
+                'languages',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(languages: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Links ─────────────────────────────────────────────
+  void showAddLinkDialog() => _openLinkDialog();
+  void showEditLinkDialog(int index) =>
+      _openLinkDialog(index: index, existing: links[index]);
+
+  Future<void> deleteLink(int index) async {
+    final updated = [...links]..removeAt(index);
+    await _updateField('links', updated.map((e) => e.toMap()).toList());
+    userModel.value = userModel.value?.copyWith(links: updated);
+  }
+
+  void _openLinkDialog({int? index, LinkModel? existing}) {
+    final urlCtrl = TextEditingController(text: existing?.url ?? '');
+    final types = ['LinkedIn', 'GitHub', 'Portfolio', 'Other'];
+    final selectedType =
+        (existing?.type.isNotEmpty == true ? existing!.type : types[0]).obs;
+
+    Get.dialog(
+      AlertDialog(
+        title: Text(index == null ? 'Add Link' : 'Edit Link'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Type',
+                style: TextStyle(fontSize: 13, color: Color(0xFF8A8A9A)),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: types.map((t) {
+                  final isSelected = selectedType.value == t;
+                  return GestureDetector(
+                    onTap: () => selectedType.value = t,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF1A3794)
+                            : const Color(0xFFE8EDF9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        t,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF1A3794),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _dialogField(urlCtrl, 'https://...'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (urlCtrl.text.trim().isEmpty) return;
+              final link = LinkModel(
+                type: selectedType.value,
+                url: urlCtrl.text.trim(),
+              );
+              final updated = [...links];
+              index == null ? updated.add(link) : updated[index] = link;
+              await _updateField(
+                'links',
+                updated.map((e) => e.toMap()).toList(),
+              );
+              userModel.value = userModel.value?.copyWith(links: updated);
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A3794),
+            ),
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   // ── Upload Profile Image ──────────────────────────────
@@ -463,6 +772,11 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
+<<<<<<< HEAD
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.SPLASH);
+=======
   // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
     final uid = _auth.currentUser?.uid;
@@ -482,6 +796,7 @@ class ProfileController extends GetxController {
     await StorageService.to.clearAuthSession();
     await _auth.signOut();
     Get.offAllNamed(Routes.splash);
+>>>>>>> cb2ffe3d318a40e52ece71e1a4bade94535fec6b
   }
 
   // ── Shared Dialog Helper ──────────────────────────────
