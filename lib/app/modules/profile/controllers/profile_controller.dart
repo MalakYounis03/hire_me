@@ -1,10 +1,15 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/profile/models/user_model.dart';
+<<<<<<< HEAD
 import 'package:hire_me/app/routes/app_pages.dart';
+=======
+import 'package:hire_me/app/services/storage_service.dart';
+>>>>>>> bff124ca00686bd31eae17638d755222ea7f9c18
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -765,6 +770,21 @@ class ProfileController extends GetxController {
 
   // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid != null) {
+      final role = StorageService.to.userRole;
+      final roleCollection = role == AppUserRole.company.value
+          ? 'companies'
+          : 'jobSeekers';
+      await _firestore.collection(roleCollection).doc(uid).set({
+        'fcmToken': FieldValue.delete(),
+      }, SetOptions(merge: true));
+      await _firestore.collection('users').doc(uid).set({
+        'fcmToken': FieldValue.delete(),
+      }, SetOptions(merge: true));
+      await FirebaseMessaging.instance.deleteToken();
+    }
+    await StorageService.to.clearAuthSession();
     await _auth.signOut();
     Get.offAllNamed(Routes.splash);
   }

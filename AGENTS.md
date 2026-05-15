@@ -93,18 +93,20 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 
 - **State/routing:** GetX. Import `app/routes/app_pages.dart` only — `app_routes.dart` is `part of 'app_pages.dart'`. Use `Routes.*` constants.
 - **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Each sub-feature: `bindings/`, `controllers/`, `views/`. Job seeker's main wrapper at `job_seeker/jobseeker_main_wrapper/`.
-- **Data layer:** `lib/app/data/repositories/notification_repository.dart` only. Models inline per-module (`model/` dirs).
-- **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (initialized with `AuthFlowType.pkce`).
-- **Notifications:** FCM tokens stored in `companies/{companyId}` and `jobSeekers/{jobSeekerId}` via Cloud Functions triggers on application create/update and RTDB message create. In-app notifications in Firestore `notifications/{userId}/items/`. Tap routing: `application_update` → `JOB_SEEKER_NOTIFICATIONS`, `new_application` → `APPLICATION_LIST`, `chat_message` → role-based chat details.
+- **Models** inline per-module at `model/` dirs in: `dashboard`, `notifications`, `profile`, etc.
+- **Data layer:** `lib/app/data/repositories/notification_repository.dart` only.
+- **Backend:** Firebase (Auth, Firestore, Storage, Realtime Database, Messaging) + Supabase (initialized with `AuthFlowType.pkce`). Firebase project: `hireme-a59e6`.
+- **Notifications:** FCM tokens stored in `companies/{companyId}` / `jobSeekers/{jobSeekerId}` via Cloud Functions triggers on application create/update and RTDB message create. In-app notifications in Firestore `notifications/{userId}/items/`. Tap routing (in `notification_service.dart:_navigateFromData`): `application_update` → `/job-seeker/apply-job`, `new_application` → `/application-list`, `chat_message` → role-based chat details.
+- **Cloud Functions** (`functions/index.js`): 4 v2-triggered handlers — `onNewApplication` (Firestore doc create), `onApplicationAccepted`/`onApplicationRejected` (Firestore doc update), `onNewChatMessage` (RTDB value create). Write notification + best-effort FCM push.
 - **RTDB chat path:** `chats/{chatId}/messages/` with chat metadata (participants, lastMessage, unread counts) at `chats/{chatId}`.
-- **Entrypoint (`lib/main.dart`):** Background handler (`@pragma('vm:entry-point')`) at line 13 → `dotenv.load` → `Future.wait(Firebase.initializeApp, Supabase.initialize)` with `Firebase.apps.isEmpty` guard (background isolate may init first) → `Get.putAsync(StorageService)` → `Get.putAsync(NotificationService)` → `runApp(GetMaterialApp)`.
-- **`AppUserRole` enum** (company, job_seeker) + `normalizeRole()` in `storage_service.dart`.
+- **Entrypoint (`lib/main.dart`):** Background handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `Future.wait(Firebase.initializeApp, Supabase.initialize)` with `Firebase.apps.isEmpty` guard (background isolate may init first) → `Get.putAsync(StorageService)` → `Get.putAsync(NotificationService)` → `runApp(GetMaterialApp)`.
+- **`AppUserRole` enum** (company, jobSeeker) — `.value` yields `'company'` or `'jobSeeker'`. `normalizeRole()` in `storage_service.dart` maps `jobseeker`/`job seeker`/`job_seeker` → `'jobSeeker'`.
 - `NotificationService.currentScreen` (`RxString`) suppresses foreground notifications when already on the relevant screen.
 
 ### Session & Role Guard
 
 - `StorageService` — GetX permanent service backed by SharedPreferences. Saves role-specific IDs (`companyId`/`jobSeekerId`). `userRole` getter already normalizes internally.
-- `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `job_seeker`. `AppUserRole` enum `.value` yields `'company'` or `'job_seeker'`.
+- `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `'jobSeeker'` (camelCase).
 - `RoleGuardMiddleware` checks `FirebaseAuth.currentUser` + `StorageService`. Mismatch → redirect to other role's wrapper; null/unauthed → `/login`.
 
 ## Conventions
@@ -128,8 +130,10 @@ CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub
 ## Quirks
 
 - **Broken fonts:** `" Poppins"`, `" Inter"`, `" Segoe.UI"` have leading spaces in `app_text_style.dart` — won't match `Poppins`/`Inter`/`Segoe.UI` in `pubspec.yaml`. (`Montserrat` and `Roboto` are correct.)
+- **FCM token role mismatch (FIXED):** `NotificationService._saveTokenToFirestore` checks `role == 'job_seeker'` but `normalizeRole()` in `StorageService` produces `'jobSeeker'` (camelCase). Was: job-seeker FCM tokens NOT saved to `jobSeekers/{uid}` → push notifications silently broken for job seekers. **Fix:** Both comparisons now use `AppUserRole.jobSeeker.value` / `AppUserRole.company.value` at `notification_service.dart:89,94`.
+- **Profile logout missing FCM cleanup (FIXED):** `profile_controller.dart:logout()` only called `_auth.signOut()` — no `deleteToken()`, no `FieldValue.delete()` from Firestore, no `clearAuthSession()`. **Fix:** now deletes token from role collection + `users/{uid}`, calls `deleteToken()`, and clears session, matching the chat-view logout pattern.
 - `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has **no** `GetPage` entry in `app_pages.dart`.
-- `Routes.JOB_SEEKER_SEARCH_JOBS` (resolves to `/job-seeker/search-jobs`) is registered at `/search-jobs` in `app_pages.dart` — path mismatch. Also has **no** `RoleGuardMiddleware` — public access.
+- `Routes.JOB_SEEKER_SEARCH_JOBS` has **no** `RoleGuardMiddleware` — public access.
 - Unlinked modules (bindings/controllers/views exist, zero `GetPage` entries): `auth/role_selector/`.
 - `pubspec.yaml` uses `package:flutter_lints/flutter.yaml` — no custom lint rules.
 >>>>>>> d876662e8fae7e65815765a3ea2ee263dc3aa461
