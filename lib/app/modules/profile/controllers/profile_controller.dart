@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/profile/models/user_model.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -760,6 +761,11 @@ class ProfileController extends GetxController {
     final updated = [...skills]..removeAt(index);
     await _updateField('skills', updated);
     userModel.value = userModel.value?.copyWith(skills: updated);
+  }
+
+  Future<void> logout() async {
+    await _auth.signOut();
+    Get.offAllNamed(Routes.SPLASH);
   }
 
   // ── Shared Dialog Helper ──────────────────────────────
