@@ -100,7 +100,7 @@ abstract class CustomTextstyle {
     fontFamily: " Inter",
   );
   static final interMedium = TextStyle(
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: FontWeight.w500,
     color: AppColor.eblack,
     fontFamily: " Inter",
