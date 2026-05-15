@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../app/routes/app_pages.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../controllers/company_dashboard_controller.dart';
 
@@ -27,10 +28,22 @@ class CompanyDashboardView extends GetView<CompanyDashboardController> {
           ),
         ),
         actions: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
+          Obx(
+            () => Badge(
+              isLabelVisible: controller.unreadCount.value > 0,
+              label: Text('${controller.unreadCount.value}'),
+              textStyle: const TextStyle(color: Colors.white, fontSize: 10),
+              backgroundColor: Colors.red,
+              smallSize: 18,
+              child: GestureDetector(
+                onTap: () => Get.toNamed(Routes.companyNotifications),
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  color: AppColor.kwhite,
+                  size: 26,
+                ),
+              ),
+            ),
           ),
           const SizedBox(width: 18),
         ],

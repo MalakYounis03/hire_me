@@ -55,6 +55,10 @@ class ProfileView extends GetView<ProfileController> {
               const SizedBox(height: 10),
               _buildSkillsCard(),
               const SizedBox(height: 10),
+<<<<<<< HEAD
+=======
+              // Languages — تظهر بس لو في بيانات
+>>>>>>> main
               Obx(
                 () => controller.languages.isNotEmpty
                     ? Column(
@@ -65,6 +69,10 @@ class ProfileView extends GetView<ProfileController> {
                       )
                     : const SizedBox.shrink(),
               ),
+<<<<<<< HEAD
+=======
+              // Links — تظهر بس لو في بيانات
+>>>>>>> main
               Obx(
                 () => controller.links.isNotEmpty
                     ? Column(
@@ -96,6 +104,10 @@ class ProfileView extends GetView<ProfileController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
+<<<<<<< HEAD
+=======
+              // Cover
+>>>>>>> main
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -133,11 +145,17 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
               ),
+<<<<<<< HEAD
+=======
+
+              // Avatar
+>>>>>>> main
               Positioned(
                 bottom: -36,
                 left: 16,
                 child: Obx(() {
                   final showBadge = controller.isOpenToWork;
+<<<<<<< HEAD
                   return SizedBox(
                     width: 88,
                     height: showBadge ? 108 : 88,
@@ -153,6 +171,77 @@ class ProfileView extends GetView<ProfileController> {
                                 ? const Color(0xFF22C55E)
                                 : Colors.white,
                           ),
+=======
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: showBadge
+                              ? const Color(0xFF22C55E)
+                              : Colors.white,
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: controller.isUploadingImage.value
+                                ? CircularProgressIndicator(
+                                    color: AppColor.kblue,
+                                  )
+                                : CircleAvatar(
+                                    radius: 38,
+                                    backgroundColor: const Color(0xFFE8EDF9),
+                                    backgroundImage:
+                                        controller.userImage.isNotEmpty
+                                        ? NetworkImage(controller.userImage)
+                                        : null,
+                                    child: controller.userImage.isEmpty
+                                        ? Icon(
+                                            Icons.person_rounded,
+                                            size: 38,
+                                            color: AppColor.kblue,
+                                          )
+                                        : null,
+                                  ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: controller.pickAndUploadImage,
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: AppColor.kblue,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (showBadge)
+                        Positioned(
+                          bottom: -10,
+                          left: 0,
+                          right: 0,
+>>>>>>> main
                           child: Center(
                             child: Container(
                               width: 80,
@@ -336,6 +425,7 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     const SizedBox(width: 8),
+                    // ── Add section ── مربوط هلق
                     OutlinedButton(
                       onPressed: controller.showAddSectionBottomSheet,
                       style: OutlinedButton.styleFrom(
@@ -462,6 +552,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Languages Card ────────────────────────────────────
+>>>>>>> main
   Widget _buildLanguagesCard() {
     return _sectionCard(
       title: 'Languages',
@@ -480,6 +574,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Links Card ────────────────────────────────────────
+>>>>>>> main
   Widget _buildLinksCard() {
     return _sectionCard(
       title: 'Links',
@@ -498,6 +596,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Section Card ──────────────────────────────────────
+>>>>>>> main
   Widget _sectionCard({
     required String title,
     required IconData icon,
@@ -641,6 +743,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Language Item ─────────────────────────────────────
+>>>>>>> main
   Widget _languageItem(LanguageModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -679,6 +785,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // ── Link Item ─────────────────────────────────────────
+>>>>>>> main
   Widget _linkItem(LinkModel e, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -731,6 +841,10 @@ class ProfileView extends GetView<ProfileController> {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // ── Skill Chip ────────────────────────────────────────
+>>>>>>> main
   Widget _skillChip(String skill, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -813,7 +927,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget _cameraIconButton() => Container(
     padding: const EdgeInsets.all(6),
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.8),
+      color: Colors.white.withOpacity(0.8),
       shape: BoxShape.circle,
     ),
     child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColor.kblue),
