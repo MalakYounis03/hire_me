@@ -84,7 +84,7 @@ abstract class CustomTextstyle {
   static final interRegularOrange = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Color(0xffF16E12),
+    color: AppColor.kblue,
     fontFamily: " Inter",
   );
   static final poppinsSemiBold500 = TextStyle(
