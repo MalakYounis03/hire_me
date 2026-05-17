@@ -101,28 +101,7 @@ class ApplicationReviewController extends GetxController {
 
       if (isClosed) return;
 
-      // 2. Write in-app notification document to Firestore for the job seeker
-      await _firestore
-          .collection('notifications')
-          .doc(jobSeekerId)
-          .collection('items')
-          .add({
-            'type': 'application_update',
-            'title': 'Application Accepted!',
-            'body':
-                'Congratulations! Your application for ${applicant.value.jobTitle} has been accepted',
-            'applicationId': applicationId,
-            'jobTitle': applicant.value.jobTitle,
-            'companyName': resolvedCompanyName,
-            'status': 'Accepted',
-            'isRead': false,
-            'createdAt': FieldValue.serverTimestamp(),
-            'icon': 'notifications',
-          });
-
-      if (isClosed) return;
-
-      // 3. Create chat document in REALTIME DATABASE
+      // 2. Create chat document in REALTIME DATABASE
       //    (NOT Firestore — the whole chat system lives in RTDB)
       final chatId = '${companyId}_$jobSeekerId';
       final now = DateTime.now();
@@ -184,26 +163,6 @@ class ApplicationReviewController extends GetxController {
         'status': 'Rejected',
         'updatedAt': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
-
-      if (isClosed) return;
-
-      await _firestore
-          .collection('notifications')
-          .doc(applicant.value.jobSeekerId)
-          .collection('items')
-          .add({
-            'type': 'application_update',
-            'title': 'Application Update',
-            'body':
-                'Unfortunately, your application for ${applicant.value.jobTitle} was not accepted',
-            'applicationId': applicationId,
-            'jobTitle': applicant.value.jobTitle,
-            'companyName': companyName.value,
-            'status': 'Rejected',
-            'isRead': false,
-            'createdAt': FieldValue.serverTimestamp(),
-            'icon': 'notifications',
-          });
 
       if (isClosed) return;
 

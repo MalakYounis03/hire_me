@@ -1,91 +1,12 @@
-<<<<<<< HEAD
-const functions = require('firebase-functions');
-=======
 const { onDocumentCreated, onDocumentUpdated } = require('firebase-functions/v2/firestore');
 const { onValueCreated } = require('firebase-functions/v2/database');
-const { logger } = require('firebase-functions/logger');
->>>>>>> d876662e8fae7e65815765a3ea2ee263dc3aa461
+const logger = require('firebase-functions/logger');
 const admin = require('firebase-admin');
 
 admin.initializeApp();
 
 const db = admin.firestore();
 
-<<<<<<< HEAD
-exports.onApplicationStatusChange = functions.firestore
-  .document('applications/{applicationId}')
-  .onWrite(async (change, context) => {
-    const { applicationId } = context.params;
-    const before = change.before.data();
-    const after = change.after.data();
-
-    if (!before && !after) return null;
-    if (!after) return null;
-
-    const newStatus = after.status;
-    const oldStatus = before ? before.status : null;
-
-    if (!newStatus || newStatus === oldStatus) return null;
-    if (newStatus !== 'Accepted' && newStatus !== 'Rejected') return null;
-
-    const applicantId = after.applicantId || after.jobSeekerId || after.seekerId;
-    const jobTitle = after.jobTitle || 'a position';
-    const companyName = after.companyName || 'a company';
-
-    if (!applicantId) return null;
-
-    const title = newStatus === 'Accepted'
-      ? 'Application Accepted!'
-      : 'Application Rejected';
-
-    const body = newStatus === 'Accepted'
-      ? `Your application for ${jobTitle} at ${companyName} has been accepted.`
-      : `Your application for ${jobTitle} at ${companyName} has been rejected.`;
-
-    const icon = newStatus === 'Accepted' ? 'check_circle' : 'visibility';
-
-    try {
-      await db.collection('notifications').doc(applicantId).collection('items').add({
-        title,
-        body,
-        icon,
-        isRead: false,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        type: 'application_update',
-        applicationId,
-        jobTitle,
-        companyName,
-        status: newStatus,
-      });
-    } catch (err) {
-      functions.logger.error('Failed to write notification document', err);
-    }
-
-    let fcmToken = after.applicantFcmToken;
-    if (!fcmToken) {
-      try {
-        const seekerDoc = await db.collection('jobSeekers').doc(applicantId).get();
-        fcmToken = seekerDoc.data()?.fcmToken;
-      } catch (err) {
-        functions.logger.error('Failed to fetch FCM token', err);
-        return null;
-      }
-    }
-
-    if (!fcmToken) {
-      functions.logger.warn(`No FCM token for applicant ${applicantId}`);
-      return null;
-    }
-
-    const message = {
-      notification: { title, body },
-      data: {
-        type: 'application_update',
-        applicationId,
-        status: newStatus,
-        jobTitle: jobTitle || '',
-        companyName: companyName || '',
-=======
 // ─────────────────────────────────────────────
 // Function 1: New application → notify company
 // ─────────────────────────────────────────────
@@ -143,31 +64,21 @@ exports.onNewApplication = onDocumentCreated(
     logger.info(`FCM token found for company ${companyId} (len=${fcmToken.length})`);
 
     const message = {
-      notification: {
-        title: 'New Application Received 📋',
-        body: `${applicantName} applied for ${jobTitle}`,
-      },
       data: {
         type: 'new_application',
+        title: 'New Application Received 📋',
+        body: `${applicantName} applied for ${jobTitle}`,
         applicationId,
->>>>>>> d876662e8fae7e65815765a3ea2ee263dc3aa461
       },
       token: fcmToken,
     };
 
+    logger.info(`onNewApplication: FCM token for company ${companyId}: "${fcmToken}" (len=${fcmToken.length})`);
     try {
-      await admin.messaging().send(message);
-<<<<<<< HEAD
+      const response = await admin.messaging().send(message);
+      logger.info(`onNewApplication: FCM send SUCCESS to company ${companyId}, response: ${JSON.stringify(response)}`);
     } catch (err) {
-      functions.logger.error('Failed to send FCM push', err);
-    }
-
-    return null;
-  });
-=======
-      logger.info(`Notification sent to company ${companyId} for new application`);
-    } catch (err) {
-      logger.error('Failed to send FCM push', err);
+      logger.error(`onNewApplication: FCM send FAILED for company ${companyId}: ${err.message} (code=${err.code})`);
     }
   },
 );
@@ -227,24 +138,21 @@ exports.onApplicationAccepted = onDocumentUpdated(
     }
 
     const message = {
-      notification: {
-        title: 'Application Accepted! 🎉',
-        body: `Congratulations! Your application for ${jobTitle} has been accepted`,
-      },
       data: {
         type: 'application_update',
+        title: 'Application Accepted! 🎉',
+        body: `Congratulations! Your application for ${jobTitle} has been accepted`,
         applicationId,
       },
       token: fcmToken,
     };
 
+    logger.info(`onApplicationAccepted: FCM token for seeker ${jobSeekerId}: "${fcmToken}" (len=${fcmToken.length})`);
     try {
-      await admin.messaging().send(message);
-      logger.info(
-        `Notification sent to job seeker ${jobSeekerId} for accepted application`,
-      );
+      const response = await admin.messaging().send(message);
+      logger.info(`onApplicationAccepted: FCM send SUCCESS to seeker ${jobSeekerId}, response: ${JSON.stringify(response)}`);
     } catch (err) {
-      logger.error('Failed to send FCM push', err);
+      logger.error(`onApplicationAccepted: FCM send FAILED for seeker ${jobSeekerId}: ${err.message} (code=${err.code})`);
     }
   },
 );
@@ -304,24 +212,21 @@ exports.onApplicationRejected = onDocumentUpdated(
     }
 
     const message = {
-      notification: {
-        title: 'Application Update',
-        body: `Unfortunately, your application for ${jobTitle} was not accepted`,
-      },
       data: {
         type: 'application_update',
+        title: 'Application Update',
+        body: `Unfortunately, your application for ${jobTitle} was not accepted`,
         applicationId,
       },
       token: fcmToken,
     };
 
+    logger.info(`onApplicationRejected: FCM token for seeker ${jobSeekerId}: "${fcmToken}" (len=${fcmToken.length})`);
     try {
-      await admin.messaging().send(message);
-      logger.info(
-        `Notification sent to job seeker ${jobSeekerId} for rejected application`,
-      );
+      const response = await admin.messaging().send(message);
+      logger.info(`onApplicationRejected: FCM send SUCCESS to seeker ${jobSeekerId}, response: ${JSON.stringify(response)}`);
     } catch (err) {
-      logger.error('Failed to send FCM push', err);
+      logger.error(`onApplicationRejected: FCM send FAILED for seeker ${jobSeekerId}: ${err.message} (code=${err.code})`);
     }
   },
 );
@@ -404,25 +309,6 @@ exports.onNewChatMessage = onValueCreated(
       return;
     }
 
-    // Write notification to Firestore unconditionally
-    if (receiverId) {
-      try {
-        await db
-          .collection('notifications').doc(receiverId).collection('items')
-          .add({
-            type: 'chat_message',
-            title: senderDisplayName,
-            body: messageText,
-            chatId,
-            isRead: false,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          });
-        logger.info(`Notification document written for receiver ${receiverId}`);
-      } catch (err) {
-        logger.error('Failed to write notification document', err);
-      }
-    }
-
     // FCM push is best-effort
     if (!fcmToken) {
       logger.warn(`No FCM token for receiver ${receiverId}`);
@@ -430,24 +316,22 @@ exports.onNewChatMessage = onValueCreated(
     }
 
     const message = {
-      notification: {
-        title: senderDisplayName,
-        body: messageText,
-      },
       data: {
         type: 'chat_message',
+        title: senderDisplayName,
+        body: messageText,
         chatId,
         senderId,
       },
       token: fcmToken,
     };
 
+    logger.info(`onNewChatMessage: FCM token for receiver ${receiverId}: "${fcmToken}" (len=${fcmToken.length})`);
     try {
-      await admin.messaging().send(message);
-      logger.info(`Chat notification sent to ${receiverId} from ${senderId}`);
+      const response = await admin.messaging().send(message);
+      logger.info(`onNewChatMessage: FCM send SUCCESS to receiver ${receiverId}, response: ${JSON.stringify(response)}`);
     } catch (err) {
-      logger.error('Failed to send chat notification', err);
+      logger.error(`onNewChatMessage: FCM send FAILED for receiver ${receiverId}: ${err.message} (code=${err.code})`);
     }
   },
 );
->>>>>>> d876662e8fae7e65815765a3ea2ee263dc3aa461

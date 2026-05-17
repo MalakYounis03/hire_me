@@ -28,6 +28,7 @@ class JobSeekerNotificationsController extends GetxController {
     _notificationsSub = _repository.streamNotifications(uid).listen((snapshot) {
       notifications.value = snapshot.docs
           .map((doc) => NotificationModel.fromMap(doc.id, doc.data()))
+          .where((n) => n.type != 'chat_message')
           .toList();
     });
   }
