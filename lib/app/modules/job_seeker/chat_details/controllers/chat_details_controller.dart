@@ -13,8 +13,8 @@ class ChatDetailsController extends GetxController {
   final String chatId;
   final String chatName;
   final String chatAvatarUrl;
-  final String seekerId;
-  final String companyId;
+  String seekerId;
+  String companyId;
 
   ChatDetailsController({
     required this.chatId,
@@ -42,10 +42,29 @@ class ChatDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     NotificationService.currentScreen.value = 'chat_details';
+    _initChat();
+  }
+
+  Future<void> _initChat() async {
+    await _loadChatMetadata();
+    await _setActivePresence(true);
+
     _listenToMessages();
     _markChatAsRead();
     _markSeen();
     _listenToOtherSeen();
+  }
+
+  Future<void> _loadChatMetadata() async {
+    if (seekerId.isNotEmpty && companyId.isNotEmpty) return;
+    final snapshot = await FirebaseDatabase.instance
+        .ref()
+        .child('chats/$chatId')
+        .get();
+    final data = snapshot.value as Map<dynamic, dynamic>?;
+    if (data == null) return;
+    if (seekerId.isEmpty) seekerId = data['seekerId'] as String? ?? '';
+    if (companyId.isEmpty) companyId = data['companyId'] as String? ?? '';
   }
 
   void _listenToMessages() {
@@ -53,6 +72,7 @@ class ChatDetailsController extends GetxController {
       messages.value = msgs;
       isLoading.value = false;
       _markSeen();
+      _markChatAsRead();
 
       Future.delayed(const Duration(milliseconds: 100), () {
         if (scrollController.hasClients) {
@@ -110,6 +130,15 @@ class ChatDetailsController extends GetxController {
         .set(0);
   }
 
+  Future<void> _setActivePresence(bool isActive) async {
+    final isSeeker = currentUserId == seekerId;
+    final field = isSeeker ? 'activeSeeker' : 'activeCompany';
+    await FirebaseDatabase.instance
+        .ref()
+        .child('chats/$chatId/$field')
+        .set(isActive);
+  }
+
   Future<void> _markSeen() async {
     await FirebaseDatabase.instance
         .ref()
@@ -140,6 +169,7 @@ class ChatDetailsController extends GetxController {
 
   @override
   void onClose() {
+    _setActivePresence(false);
     NotificationService.currentScreen.value = '';
     _messageSub?.cancel();
     _seenSub?.cancel();

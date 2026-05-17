@@ -126,9 +126,10 @@ class CompanyDashboardController extends GetxController {
         .collection('items')
         .where('isRead', isEqualTo: false)
         .snapshots()
-        .listen((snapshot) {
-          unreadCount.value = snapshot.docs.length;
-        });
+        .listen(
+          (snapshot) => unreadCount.value = snapshot.docs.length,
+          onError: (_) => unreadCount.value = 0,
+        );
   }
 
   Future<void> refreshDashboard() async {

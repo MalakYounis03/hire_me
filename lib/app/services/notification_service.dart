@@ -45,6 +45,20 @@ class NotificationService extends GetxService {
       settings,
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
+
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        'hireme_notifications',
+        'HireMe Notifications',
+        description: 'Job application notifications',
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+      ),
+    );
   }
 
   Future<void> _requestPermission() async {
@@ -116,39 +130,52 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    debugPrint('🔵 Foreground message received: ${message.notification?.title}');
-    debugPrint('🔵 Message type: ${message.data['type']}');
-    debugPrint('🔵 Current screen: ${NotificationService.currentScreen.value}');
-    final type = message.data['type'];
-    final screen = currentScreen.value;
+    try {
+      debugPrint('🔵 Foreground message received: ${message.notification?.title}');
+      debugPrint('🔵 Message type: ${message.data['type']}');
+      debugPrint('🔵 Current screen: ${NotificationService.currentScreen.value}');
+      final type = message.data['type'];
+      final screen = currentScreen.value;
 
-    if (type == 'chat_message' && screen == 'chat_details') return;
-    if (type == 'application_update' && screen == 'notifications') return;
-    if (type == 'new_application' && screen == 'notifications') return;
+      if (type == 'chat_message' && screen == 'chat_details') return;
+      if (type == 'application_update' && screen == 'notifications') return;
+      if (type == 'new_application' && screen == 'notifications') return;
 
-    final notification = message.notification;
-    if (notification == null) return;
+      final title = message.notification?.title ??
+          message.data['title']?.toString() ??
+          'HireMe';
+      final body = message.notification?.body ??
+          message.data['body']?.toString() ??
+          '';
 
-    final androidDetails = AndroidNotificationDetails(
-      'hireme_notifications',
-      'HireMe Notifications',
-      channelDescription: 'Job application notifications',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const iosDetails = DarwinNotificationDetails();
-    final details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
+      final androidDetails = AndroidNotificationDetails(
+        'hireme_notifications',
+        'HireMe Notifications',
+        channelDescription: 'Job application notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        enableVibration: true,
+        showWhen: true,
+        enableLights: true,
+        colorized: true,
+      );
+      const iosDetails = DarwinNotificationDetails();
+      final details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
 
-    await _localNotifications.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      notification.title,
-      notification.body,
-      details,
-      payload: jsonEncode(message.data),
-    );
+      await _localNotifications.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title,
+        body,
+        details,
+        payload: jsonEncode(message.data),
+      );
+    } catch (e) {
+      debugPrint('🔴 Failed to show foreground notification: $e');
+    }
   }
 
   void _onNotificationTap(NotificationResponse response) {
@@ -179,7 +206,7 @@ class NotificationService extends GetxService {
     debugPrint('🔵 Navigate from notification type: $type');
     switch (type) {
       case 'application_update':
-        Get.toNamed(Routes.jobSeekerApplyJob);
+        Get.toNamed(Routes.jobSeekerNotifications);
         break;
       case 'new_application':
         Get.toNamed(Routes.applicationList);
@@ -190,14 +217,12 @@ class NotificationService extends GetxService {
         if (chatId == null || senderId == null) break;
         final uid = _auth.currentUser?.uid;
         if (uid == null || uid == senderId) break;
-        _firestore.collection('users').doc(uid).get().then((doc) {
-          final role = doc.data()?['role'] as String?;
-      if (role == AppUserRole.jobSeeker.value) {
-            Get.toNamed(Routes.jobSeekerChatDetails, arguments: chatId);
-          } else if (role == AppUserRole.company.value) {
-            Get.toNamed(Routes.companyChatDetails, arguments: chatId);
-          }
-        });
+        final role = StorageService.to.userRole;
+        if (role == AppUserRole.jobSeeker.value) {
+          Get.toNamed(Routes.jobSeekerChatDetails, arguments: chatId);
+        } else if (role == AppUserRole.company.value) {
+          Get.toNamed(Routes.companyChatDetails, arguments: chatId);
+        }
         break;
       default:
         debugPrint('Unknown notification type: $type');

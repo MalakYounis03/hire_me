@@ -260,7 +260,10 @@ class JobSeekerDashboardController extends GetxController {
         .where('isRead', isEqualTo: false)
         .snapshots()
         .map((snap) => snap.docs.length)
-        .listen((count) => notificationBadgeCount.value = count);
+        .listen(
+          (count) => notificationBadgeCount.value = count,
+          onError: (_) => notificationBadgeCount.value = 0,
+        );
   }
 
   Future<void> refreshDashboard() async {
