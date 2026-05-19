@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
 import '../controllers/job_seeker_apply_job_controller.dart';
 
 class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
@@ -9,14 +10,15 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.kblue,
+      backgroundColor: const Color(0xFFF5F7FF),
+
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             _buildLabel('Full Name'),
             const SizedBox(height: 8),
             _buildTextField(controller: controller.nameController),
@@ -48,27 +50,23 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
         onTap: () => Get.back(),
         child: const Icon(Icons.arrow_back, color: Colors.white),
       ),
-      title: const Text(
-        'Apply job',
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
+      title: Text('Apply job', style: CustomTextstyle.interSemiBoldwhite),
       centerTitle: true,
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: const Icon(
+            Icons.notifications_outlined,
+            color: Colors.white,
+            size: 26,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: Color(0xFF1A1A2E),
-      ),
-    );
+    return Text(text, style: CustomTextstyle.interRegular500black);
   }
 
   Widget _buildTextField({
@@ -182,11 +180,7 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
               ? const CircularProgressIndicator(color: Colors.white)
               : Text(
                   AppString.apply,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                  style: CustomTextstyle.interRegular400white,
                 ),
         ),
       ),

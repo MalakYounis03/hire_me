@@ -84,7 +84,7 @@ abstract class CustomTextstyle {
   static final interRegularOrange = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Color(0xffF16E12),
+    color: AppColor.kblue,
     fontFamily: " Inter",
   );
   static final poppinsSemiBold500 = TextStyle(
@@ -164,5 +164,23 @@ abstract class CustomTextstyle {
     fontWeight: FontWeight.w400,
     color: AppColor.eblack,
     fontFamily: " Segoe.UI",
+  );
+  static final interSemiBoldwhite = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: AppColor.lwhite,
+    fontFamily: " Inter",
+  );
+  static final interRegular500black = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: AppColor.lblack,
+    fontFamily: " Inter",
+  );
+  static final interRegular400white = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColor.kwhite,
+    fontFamily: " Inter",
   );
 }

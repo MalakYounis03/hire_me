@@ -9,7 +9,9 @@ abstract class AppColor {
   static Color kwhite = const Color(0xffFFFFFF);
   static Color offWhite = const Color(0xffCBD6FF);
   static Color ewhite = const Color(0xffF1F4FF);
+  static Color lwhite = const Color(0xffFAFAFA);
   static Color eblack = const Color(0xff000000);
+  static Color lblack = const Color(0xff1D1D1D);
   static Color lightThemeGrey = const Color(0xff585c60);
   static Color lightThemeBlue = const Color(0xff0A66C2);
   static const white = Colors.white;
