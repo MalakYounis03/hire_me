@@ -165,4 +165,22 @@ abstract class CustomTextstyle {
     color: AppColor.eblack,
     fontFamily: " Segoe.UI",
   );
+  static final interSemiBoldwhite = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: AppColor.lwhite,
+    fontFamily: " Inter",
+  );
+  static final interRegular500black = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: AppColor.lblack,
+    fontFamily: " Inter",
+  );
+  static final interRegular400white = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    color: AppColor.kwhite,
+    fontFamily: " Inter",
+  );
 }
