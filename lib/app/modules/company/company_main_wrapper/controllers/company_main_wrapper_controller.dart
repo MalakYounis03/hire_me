@@ -19,7 +19,7 @@ class CompanyMainWrapperController extends GetxController {
     if (args is Map<String, dynamic>) {
       final initialIndex = args['initialIndex'];
 
-      if (initialIndex is int && initialIndex >= 0 && initialIndex <= 3) {
+      if (initialIndex is int && initialIndex >= 0 && initialIndex <= 4) {
         currentIndex.value = initialIndex;
       }
     }
@@ -30,6 +30,7 @@ class CompanyMainWrapperController extends GetxController {
   void _listenToUnreadChats() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
+
     _chatSub = FirebaseDatabase.instance
         .ref()
         .child('chats')
@@ -38,16 +39,20 @@ class CompanyMainWrapperController extends GetxController {
         .onValue
         .map((event) {
           final raw = event.snapshot.value;
+
           if (raw == null || raw is! Map) return 0;
-          return raw.entries.where((e) {
-            final chat = e.value;
+
+          return raw.entries.where((entry) {
+            final chat = entry.value;
+
             if (chat is! Map) return false;
+
             return ((chat['unreadCompany'] as num?)?.toInt() ?? 0) > 0;
           }).length;
         })
         .listen(
-          (c) => unreadChats.value = c,
-          onError: (e) => unreadChats.value = 0,
+          (count) => unreadChats.value = count,
+          onError: (_) => unreadChats.value = 0,
         );
   }
 
@@ -62,6 +67,10 @@ class CompanyMainWrapperController extends GetxController {
 
   void goToPostJob() {
     currentIndex.value = 3;
+  }
+
+  void goToProfile() {
+    currentIndex.value = 4;
   }
 
   @override

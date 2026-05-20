@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../../application_list/views/application_list_view.dart';
 import '../../company_chat/views/company_chat_view.dart';
+import '../../company_profile/views/company_profile_view.dart';
 import '../../dashboard/views/company_dashboard_view.dart';
 import '../../post_job/views/company_post_job_view.dart';
 import '../controllers/company_main_wrapper_controller.dart';
@@ -38,7 +39,9 @@ class CompanyMainWrapperView extends GetView<CompanyMainWrapperController> {
         return const CompanyDashboardView();
 
       case 3:
-        return const CompanyPostJobView();
+        return const CompanyPostJobView(showBackButton: false);
+      case 4:
+        return const CompanyProfileView();
 
       default:
         return const CompanyDashboardView();
@@ -61,7 +64,7 @@ class _CompanyBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 82,
-      padding: const EdgeInsets.only(left: 34, right: 34, top: 8, bottom: 8),
+      padding: const EdgeInsets.only(left: 18, right: 18, top: 8, bottom: 8),
       decoration: BoxDecoration(
         color: AppColor.kwhite,
         boxShadow: [
@@ -82,24 +85,30 @@ class _CompanyBottomNavBar extends StatelessWidget {
               icon: Icons.account_balance_outlined,
               activeIcon: Icons.account_balance_rounded,
             ),
-            Badge(
-              isLabelVisible: unreadChats > 0,
-              label: Text('$unreadChats'),
-              child: _navItem(
-                index: 1,
-                icon: Icons.chat_bubble_outline_rounded,
-                activeIcon: Icons.chat_bubble_rounded,
-              ),
+
+            _navItem(
+              index: 1,
+              icon: Icons.chat_bubble_outline_rounded,
+              activeIcon: Icons.chat_bubble_rounded,
+              badgeCount: unreadChats,
             ),
+
             _navItem(
               index: 2,
               icon: Icons.home_outlined,
               activeIcon: Icons.home_rounded,
             ),
+
             _navItem(
               index: 3,
               icon: Icons.business_center_outlined,
               activeIcon: Icons.business_center_rounded,
+            ),
+
+            _navItem(
+              index: 4,
+              icon: Icons.person_outline_rounded,
+              activeIcon: Icons.person_rounded,
             ),
           ],
         ),
@@ -111,6 +120,7 @@ class _CompanyBottomNavBar extends StatelessWidget {
     required int index,
     required IconData icon,
     required IconData activeIcon,
+    int badgeCount = 0,
   }) {
     final isSelected = currentIndex == index;
 
@@ -118,24 +128,54 @@ class _CompanyBottomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 58,
+        width: 52,
         height: 58,
-        child: Center(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
-            curve: Curves.easeOut,
-            width: isSelected ? 56 : 44,
-            height: isSelected ? 56 : 44,
-            decoration: BoxDecoration(
-              color: isSelected ? AppColor.kblue : Colors.transparent,
-              shape: BoxShape.circle,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              curve: Curves.easeOut,
+              width: isSelected ? 54 : 42,
+              height: isSelected ? 54 : 42,
+              decoration: BoxDecoration(
+                color: isSelected ? AppColor.kblue : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isSelected ? activeIcon : icon,
+                color: isSelected ? AppColor.kwhite : AppColor.kblue,
+                size: isSelected ? 28 : 25,
+              ),
             ),
-            child: Icon(
-              isSelected ? activeIcon : icon,
-              color: isSelected ? AppColor.kwhite : AppColor.kblue,
-              size: isSelected ? 30 : 27,
-            ),
-          ),
+
+            if (badgeCount > 0)
+              Positioned(
+                top: 2,
+                right: 2,
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minWidth: 17,
+                    minHeight: 17,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFEF4444),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    badgeCount > 9 ? '9+' : '$badgeCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
