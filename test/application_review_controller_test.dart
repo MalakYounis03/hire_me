@@ -196,6 +196,8 @@ class _FakeApplicationReviewController {
       final now = DateTime.now();
 
       final chatRef = _rtdb.ref().child('chats/$chatId');
+      // ignore: avoid_print
+      print('DEBUG jobId passed to chat: ${applicant.value.jobId}');
       await chatRef.set({
         'companyId': companyId,
         'seekerId': jobSeekerId,
