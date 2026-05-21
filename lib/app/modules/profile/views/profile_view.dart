@@ -813,7 +813,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget _cameraIconButton() => Container(
     padding: const EdgeInsets.all(6),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.8),
+      color: Colors.white.withValues(alpha: 0.8),
       shape: BoxShape.circle,
     ),
     child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColor.kblue),

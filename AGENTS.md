@@ -40,9 +40,9 @@ Background isolate handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `
 ## Architecture
 
 - **State/routing:** GetX. Import only `app/routes/app_pages.dart` — `app_routes.dart` is `part of 'app_pages.dart'`. Use `Routes.*` constants.
-- **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Auth: `splash`, `onboarding`, `select_user` (active), `role_selector` (unlinked — zero `GetPage` entries), `login`, `register`, `forgot_password`.
-- **Models:** Inline per-module at `model/` dirs. Also `lib/app/data/models/` and `lib/core/models/`.
-- **Backend:** Firebase (Auth, Firestore, Storage, RTDB, Messaging) + Supabase (`AuthFlowType.pkce`). Firebase project `hireme-a59e6`.
+- **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Auth: `splash`, `onboarding`, `select_user`, `login`, `register`, `forgot_password`.
+- **Models:** Inline per-module at `model/` or `models/` dirs (e.g. `profile/models/`, `application_list/model/`).
+- **Backend:** Firebase (Auth, Firestore, RTDB, Messaging) + Supabase (`AuthFlowType.pkce`, storage). **No `firebase_storage` package** — Supabase Storage handles image/file uploads. Firebase project `hireme-a59e6`.
 - **Session:** `StorageService` — GetX permanent service backed by SharedPreferences. `AppUserRole` enum (company, jobSeeker). `.value` yields `'company'` / `'jobSeeker'`. `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `'jobSeeker'`.
 - **Role guard:** `RoleGuardMiddleware` checks `FirebaseAuth.currentUser` + `StorageService`. Mismatch → redirect; null → `/login`.
 - **FCM tokens** saved to `companies/{uid}` / `jobSeekers/{uid}` (and `users/{uid}` fallback) via `NotificationService._saveTokenToFirestore`. `onTokenRefresh` handles rotation.
@@ -62,13 +62,10 @@ Background isolate handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `
 
 - Manual fakes only — no mockito/mocktail. No Firebase/Supabase init needed.
 - Call `Get.reset()` in `tearDown` for GetX isolation.
-- 4 test files: `widget_test.dart` (placeholder), `auth_login_controller_test.dart`, `job_seeker_dashboard_controller_test.dart`, `application_review_controller_test.dart`.
+- 6 test files: `widget_test.dart` (placeholder), `auth_login_controller_test.dart`, `job_seeker_dashboard_controller_test.dart`, `application_review_controller_test.dart`, `profile_controller_test.dart`, `company_dashboard_controller_test.dart`.
 
 ## Gotchas
 
-- **Broken fonts:** `" Poppins"`, `" Inter"`, `" Segoe.UI"` have leading spaces in `app_text_style.dart` — won't match `Poppins`/`Inter`/`Segoe.UI` in `pubspec.yaml`. (`Montserrat` and `Roboto` are correct.) `main.dart` `fontFamily: 'Inter'` (no space) works for default theme only.
-- `Routes.COMPANY_APPLICANTS` defined in `app_routes.dart` but has **no** `GetPage` entry in `app_pages.dart`.
 - `Routes.JOB_SEEKER_SEARCH_JOBS` has **no** `RoleGuardMiddleware` — public access.
-- `auth/role_selector/` exists (bindings/controllers/views) but zero routes reference it; `select_user/` is the active module.
-- **deleteJob RTDB cleanup** (`application_list_controller.dart`): uses direct chat-ID construction (`${companyId}_$seekerId`) — NOT `orderByChild` query. Previously was `orderByChild('jobId').equalTo(jobId)` which required `.indexOn: ["jobId"]` in RTDB rules.
-- **Incomplete logout:** `profile_controller.dart` and `company_profile_controller.dart:logout()` only call `_auth.signOut()` — no FCM token cleanup, no `clearAuthSession()`. Chat-view logout (both `chat_view.dart` and `company_chat_view.dart`) does the full cleanup.
+- **deleteJob RTDB cleanup** (`lib/app/modules/company/application_list/controllers/application_list_controller.dart`): constructs chat IDs directly as `${companyId}_$seekerId` — NOT via `orderByChild` query.
+- **Logout:** Full cleanup pattern (FCM token delete → `deleteToken()` → `clearAuthSession()` → `signOut()`) is implemented in all four logout locations: `lib/app/modules/profile/controllers/profile_controller.dart`, `lib/app/modules/company/company_profile/controllers/company_profile_controller.dart`, `lib/app/modules/job_seeker/chat/views/chat_view.dart`, `lib/app/modules/company/company_chat/views/company_chat_view.dart`.

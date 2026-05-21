@@ -106,7 +106,7 @@ class JobCategorySelectorSheet extends StatelessWidget {
       child: ListView.separated(
         shrinkWrap: true,
         itemCount: categories.length,
-        separatorBuilder: (_, __) => Divider(
+        separatorBuilder: (_, _) => Divider(
           height: 1,
           thickness: 0.8,
           color: AppColor.kblack.withValues(alpha: 0.05),
