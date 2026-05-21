@@ -261,7 +261,7 @@ class JobSeekerDashboardController extends GetxController {
         .snapshots()
         .map((snap) => snap.docs.length)
         .listen(
-          (count) => notificationBadgeCount.value = count,
+          (jobCount) => notificationBadgeCount.value = jobCount,
           onError: (_) => notificationBadgeCount.value = 0,
         );
   }

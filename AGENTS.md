@@ -4,14 +4,15 @@
 
 ```bash
 flutter pub get                                   # Install deps
-flutter analyze --no-fatal-infos --no-fatal-warnings  # CI lint
+flutter analyze --no-fatal-infos --no-fatal-warnings  # CI lint (match CI flags)
 flutter test                                      # All tests
 flutter test test/<file>.dart                     # Single test file
-flutter test --no-pub                             # CI test (skips pub get)
+flutter test --no-pub                             # CI test (skips pub get; also faster locally)
 flutter run                                       # Device/emulator
-flutter build apk --release                       # Release APK
+flutter build apk --release                       # Release APK (CI also uploads to Firebase App Distribution)
 firebase deploy --only database                   # Deploy RTDB rules (from project root)
 firebase deploy --only functions                  # Deploy Cloud Functions (from project root)
+firebase deploy --only firestore:indexes          # Deploy composite indexes if added
 ```
 
 CI (`.github/workflows/flutter.yml`): `pub get` → `analyze` → `test --no-pub` → `build apk --release` → upload APK → Firebase App Distribution. Flutter `3.41.6`, Java 17.
@@ -42,7 +43,7 @@ Background isolate handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `
 - **State/routing:** GetX. Import only `app/routes/app_pages.dart` — `app_routes.dart` is `part of 'app_pages.dart'`. Use `Routes.*` constants.
 - **Modules:** `lib/app/modules/{auth, company, job_seeker, pdf_viewer, profile}`. Auth: `splash`, `onboarding`, `select_user`, `login`, `register`, `forgot_password`.
 - **Models:** Inline per-module at `model/` or `models/` dirs (e.g. `profile/models/`, `application_list/model/`).
-- **Backend:** Firebase (Auth, Firestore, RTDB, Messaging) + Supabase (`AuthFlowType.pkce`, storage). **No `firebase_storage` package** — Supabase Storage handles image/file uploads. Firebase project `hireme-a59e6`.
+- **Backend:** Firebase (Auth, Firestore, RTDB, Messaging) + Supabase (`AuthFlowType.pkce`, storage). `firebase_storage` listed in `pubspec.yaml` but unused — Supabase Storage handles image/file uploads. Firebase project `hireme-a59e6`.
 - **Session:** `StorageService` — GetX permanent service backed by SharedPreferences. `AppUserRole` enum (company, jobSeeker). `.value` yields `'company'` / `'jobSeeker'`. `normalizeRole()` maps `jobseeker`/`job seeker`/`job_seeker` → `'jobSeeker'`.
 - **Role guard:** `RoleGuardMiddleware` checks `FirebaseAuth.currentUser` + `StorageService`. Mismatch → redirect; null → `/login`.
 - **FCM tokens** saved to `companies/{uid}` / `jobSeekers/{uid}` (and `users/{uid}` fallback) via `NotificationService._saveTokenToFirestore`. `onTokenRefresh` handles rotation.
@@ -62,7 +63,8 @@ Background isolate handler (`@pragma('vm:entry-point')`) → `dotenv.load` → `
 
 - Manual fakes only — no mockito/mocktail. No Firebase/Supabase init needed.
 - Call `Get.reset()` in `tearDown` for GetX isolation.
-- 6 test files: `widget_test.dart` (placeholder), `auth_login_controller_test.dart`, `job_seeker_dashboard_controller_test.dart`, `application_review_controller_test.dart`, `profile_controller_test.dart`, `company_dashboard_controller_test.dart`.
+- 6 test files (80+ tests): `widget_test.dart` (placeholder), `auth_login_controller_test.dart`, `job_seeker_dashboard_controller_test.dart`, `application_review_controller_test.dart`, `profile_controller_test.dart`, `company_dashboard_controller_test.dart`.
+- Tests use top-level helper functions mirroring controller logic (e.g. `FakeJob` + `applyFilters()` in dashboard test). Keep test-only types public (`FakeJob`) or make the function private; `_`-prefixed types used in public top-level functions triggers lint errors.
 
 ## Gotchas
 
