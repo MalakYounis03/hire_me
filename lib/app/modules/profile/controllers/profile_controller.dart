@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/profile/models/user_model.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
+import 'package:hire_me/app/services/storage_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,7 +71,7 @@ class ProfileController extends GetxController {
         final newUser = UserModel(
           uid: uid,
           email: _auth.currentUser?.email ?? '',
-          role: 'jobseeker',
+          role: AppUserRole.jobSeeker.value,
           name: name,
         );
         await _firestore.collection('jobSeekers').doc(uid).set(newUser.toMap());

@@ -146,6 +146,7 @@ class _FakeApplicationReviewController {
                   cvUrl: '',
                   appliedAt: '',
                   applicantFcmToken: '',
+                  jobId: '',
                 ))
             .obs;
     companyName.value = initialCompanyName;
@@ -198,7 +199,7 @@ class _FakeApplicationReviewController {
       await chatRef.set({
         'companyId': companyId,
         'seekerId': jobSeekerId,
-        'jobId': '',
+        'jobId': applicant.value.jobId,
         'companyName': resolvedCompanyName,
         'seekerName': jobSeekerName,
         'lastMessage': 'You have been accepted for this position.',
@@ -270,6 +271,7 @@ void main() {
     avatarUrl: 'https://example.com/avatar.png',
     appliedAt: '2026-05-01',
     applicantFcmToken: 'fcm-token-123',
+    jobId: 'job-789',
   );
 
   const testCompanyId = 'company-456';
@@ -401,7 +403,7 @@ void main() {
       expect(chatData['companyName'], testCompanyName);
     });
 
-    test('should set jobId to empty string', () async {
+    test('should set jobId from applicant model', () async {
       await controller.acceptApplication(
         testApplicationId,
         testJobSeekerId,
@@ -413,7 +415,7 @@ void main() {
       final chatData =
           fakeRTDB.store['chats/${testCompanyId}_$testJobSeekerId'];
 
-      expect(chatData!['jobId'], '');
+      expect(chatData!['jobId'], testApplicant.jobId);
     });
 
     test('should set unreadSeeker to 1 and unreadCompany to 0', () async {
