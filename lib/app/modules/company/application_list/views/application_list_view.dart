@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/company/application_list/views/widgets/job_actions_sheet%20.dart';
+import 'package:hire_me/app/modules/company/application_list/views/widgets/job_actions_sheet.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 
 import '../../application_review/model/job_with_application.dart';
@@ -26,10 +26,6 @@ class ApplicationListView extends GetView<ApplicationListController> {
               applicantsCount: controller.applicantsCount.value,
               onJobsTap: controller.showJobsTab,
               onApplicationsTap: controller.showApplicationsTab,
-            ),
-            _TabBar(
-              activeTab: controller.activeTab.value,
-              onTab: controller.switchTab,
             ),
             if (controller.activeTab.value == 'applications')
               _StatusFilterBar(
@@ -308,35 +304,6 @@ class ApplicationListView extends GetView<ApplicationListController> {
   }
 }
 
-class _TabBar extends StatelessWidget {
-  final String activeTab;
-  final void Function(String) onTab;
-
-  const _TabBar({required this.activeTab, required this.onTab});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-      child: Row(
-        children: [
-          _TabButton(
-            label: 'Jobs',
-            isActive: activeTab == 'jobs',
-            onTap: () => onTab('jobs'),
-          ),
-          const SizedBox(width: 10),
-          _TabButton(
-            label: 'Applications',
-            isActive: activeTab == 'applications',
-            onTap: () => onTab('applications'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _StatusFilterBar extends StatelessWidget {
   final String selectedStatus;
   final void Function(String) onSelect;
@@ -386,43 +353,6 @@ class _StatusFilterBar extends StatelessWidget {
             ),
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class _TabButton extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _TabButton({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isActive ? AppColor.kblue : AppColor.kwhite,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isActive ? AppColor.kblue : AppColor.greyVeryLight,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isActive ? AppColor.kwhite : AppColor.greydark,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ),
     );
   }
