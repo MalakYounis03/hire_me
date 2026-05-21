@@ -141,6 +141,7 @@ class ApplicationListController extends GetxController {
                       updatedAt: data['updatedAt']?.toString() ?? '',
                       applicantFcmToken:
                           data['applicantFcmToken']?.toString() ?? '',
+                      jobId: jobId,
                     ),
                   );
             }

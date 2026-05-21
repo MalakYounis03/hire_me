@@ -66,6 +66,7 @@ class ApplicationReviewController extends GetxController {
       cvUrl: '',
       appliedAt: '',
       applicantFcmToken: '',
+      jobId: '',
     ).obs;
   }
 
@@ -109,7 +110,7 @@ class ApplicationReviewController extends GetxController {
       await _db.child('chats/$chatId').set({
         'companyId': companyId,
         'seekerId': jobSeekerId,
-        'jobId': '',
+        'jobId': applicant.value.jobId,
         'companyName': resolvedCompanyName,
         'seekerName': jobSeekerName,
         'lastMessage': 'You have been accepted for this position.',

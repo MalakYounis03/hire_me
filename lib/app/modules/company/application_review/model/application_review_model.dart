@@ -14,6 +14,7 @@ class ApplicationReviewModel {
   final String appliedAt;
   final String updatedAt;
   final String applicantFcmToken;
+  final String jobId;
 
   ApplicationReviewModel({
     required this.id,
@@ -31,5 +32,6 @@ class ApplicationReviewModel {
     required this.appliedAt,
     this.updatedAt = '',
     this.applicantFcmToken = '',
+    this.jobId = '',
   });
 }

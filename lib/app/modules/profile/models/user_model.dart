@@ -37,7 +37,7 @@ class UserModel {
     return UserModel(
       uid: map['uid'] ?? '',
       email: map['email'] ?? '',
-      role: map['role'] ?? 'jobseeker',
+      role: map['role'] ?? 'jobSeeker',
       name: map['name'] ?? '',
       title: map['title'] ?? '',
       university: map['university'] ?? '',
