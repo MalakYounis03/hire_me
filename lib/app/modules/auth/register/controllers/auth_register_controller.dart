@@ -98,7 +98,7 @@ class AuthRegisterController extends GetxController {
   }
 
   Future<void> _saveUserToFirestore(String uid) async {
-    final collection = _role == 'company' ? 'companies' : 'jobSeekers';
+    final collection = _role == AppUserRole.company.value ? 'companies' : 'jobSeekers';
     await _firestore.collection('users').doc(uid).set({
       'uid': uid,
       'name': nameController.text.trim(),
@@ -117,7 +117,7 @@ class AuthRegisterController extends GetxController {
   }
 
   void _navigateAfterRegister() {
-    if (_role == 'company') {
+    if (_role == AppUserRole.company.value) {
       Get.offAllNamed(Routes.companyMainWrapper);
     } else {
       Get.offAllNamed(Routes.mainWrapper);

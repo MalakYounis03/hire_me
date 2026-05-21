@@ -30,6 +30,15 @@ exports.onNewApplication = onDocumentCreated(
       return;
     }
 
+    const jobId = data.jobId;
+    if (jobId) {
+      const jobDoc = await db.collection('jobs').doc(jobId).get();
+      if (!jobDoc.exists) {
+        logger.warn(`Job ${jobId} no longer exists, skipping notification`);
+        return;
+      }
+    }
+
     // Write notification to Firestore unconditionally (in-app badge/list)
     try {
       await db

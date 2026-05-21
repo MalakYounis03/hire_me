@@ -66,6 +66,7 @@ class ApplicationReviewController extends GetxController {
       cvUrl: '',
       appliedAt: '',
       applicantFcmToken: '',
+      jobId: '',
     ).obs;
   }
 
@@ -106,10 +107,12 @@ class ApplicationReviewController extends GetxController {
       final chatId = '${companyId}_$jobSeekerId';
       final now = DateTime.now();
 
+      debugPrint('DEBUG jobId passed to chat: ${applicant.value.jobId}');
+
       await _db.child('chats/$chatId').set({
         'companyId': companyId,
         'seekerId': jobSeekerId,
-        'jobId': '',
+        'jobId': applicant.value.jobId,
         'companyName': resolvedCompanyName,
         'seekerName': jobSeekerName,
         'lastMessage': 'You have been accepted for this position.',
