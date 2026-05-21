@@ -11,10 +11,13 @@ class CompanyDashboardController extends GetxController {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _jobsSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _applicationsSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _notificationsSubscription;
 
   final isLoading = true.obs;
 
   final totalJobs = 0.obs;
+  final unreadCount = 0.obs;
   final openJobs = 0.obs;
   final closedJobs = 0.obs;
 
@@ -44,6 +47,7 @@ class CompanyDashboardController extends GetxController {
 
     _jobsSubscription?.cancel();
     _applicationsSubscription?.cancel();
+    _notificationsSubscription?.cancel();
 
     _jobsSubscription = _firestore
         .collection('jobs')
@@ -182,6 +186,17 @@ class CompanyDashboardController extends GetxController {
             isLoading.value = false;
           },
         );
+
+    _notificationsSubscription = _firestore
+        .collection('notifications')
+        .doc(uid)
+        .collection('items')
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .listen(
+          (snapshot) => unreadCount.value = snapshot.docs.length,
+          onError: (_) => unreadCount.value = 0,
+        );
   }
 
   Future<void> refreshDashboard() async {
@@ -205,6 +220,7 @@ class CompanyDashboardController extends GetxController {
   void onClose() {
     _jobsSubscription?.cancel();
     _applicationsSubscription?.cancel();
+    _notificationsSubscription?.cancel();
     super.onClose();
   }
 }

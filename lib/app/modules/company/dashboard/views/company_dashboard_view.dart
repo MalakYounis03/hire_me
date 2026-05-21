@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/utils/app_color.dart';
+import '../../../../routes/app_pages.dart';
 import '../../application_list/controllers/application_list_controller.dart';
 import '../../company_main_wrapper/controllers/company_main_wrapper_controller.dart';
 import '../controllers/company_dashboard_controller.dart';
@@ -55,10 +56,23 @@ class CompanyDashboardView extends GetView<CompanyDashboardController> {
           ),
         ),
         actions: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
+          Obx(
+            () => Badge(
+              isLabelVisible: controller.unreadCount > 0,
+              label: Text('${controller.unreadCount}'),
+              textStyle: const TextStyle(color: Colors.white, fontSize: 10),
+              textColor: Colors.white,
+              backgroundColor: Colors.red,
+              smallSize: 18,
+              child: GestureDetector(
+                onTap: () => Get.toNamed(Routes.companyNotifications),
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  color: AppColor.kwhite,
+                  size: 26,
+                ),
+              ),
+            ),
           ),
           const SizedBox(width: 18),
         ],

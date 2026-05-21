@@ -107,6 +107,8 @@ class ApplicationReviewController extends GetxController {
       final chatId = '${companyId}_$jobSeekerId';
       final now = DateTime.now();
 
+      debugPrint('DEBUG jobId passed to chat: ${applicant.value.jobId}');
+
       await _db.child('chats/$chatId').set({
         'companyId': companyId,
         'seekerId': jobSeekerId,

@@ -418,16 +418,11 @@ class ApplicationListController extends GetxController {
 
       // Step 5: Find and delete related chats from RTDB
       final db = FirebaseDatabase.instance.ref();
-      final chatsSnapshot = await db
-          .child('chats')
-          .orderByChild('jobId')
-          .equalTo(jobId)
-          .get();
-
-      if (chatsSnapshot.exists) {
-        for (final chatNode in chatsSnapshot.children) {
-          final chatId = chatNode.key;
-          if (chatId != null) {
+      if (companyId != null && companyId.isNotEmpty) {
+        for (final seekerId in seekerIds) {
+          final chatId = '${companyId}_$seekerId';
+          final chatSnapshot = await db.child('chats/$chatId').get();
+          if (chatSnapshot.exists) {
             await db.child('chats/$chatId/messages').remove();
             await db.child('chats/$chatId').remove();
           }
