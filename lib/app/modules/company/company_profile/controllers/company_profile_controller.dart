@@ -15,8 +15,7 @@ class CompanyProfileController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  static const String _logoBucket = 'company-logos';
-
+  static const String _logoBucket = 'logos';
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _jobsSub;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _applicationsSub;
 

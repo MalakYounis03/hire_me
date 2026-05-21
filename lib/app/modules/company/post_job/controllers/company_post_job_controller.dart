@@ -41,8 +41,7 @@ class CompanyPostJobController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  static const String _logoBucket = 'company-logos';
-
+  static const String _logoBucket = 'logos';
   String companyName = '';
 
   @override

@@ -160,10 +160,23 @@ class CompanyProfileView extends GetView<CompanyProfileController> {
                       )
                     : Image.network(
                         imageUrl,
+                        key: ValueKey(imageUrl),
                         width: 92,
                         height: 92,
                         fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: AppColor.kblue,
+                              strokeWidth: 2.2,
+                            ),
+                          );
+                        },
                         errorBuilder: (context, error, stackTrace) {
+                          debugPrint('Company logo image error: $error');
+
                           return Icon(
                             Icons.business_rounded,
                             color: AppColor.kblue,

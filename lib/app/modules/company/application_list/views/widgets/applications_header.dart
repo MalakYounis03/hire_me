@@ -32,7 +32,7 @@ class ApplicantsHeader extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text(
-              'Applicants List',
+              'Job Management',
               style: TextStyle(
                 color: AppColor.kwhite,
                 fontSize: 22,
@@ -55,7 +55,8 @@ class ApplicantsHeader extends StatelessWidget {
                   onTap: onApplicationsTap,
                   child: _InfoPill(
                     icon: Icons.group_outlined,
-                    text: '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
+                    text:
+                        '$applicantsCount ${applicantsCount == 1 ? 'applicant' : 'applicants'}',
                   ),
                 ),
               ],
