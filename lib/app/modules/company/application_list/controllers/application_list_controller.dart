@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/company/application_list/views/widgets/app_confirm_dialog.dart';
@@ -18,6 +19,7 @@ class ApplicationListController extends GetxController {
 
   final isLoading = true.obs;
   final isJobsLoading = true.obs;
+  final isDeleting = false.obs;
 
   final jobsCount = 0.obs;
   final applicantsCount = 0.obs;
@@ -342,7 +344,7 @@ class ApplicationListController extends GetxController {
       icon: Icons.delete_outline_rounded,
       title: 'Delete Job',
       message:
-          'This job will be removed from your jobs list. This action is not recommended if the job has applicants.',
+          'This will permanently delete the job, all applications, related chats, and notifications. This action cannot be undone.',
       confirmText: 'Delete',
       confirmColor: const Color(0xFFEF4444),
     );
@@ -369,12 +371,95 @@ class ApplicationListController extends GetxController {
 
   Future<void> deleteJob(String jobId) async {
     try {
-      await _firestore.collection('jobs').doc(jobId).update({
-        'status': 'Deleted',
-        'isActive': false,
-        'isDeleted': true,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      isDeleting.value = true;
+
+      // Step 1: Collect all applications for this job
+      final appsSnapshot = await _firestore
+          .collection('applications')
+          .where('jobId', isEqualTo: jobId)
+          .get();
+
+      final seekerIds = <String>{};
+      final appIds = <String>[];
+      String? companyId;
+
+      for (final doc in appsSnapshot.docs) {
+        final data = doc.data();
+        final seekerId = data['seekerId']?.toString() ?? '';
+        if (seekerId.isNotEmpty) seekerIds.add(seekerId);
+        appIds.add(doc.id);
+        companyId ??= data['companyId']?.toString();
+      }
+
+      // Step 3: Collect savedJobs for this job
+      final savedJobsSnapshot = await _firestore
+          .collection('savedJobs')
+          .where('jobId', isEqualTo: jobId)
+          .get();
+
+      // Steps 2, 3, 6: Delete applications, savedJobs, and job document
+      // using WriteBatch (split into batches of 500 if needed)
+      final deletes = <void Function(WriteBatch)>[
+        for (final appId in appIds)
+          (b) => b.delete(_firestore.collection('applications').doc(appId)),
+        for (final doc in savedJobsSnapshot.docs)
+          (b) => b.delete(_firestore.collection('savedJobs').doc(doc.id)),
+        (b) => b.delete(_firestore.collection('jobs').doc(jobId)),
+      ];
+
+      for (var i = 0; i < deletes.length; i += 500) {
+        final batch = _firestore.batch();
+        for (var j = i; j < (i + 500).clamp(0, deletes.length); j++) {
+          deletes[j](batch);
+        }
+        await batch.commit();
+      }
+
+      // Step 5: Find and delete related chats from RTDB
+      final db = FirebaseDatabase.instance.ref();
+      final chatsSnapshot = await db
+          .child('chats')
+          .orderByChild('jobId')
+          .equalTo(jobId)
+          .get();
+
+      if (chatsSnapshot.exists) {
+        for (final chatNode in chatsSnapshot.children) {
+          final chatId = chatNode.key;
+          if (chatId != null) {
+            await db.child('chats/$chatId/messages').remove();
+            await db.child('chats/$chatId').remove();
+          }
+        }
+      }
+
+      // Delete notification docs related to the deleted applications
+      final allUserIds = <String>{...seekerIds};
+      if (companyId != null && companyId.isNotEmpty) {
+        allUserIds.add(companyId);
+      }
+
+      for (final userId in allUserIds) {
+        for (var i = 0; i < appIds.length; i += 10) {
+          final chunk = appIds.skip(i).take(10).toList();
+          if (chunk.isEmpty) continue;
+
+          final notifSnapshot = await _firestore
+              .collection('notifications')
+              .doc(userId)
+              .collection('items')
+              .where('applicationId', whereIn: chunk)
+              .get();
+
+          if (notifSnapshot.docs.isEmpty) continue;
+
+          final notifBatch = _firestore.batch();
+          for (final doc in notifSnapshot.docs) {
+            notifBatch.delete(doc.reference);
+          }
+          await notifBatch.commit();
+        }
+      }
 
       Get.snackbar(
         'Success',
@@ -384,9 +469,11 @@ class ApplicationListController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to delete job',
+        'Failed to delete job: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
+    } finally {
+      isDeleting.value = false;
     }
   }
 
