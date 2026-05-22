@@ -4,7 +4,7 @@ import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
 
-import '../controllers/job_seeker_dashboard_controller.dart';
+import '../../controllers/job_seeker_dashboard_controller.dart';
 
 class HeaderWidget extends GetView<JobSeekerDashboardController> {
   const HeaderWidget({super.key});

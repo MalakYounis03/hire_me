@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:hire_me/app/services/storage_service.dart';
 import 'widgets/company_chat_tile.dart';
 import 'widgets/company_empty_state.dart';
-import '../../../job_seeker/dashboard/widgets/search_widget.dart';
+import '../../../job_seeker/dashboard/views/widgets/search_widget.dart';
 import '../../../../routes/app_pages.dart';
 import '../../../../../core/utils/app_color.dart';
 

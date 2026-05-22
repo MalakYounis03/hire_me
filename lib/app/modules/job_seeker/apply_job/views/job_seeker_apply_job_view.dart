@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hire_me/app/modules/job_seeker/apply_job/views/widgets/apply_cv_upload_box.dart';
+import 'package:hire_me/app/modules/job_seeker/apply_job/views/widgets/apply_job_button.dart';
 import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
+
 import '../controllers/job_seeker_apply_job_controller.dart';
 
 class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
   const JobSeekerApplyJobView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FF),
-
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -19,10 +21,13 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
+
             _buildLabel('Full Name'),
             const SizedBox(height: 8),
             _buildTextField(controller: controller.nameController),
+
             const SizedBox(height: 20),
+
             _buildLabel('Email'),
             const SizedBox(height: 8),
             _buildTextField(
@@ -30,12 +35,16 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
               readOnly: true,
               keyboardType: TextInputType.emailAddress,
             ),
+
             const SizedBox(height: 20),
+
             _buildLabel('Upload Cv\\Resume'),
             const SizedBox(height: 8),
-            _buildUploadArea(),
+            const ApplyCvUploadBox(),
+
             const SizedBox(height: 40),
-            _buildApplyButton(),
+
+            const ApplyJobButton(),
           ],
         ),
       ),
@@ -52,10 +61,10 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
       ),
       title: Text('Apply job', style: CustomTextstyle.interSemiBoldwhite),
       centerTitle: true,
-      actions: [
+      actions: const [
         Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: const Icon(
+          padding: EdgeInsets.only(right: 16),
+          child: Icon(
             Icons.notifications_outlined,
             color: Colors.white,
             size: 26,
@@ -93,95 +102,6 @@ class JobSeekerApplyJobView extends GetView<JobSeekerApplyJobController> {
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUploadArea() {
-    return Obx(
-      () => GestureDetector(
-        onTap: controller.pickCV,
-        child: Container(
-          width: double.infinity,
-          height: 160,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: controller.cvFileName.value.isEmpty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 48,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tap to upload PDF or Word',
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.insert_drive_file_outlined,
-                      size: 40,
-                      color: AppColor.kblue,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      controller.cvFileName.value,
-                      style: TextStyle(
-                        color: AppColor.kblue,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildApplyButton() {
-    return Obx(
-      () => SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton(
-          onPressed: controller.isLoading.value
-              ? null
-              : controller.onApplyPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColor.kblue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            elevation: 0,
-          ),
-          child: controller.isLoading.value
-              ? const CircularProgressIndicator(color: Colors.white)
-              : Text(
-                  AppString.apply,
-                  style: CustomTextstyle.interRegular400white,
-                ),
         ),
       ),
     );

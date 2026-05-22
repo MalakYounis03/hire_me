@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/profile/models/user_model.dart';
+import 'package:hire_me/app/modules/job_seeker/profile/models/user_model.dart';
 import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:hire_me/app/services/storage_service.dart';
 import 'package:image_picker/image_picker.dart';
