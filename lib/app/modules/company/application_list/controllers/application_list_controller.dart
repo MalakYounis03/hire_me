@@ -227,8 +227,8 @@ class ApplicationListController extends GetxController {
             return data['isDeleted'] != true;
           }).length;
         })
-        .listen((count) {
-          jobsCount.value = count;
+        .listen((jobCount) {
+          jobsCount.value = jobCount;
         });
   }
 

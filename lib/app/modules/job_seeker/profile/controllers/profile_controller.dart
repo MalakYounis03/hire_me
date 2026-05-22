@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/job_seeker/profile/models/user_model.dart';
@@ -158,7 +159,9 @@ class ProfileController extends GetxController {
                           height: 38,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF1A3794).withOpacity(0.12)
+                                ? const Color(
+                                    0xFF1A3794,
+                                  ).withValues(alpha: 0.12)
                                 : const Color(0xFFE8EDF9),
                             shape: BoxShape.circle,
                           ),
@@ -766,8 +769,23 @@ class ProfileController extends GetxController {
 
   // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid != null) {
+      final role = StorageService.to.userRole;
+      final roleCollection = role == AppUserRole.company.value
+          ? 'companies'
+          : 'jobSeekers';
+      await _firestore.collection(roleCollection).doc(uid).set({
+        'fcmToken': FieldValue.delete(),
+      }, SetOptions(merge: true));
+      await _firestore.collection('users').doc(uid).set({
+        'fcmToken': FieldValue.delete(),
+      }, SetOptions(merge: true));
+      await FirebaseMessaging.instance.deleteToken();
+    }
+    await StorageService.to.clearAuthSession();
     await _auth.signOut();
-    Get.offAllNamed(Routes.splash);
+    Get.offAllNamed(Routes.authLogin);
   }
 
   // ── Shared Dialog Helper ──────────────────────────────

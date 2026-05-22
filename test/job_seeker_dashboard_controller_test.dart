@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 // ─── Fake job model for testing ───
 
-class _FakeJob {
+class FakeJob {
   final String id;
   final String title;
   final String companyName;
@@ -13,7 +13,7 @@ class _FakeJob {
   final String location;
   final String description;
 
-  _FakeJob({
+  FakeJob({
     required this.id,
     required this.title,
     required this.companyName,
@@ -28,14 +28,14 @@ class _FakeJob {
 
 // ─── Pure logic mirroring JobSeekerDashboardController.applyFilters ───
 
-List<_FakeJob> applyFilters({
-  required List<_FakeJob> allJobs,
+List<FakeJob> applyFilters({
+  required List<FakeJob> allJobs,
   required String selectedMainFieldId,
   required String selectedJobType,
   required String selectedWorkMode,
   required String searchQuery,
 }) {
-  Iterable<_FakeJob> results = allJobs;
+  Iterable<FakeJob> results = allJobs;
 
   if (selectedMainFieldId != 'all') {
     results = results.where((job) => job.mainFieldId == selectedMainFieldId);
@@ -65,8 +65,8 @@ List<_FakeJob> applyFilters({
 
 // ─── Fixtures ───
 
-final _jobs = [
-  _FakeJob(
+final jobs = [
+  FakeJob(
     id: '1',
     title: 'Flutter Developer',
     companyName: 'Tech Corp',
@@ -77,7 +77,7 @@ final _jobs = [
     location: 'Cairo',
     description: 'Build mobile apps with Flutter',
   ),
-  _FakeJob(
+  FakeJob(
     id: '2',
     title: 'Backend Engineer',
     companyName: 'Data Systems',
@@ -88,7 +88,7 @@ final _jobs = [
     location: 'Alexandria',
     description: 'Design and build APIs',
   ),
-  _FakeJob(
+  FakeJob(
     id: '3',
     title: 'UI/UX Designer',
     companyName: 'Creative Studio',
@@ -99,7 +99,7 @@ final _jobs = [
     location: 'Remote',
     description: 'Create user interfaces',
   ),
-  _FakeJob(
+  FakeJob(
     id: '4',
     title: 'Data Analyst',
     companyName: 'Tech Corp',
@@ -116,7 +116,7 @@ void main() {
   group('Dashboard Filters', () {
     test('returns all jobs when no filters applied', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -128,7 +128,7 @@ void main() {
 
     test('filters by main field', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'field_1',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -141,7 +141,7 @@ void main() {
 
     test('filters by job type', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'FullTime',
         selectedWorkMode: 'all',
@@ -154,7 +154,7 @@ void main() {
 
     test('filters by work mode', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'Remote',
@@ -167,7 +167,7 @@ void main() {
 
     test('filters by all three dimensions combined', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'field_1',
         selectedJobType: 'Freelance',
         selectedWorkMode: 'Hybrid',
@@ -180,7 +180,7 @@ void main() {
 
     test('returns empty when no jobs match filters', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'nonexistent',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -194,7 +194,7 @@ void main() {
   group('Dashboard Search', () {
     test('finds jobs by title keyword', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -207,7 +207,7 @@ void main() {
 
     test('finds jobs by company name', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -220,7 +220,7 @@ void main() {
 
     test('finds jobs by main field name', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -236,7 +236,7 @@ void main() {
 
     test('finds jobs by location', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -249,7 +249,7 @@ void main() {
 
     test('finds jobs by description', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -262,7 +262,7 @@ void main() {
 
     test('search is case-insensitive', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'all',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
@@ -274,7 +274,7 @@ void main() {
 
     test('search combined with filters', () {
       final result = applyFilters(
-        allJobs: _jobs,
+        allJobs: jobs,
         selectedMainFieldId: 'field_1',
         selectedJobType: 'all',
         selectedWorkMode: 'all',
