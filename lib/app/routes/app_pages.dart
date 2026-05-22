@@ -44,8 +44,6 @@ import 'package:hire_me/app/modules/job_seeker/job_details/bindings/job_seeker_j
 import 'package:hire_me/app/modules/job_seeker/job_details/views/job_seeker_job_details_view.dart';
 import 'package:hire_me/app/modules/job_seeker/jobseeker_main_wrapper/bindings/main_wrapper_binding.dart';
 import 'package:hire_me/app/modules/job_seeker/jobseeker_main_wrapper/views/main_wrapper_view.dart';
-import 'package:hire_me/app/modules/job_seeker/main_fields/bindings/job_seeker_main_fields_binding.dart';
-import 'package:hire_me/app/modules/job_seeker/main_fields/views/job_seeker_main_fields_view.dart';
 import 'package:hire_me/app/modules/job_seeker/my_applications/bindings/job_seeker_my_applications_binding.dart';
 import 'package:hire_me/app/modules/job_seeker/my_applications/views/job_seeker_my_applications_view.dart';
 import 'package:hire_me/app/modules/job_seeker/notifications/bindings/job_seeker_notifications_binding.dart';
@@ -170,14 +168,7 @@ class AppPages {
         RoleGuardMiddleware(requiredRole: AppUserRole.company.value),
       ],
     ),
-    GetPage(
-      name: Routes.jobSeekerMainFields,
-      page: () => const JobSeekerMainFieldsView(),
-      binding: JobSeekerMainFieldsBinding(),
-      middlewares: [
-        RoleGuardMiddleware(requiredRole: AppUserRole.jobSeeker.value),
-      ],
-    ),
+
     GetPage(
       name: Routes.jobSeekerSavedJobs,
       page: () => const JobSeekerSavedJobsView(),
