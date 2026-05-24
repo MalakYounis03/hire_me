@@ -1,7 +1,9 @@
 ---
 name: flutter-pr
 description: Generate git branch name, commit message, and pull request description. Invoke AFTER flutter-code-review passes. Use after code review is approved, when the user says "create PR", "submit", "push this", or when finalizing changes for submission.
-allowed-tools: Bash(git *) Bash(gh *)
+allowed-tools:
+  - Bash(git *)
+  - Bash(gh *)
 ---
 
 # Git & Pull Request Output
@@ -69,7 +71,6 @@ What caused the bug and how this PR addresses it.
 
 ## Testing
 - [ ] Tested on Android
-- [ ] Tested on iOS
 - [ ] Role guard works correctly for both roles
 - [ ] No Firebase/Supabase errors in console
 ```
