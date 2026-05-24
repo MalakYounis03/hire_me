@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/company/application_list/views/widgets/app_confirm_dialog.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../application_review/model/application_review_model.dart';
 import '../../application_review/model/job_with_application.dart';
@@ -29,6 +30,7 @@ class ApplicationListController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   final _appsCountByJob = <String, int>{};
 
@@ -382,6 +384,7 @@ class ApplicationListController extends GetxController {
 
       final seekerIds = <String>{};
       final appIds = <String>[];
+      final cvUrls = <String>[];
       String? companyId;
 
       for (final doc in appsSnapshot.docs) {
@@ -390,6 +393,8 @@ class ApplicationListController extends GetxController {
         if (seekerId.isNotEmpty) seekerIds.add(seekerId);
         appIds.add(doc.id);
         companyId ??= data['companyId']?.toString();
+        final cvUrl = data['cvUrl']?.toString();
+        if (cvUrl != null && cvUrl.isNotEmpty) cvUrls.add(cvUrl);
       }
 
       // Step 3: Collect savedJobs for this job
@@ -397,6 +402,18 @@ class ApplicationListController extends GetxController {
           .collection('savedJobs')
           .where('jobId', isEqualTo: jobId)
           .get();
+
+      // Step 4: Delete CV files from Supabase Storage
+      if (cvUrls.isNotEmpty) {
+        try {
+          final cvPaths = cvUrls
+              .map((url) => Uri.parse(url).pathSegments.last)
+              .toList();
+          await _supabase.storage.from('cv').remove(cvPaths);
+        } catch (_) {
+          // best-effort cleanup — don't block job deletion
+        }
+      }
 
       // Steps 2, 3, 6: Delete applications, savedJobs, and job document
       // using WriteBatch (split into batches of 500 if needed)

@@ -82,6 +82,7 @@ Models live inline per module at `model/` or `models/` (e.g. `profile/models/`, 
 ### Storage & writes
 - `firebase_storage` is in `pubspec.yaml` but **unused** — all uploads go through Supabase Storage. Do not use `FirebaseStorage` in new code.
 - All Firestore writes must use `SetOptions(merge: true)` — never plain `set()`.
+- **Supabase Storage has no deletion calls by default** — when deleting any user-generated content (applications, profiles), manually delete linked files from the relevant bucket. Extract filename via `Uri.parse(url).pathSegments.last`. Wrap Storage deletion in an isolated `try-catch` so a failure does not block Firestore or RTDB operations. Reference implementation: `deleteJob` in `application_list_controller.dart`.
 
 ### Notification badge streams
 Must have `onError` handlers that reset count to 0. Without this, a stream error terminates the subscription permanently and leaves a stale badge. Match the pattern in `JobSeekerDashboardController.listenToNotificationBadge()` and `CompanyDashboardController._notificationsSubscription` exactly.

@@ -25,12 +25,15 @@ class JobSeekerNotificationsController extends GetxController {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
 
-    _notificationsSub = _repository.streamNotifications(uid).listen((snapshot) {
-      notifications.value = snapshot.docs
-          .map((doc) => NotificationModel.fromMap(doc.id, doc.data()))
-          .where((n) => n.type != 'chat_message')
-          .toList();
-    });
+    _notificationsSub = _repository.streamNotifications(uid).listen(
+      (snapshot) {
+        notifications.value = snapshot.docs
+            .map((doc) => NotificationModel.fromMap(doc.id, doc.data()))
+            .where((n) => n.type != 'chat_message')
+            .toList();
+      },
+      onError: (_) => notifications.value = [],
+    );
   }
 
   int get unreadCount => notifications.where((n) => !n.isRead).length;
