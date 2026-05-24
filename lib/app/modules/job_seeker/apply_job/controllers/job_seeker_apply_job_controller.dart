@@ -5,8 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../routes/app_pages.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
+import 'package:hire_me/app/routes/app_pages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JobSeekerApplyJobController extends GetxController {
@@ -30,10 +30,18 @@ class JobSeekerApplyJobController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _setUserEmail();
+    _validateJobData();
+  }
+
+  void _setUserEmail() {
     final user = _auth.currentUser;
     if (user != null) {
       emailController.text = user.email ?? '';
     }
+  }
+
+  void _validateJobData() {
     if (job == null) {
       _showError('Job data not found');
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -55,18 +63,12 @@ class JobSeekerApplyJobController extends GetxController {
       }
     } catch (e) {
       debugPrint('FilePicker error: $e');
+      _showError('Failed to pick CV file');
     }
   }
 
   Future<void> onApplyPressed() async {
-    if (nameController.text.trim().isEmpty) {
-      _showError('Please enter your full name');
-      return;
-    }
-    if (cvFilePath.value.isEmpty) {
-      _showError('Please upload your CV');
-      return;
-    }
+    if (!_validateForm()) return;
 
     final currentJob = job;
     if (currentJob == null) {
@@ -80,18 +82,6 @@ class JobSeekerApplyJobController extends GetxController {
       return;
     }
 
-    final existing = await _firestore
-        .collection('applications')
-        .where('seekerId', isEqualTo: uid)
-        .where('jobId', isEqualTo: currentJob.id)
-        .limit(1)
-        .get();
-
-    if (existing.docs.isNotEmpty) {
-      _showError('You have already applied to this job');
-      return;
-    }
-
     final file = File(cvFilePath.value);
     if (!file.existsSync()) {
       _showError('CV file not found. Please upload again');
@@ -99,27 +89,21 @@ class JobSeekerApplyJobController extends GetxController {
     }
 
     isLoading.value = true;
+
     try {
-      final fileName =
-          '${uid}_${DateTime.now().millisecondsSinceEpoch}_${cvFileName.value}';
+      final alreadyApplied = await _hasAlreadyApplied(
+        seekerId: uid,
+        jobId: currentJob.id,
+      );
 
-      await _supabase.storage.from('cv').upload(fileName, file);
+      if (alreadyApplied) {
+        _showError('You have already applied to this job');
+        return;
+      }
 
-      final cvUrl = _supabase.storage.from('cv').getPublicUrl(fileName);
+      final cvUrl = await _uploadCV(uid: uid, file: file);
 
-      final data = <String, dynamic>{
-        'jobId': currentJob.id,
-        'jobTitle': currentJob.title,
-        'companyId': currentJob.companyId,
-        'companyName': currentJob.companyName,
-        'seekerId': uid,
-        'seekerName': nameController.text.trim(),
-        'email': emailController.text.trim(),
-        'cvUrl': cvUrl,
-        'status': 'pending',
-        'createdAt': FieldValue.serverTimestamp(),
-      };
-      await _firestore.collection('applications').add(data);
+      await _saveApplication(uid: uid, job: currentJob, cvUrl: cvUrl);
 
       Get.offNamed(Routes.jobSeekerCongratulations);
     } catch (e) {
@@ -127,6 +111,64 @@ class JobSeekerApplyJobController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  bool _validateForm() {
+    if (nameController.text.trim().isEmpty) {
+      _showError('Please enter your full name');
+      return false;
+    }
+
+    if (cvFilePath.value.isEmpty) {
+      _showError('Please upload your CV');
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> _hasAlreadyApplied({
+    required String seekerId,
+    required String jobId,
+  }) async {
+    final existing = await _firestore
+        .collection('applications')
+        .where('seekerId', isEqualTo: seekerId)
+        .where('jobId', isEqualTo: jobId)
+        .limit(1)
+        .get();
+
+    return existing.docs.isNotEmpty;
+  }
+
+  Future<String> _uploadCV({required String uid, required File file}) async {
+    final fileName =
+        '${uid}_${DateTime.now().millisecondsSinceEpoch}_${cvFileName.value}';
+
+    await _supabase.storage.from('cv').upload(fileName, file);
+
+    return _supabase.storage.from('cv').getPublicUrl(fileName);
+  }
+
+  Future<void> _saveApplication({
+    required String uid,
+    required JobModel job,
+    required String cvUrl,
+  }) async {
+    final data = <String, dynamic>{
+      'jobId': job.id,
+      'jobTitle': job.title,
+      'companyId': job.companyId,
+      'companyName': job.companyName,
+      'seekerId': uid,
+      'seekerName': nameController.text.trim(),
+      'email': emailController.text.trim(),
+      'cvUrl': cvUrl,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+
+    await _firestore.collection('applications').add(data);
   }
 
   void _showError(String message) {

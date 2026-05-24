@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/profile/models/user_model.dart';
+import 'package:hire_me/app/modules/job_seeker/profile/models/user_model.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';

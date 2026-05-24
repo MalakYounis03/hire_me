@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/main_fields_widget.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/search_widget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/controllers/job_seeker_dashboard_controller.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/header_widget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/job_card_widget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/job_filter_bottom_sheet.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/main_fields_widget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/search_widget.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
-
-import '../controllers/job_seeker_dashboard_controller.dart';
-import '../widgets/header_widget.dart';
-import '../widgets/job_card_widget.dart';
 
 class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
   const JobSeekerDashboardView({super.key});
@@ -33,7 +32,7 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
                   child: SearchFilterWidget(
                     searchController: controller.searchTextController,
                     onChanged: controller.onSearch,
-                    onFilterTap: () => _showFilterBottomSheet(context),
+                    onFilterTap: JobFilterBottomSheet.show,
                   ),
                 ),
 
@@ -125,173 +124,5 @@ class JobSeekerDashboardView extends GetView<JobSeekerDashboardController> {
         ),
       ),
     );
-  }
-
-  void _showFilterBottomSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Obx(
-          () => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 45,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 22),
-
-              Text(
-                'Filter Jobs',
-                style: CustomTextstyle.poppinsBold.copyWith(fontSize: 20),
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                'Job Type',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.eblack,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: controller.jobTypes.map((type) {
-                  final selected = controller.selectedJobType.value == type;
-
-                  return _filterChip(
-                    label: _formatFilterLabel(type),
-                    selected: selected,
-                    onTap: () => controller.setJobTypeFilter(type),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 22),
-
-              Text(
-                'Work Mode',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.eblack,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: controller.workModes.map((mode) {
-                  final selected = controller.selectedWorkMode.value == mode;
-
-                  return _filterChip(
-                    label: _formatFilterLabel(mode),
-                    selected: selected,
-                    onTap: () => controller.setWorkModeFilter(mode),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 28),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: controller.clearFilters,
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColor.kblue),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(color: AppColor.kblue),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 14),
-
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: Get.back,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.kblue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text(
-                        'Apply',
-                        style: TextStyle(color: AppColor.kwhite),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
-
-  Widget _filterChip({
-    required String label,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          color: selected ? AppColor.kblue : const Color(0xffF5F7FA),
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: selected ? AppColor.kblue : Colors.grey.shade200,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? AppColor.kwhite : AppColor.greydark,
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _formatFilterLabel(String value) {
-    if (value == 'all') return 'All';
-    if (value == 'FullTime') return 'Full Time';
-    if (value == 'PartTime') return 'Part Time';
-    return value;
   }
 }

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/widgets/job_card_widget.dart';
+import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/job_card_widget.dart';
 
 import '../controllers/job_seeker_saved_jobs_controller.dart';
 

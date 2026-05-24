@@ -1,408 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_text_style.dart';
-import 'package:hire_me/app/routes/app_pages.dart';
-
-import '../controllers/job_seeker_job_details_controller.dart';
-
-class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
-  const JobSeekerJobDetailsView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      final job = controller.job.value;
-
-      if (job == null) {
-        return Scaffold(
-          backgroundColor: const Color(0xffF5F7FA),
-          body: Center(child: CircularProgressIndicator(color: AppColor.kblue)),
-        );
-      }
-
-      return Scaffold(
-        backgroundColor: const Color(0xffF5F7FA),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-                  child: _buildDetailsCard(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: _buildBottomNav(),
-      );
-    });
-  }
-
-  Widget _buildAppBar() {
-    return Container(
-      height: 76,
-      width: double.infinity,
-      color: AppColor.kblue,
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: AppColor.kwhite,
-              size: 20,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              'Job Description',
-              textAlign: TextAlign.center,
-              style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
-                fontSize: 18,
-                color: AppColor.kwhite,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailsCard() {
-    final job = controller.job.value!;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 22),
-      decoration: BoxDecoration(
-        color: AppColor.kwhite,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.eblack.withValues(alpha: 0.08),
-
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildJobTopInfo(),
-
-          const SizedBox(height: 12),
-
-          _buildLocationAndSalary(),
-
-          const SizedBox(height: 12),
-
-          Row(
-            children: [
-              _buildBadge(
-                controller.formatJobType(job.jobType),
-                isPrimary: false,
-              ),
-              const SizedBox(width: 10),
-              _buildBadge(job.workMode, isPrimary: true),
-            ],
-          ),
-
-          const SizedBox(height: 22),
-
-          _sectionTitle('Job Description:'),
-          const SizedBox(height: 8),
-          _sectionText(
-            job.description.isNotEmpty
-                ? job.description
-                : 'No job description available.',
-          ),
-
-          const SizedBox(height: 22),
-
-          _sectionTitle('Requirements and Skills'),
-          const SizedBox(height: 8),
-          _sectionText(
-            job.requirements.isNotEmpty
-                ? job.requirements
-                : 'No requirements added for this job.',
-          ),
-
-          const SizedBox(height: 34),
-
-          Center(
-            child: SizedBox(
-              width: 190,
-              height: 42,
-              child: ElevatedButton(
-                onPressed: job.status == 'Closed'
-                    ? null
-                    : controller.goToApplyJob,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.kblue,
-                  disabledBackgroundColor: AppColor.greyLight,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                ),
-                child: Text(
-                  job.status == 'Closed' ? 'Closed' : 'Apply',
-                  style: TextStyle(
-                    color: AppColor.kwhite,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildJobTopInfo() {
-    final job = controller.job.value!;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _logoBox(),
-
-        const SizedBox(width: 12),
-
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                job.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: CustomTextstyle.poppinsSemiBold.copyWith(
-                  fontSize: 16,
-                  color: AppColor.eblack,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                job.companyName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColor.greydark,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        Obx(
-          () => IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed: controller.toggleSaveJob,
-            icon: Icon(
-              controller.isSaved.value
-                  ? Icons.bookmark_rounded
-                  : Icons.bookmark_border_rounded,
-              color: AppColor.kblue,
-              size: 26,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _logoBox() {
-    final job = controller.job.value!;
-
-    return Container(
-      width: 46,
-      height: 46,
-      decoration: BoxDecoration(
-        color: AppColor.ewhite,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: job.logoUrl.isNotEmpty
-            ? CachedNetworkImage(
-                imageUrl: job.logoUrl,
-                fit: BoxFit.contain,
-                errorWidget: (context, url, error) => Icon(
-                  Icons.business_rounded,
-                  color: AppColor.kblue,
-                  size: 28,
-                ),
-              )
-            : Icon(Icons.business_rounded, color: AppColor.kblue, size: 28),
-      ),
-    );
-  }
-
-  Widget _buildLocationAndSalary() {
-    final job = controller.job.value!;
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 58),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                color: Colors.green,
-                size: 15,
-              ),
-              const SizedBox(width: 3),
-              Expanded(
-                child: Text(
-                  job.location.isNotEmpty ? job.location : 'Not specified',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: AppColor.greydark, fontSize: 11),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(
-            job.salary.isNotEmpty ? job.salary : 'Salary not specified',
-            style: TextStyle(
-              color: AppColor.kblue,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBadge(String text, {required bool isPrimary}) {
-    return Expanded(
-      child: Container(
-        height: 34,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isPrimary ? AppColor.kblue : AppColor.kwhite,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColor.kblue, width: 1),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isPrimary ? AppColor.kwhite : AppColor.kblue,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: AppColor.eblack,
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-
-  Widget _sectionText(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: AppColor.eblack..withValues(alpha: 0.78),
-        fontSize: 13,
-        height: 1.55,
-        fontWeight: FontWeight.w400,
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      height: 72,
-      padding: const EdgeInsets.symmetric(horizontal: 28),
-      decoration: BoxDecoration(
-        color: AppColor.kwhite,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .04),
-            blurRadius: 18,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _navIcon(icon: Icons.person_outline_rounded, index: 0),
-            _navIcon(icon: Icons.chat_bubble_outline_rounded, index: 1),
-            _homeIcon(),
-            _navIcon(icon: Icons.work_outline_rounded, index: 3),
-            _navIcon(icon: Icons.bookmark_border_rounded, index: 4),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _homeIcon() {
-    return GestureDetector(
-      onTap: () => _goToMainWrapper(2),
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: AppColor.kblue,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(Icons.home_outlined, color: AppColor.kwhite, size: 25),
-      ),
-    );
-  }
-
-  Widget _navIcon({required IconData icon, required int index}) {
-    return GestureDetector(
-      onTap: () => _goToMainWrapper(index),
-      child: SizedBox(
-        width: 42,
-        height: 52,
-        child: Center(child: Icon(icon, color: AppColor.kblue, size: 25)),
-      ),
-    );
-  }
-
-  void _goToMainWrapper(int index) {
-    Get.offAllNamed(Routes.mainWrapper, arguments: {'initialIndex': index});
-  }
-}
+// import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 
-// import 'package:hire_me/app/core/utils/app_color.dart';
-// import 'package:hire_me/app/core/utils/app_text_style.dart';
+// import 'package:hire_me/core/utils/app_color.dart';
+// import 'package:hire_me/core/utils/app_text_style.dart';
 
 // import '../controllers/job_seeker_job_details_controller.dart';
+// import '../../jobseeker_main_wrapper/views/main_wrapper_view.dart';
 
 // class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //   const JobSeekerJobDetailsView({super.key});
@@ -427,28 +31,39 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //               _buildAppBar(),
 //               Expanded(
 //                 child: SingleChildScrollView(
-//                   padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-//                   child: _buildDetailsCard(),
+//                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       _buildJobHeaderCard(),
+//                       const SizedBox(height: 16),
+//                       _buildDescriptionCard(),
+//                       const SizedBox(height: 16),
+//                       _buildRequirementsCard(),
+//                       const SizedBox(height: 28),
+//                       _buildApplyButton(),
+//                     ],
+//                   ),
 //                 ),
 //               ),
 //             ],
 //           ),
 //         ),
-//         bottomNavigationBar: _buildBottomNav(),
+//         bottomNavigationBar: const MainBottomNavBar(navigateToWrapper: true),
 //       );
 //     });
 //   }
 
 //   Widget _buildAppBar() {
 //     return Container(
-//       height: 76,
+//       height: 68,
 //       width: double.infinity,
 //       color: AppColor.kblue,
 //       padding: const EdgeInsets.symmetric(horizontal: 18),
 //       child: Row(
 //         children: [
 //           GestureDetector(
-//             onTap: () => Get.back(),
+//             onTap: Get.back,
 //             child: Icon(
 //               Icons.arrow_back_ios_new_rounded,
 //               color: AppColor.kwhite,
@@ -459,49 +74,128 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //             child: Text(
 //               'Job Description',
 //               textAlign: TextAlign.center,
-//               style: CustomTextstyle.Poppinssemiboldwhite.copyWith(
+//               style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
 //                 fontSize: 18,
 //                 color: AppColor.kwhite,
 //               ),
 //             ),
 //           ),
-//           Icon(
-//             Icons.notifications_none_rounded,
-//             color: AppColor.kwhite,
-//             size: 26,
-//           ),
+//           const SizedBox(width: 20),
 //         ],
 //       ),
 //     );
 //   }
 
-//   Widget _buildDetailsCard() {
+//   Widget _buildJobHeaderCard() {
 //     final job = controller.job.value!;
 
 //     return Container(
 //       width: double.infinity,
-//       padding: const EdgeInsets.fromLTRB(16, 16, 16, 22),
+//       padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
 //       decoration: BoxDecoration(
 //         color: AppColor.kwhite,
-//         borderRadius: BorderRadius.circular(6),
+//         borderRadius: BorderRadius.circular(18),
 //         boxShadow: [
 //           BoxShadow(
-//             color: AppColor.Eblack.withOpacity(0.08),
-//             blurRadius: 8,
-//             offset: const Offset(0, 3),
+//             color: AppColor.eblack.withValues(alpha: 0.06),
+//             blurRadius: 18,
+//             offset: const Offset(0, 8),
 //           ),
 //         ],
 //       ),
 //       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
 //         children: [
-//           _buildJobTopInfo(),
+//           Row(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               _logoBox(),
 
-//           const SizedBox(height: 12),
+//               const SizedBox(width: 12),
 
-//           _buildLocationAndSalary(),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       job.title,
+//                       maxLines: 1,
+//                       overflow: TextOverflow.ellipsis,
+//                       style: CustomTextstyle.poppinsSemiBold.copyWith(
+//                         fontSize: 16,
+//                         color: AppColor.eblack,
+//                       ),
+//                     ),
+//                     const SizedBox(height: 4),
+//                     Text(
+//                       job.companyName,
+//                       maxLines: 1,
+//                       overflow: TextOverflow.ellipsis,
+//                       style: TextStyle(
+//                         color: AppColor.greydark,
+//                         fontSize: 12,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                     const SizedBox(height: 8),
+//                     Row(
+//                       children: [
+//                         Icon(
+//                           Icons.location_on_outlined,
+//                           size: 15,
+//                           color: Colors.green.shade600,
+//                         ),
+//                         const SizedBox(width: 4),
+//                         Expanded(
+//                           child: Text(
+//                             job.location.isNotEmpty
+//                                 ? job.location
+//                                 : 'Not specified',
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                             style: TextStyle(
+//                               color: AppColor.greydark,
+//                               fontSize: 11,
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ],
+//                 ),
+//               ),
 
-//           const SizedBox(height: 12),
+//               Obx(
+//                 () => IconButton(
+//                   padding: EdgeInsets.zero,
+//                   constraints: const BoxConstraints(),
+//                   onPressed: controller.toggleSaveJob,
+//                   icon: Icon(
+//                     controller.isSaved.value
+//                         ? Icons.bookmark_rounded
+//                         : Icons.bookmark_border_rounded,
+//                     color: AppColor.kblue,
+//                     size: 27,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+
+//           const SizedBox(height: 14),
+
+//           Align(
+//             alignment: Alignment.centerLeft,
+//             child: Text(
+//               job.salary.isNotEmpty ? job.salary : 'Salary not specified',
+//               style: TextStyle(
+//                 color: AppColor.kblue,
+//                 fontSize: 13,
+//                 fontWeight: FontWeight.w700,
+//               ),
+//             ),
+//           ),
+
+//           const SizedBox(height: 14),
 
 //           Row(
 //             children: [
@@ -513,114 +207,8 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //               _buildBadge(job.workMode, isPrimary: true),
 //             ],
 //           ),
-
-//           const SizedBox(height: 22),
-
-//           _sectionTitle('Job Description:'),
-//           const SizedBox(height: 8),
-//           _sectionText(
-//             job.description.isNotEmpty
-//                 ? job.description
-//                 : 'No job description available.',
-//           ),
-
-//           const SizedBox(height: 22),
-
-//           _sectionTitle('Requirements and Skills'),
-//           const SizedBox(height: 8),
-//           _sectionText(
-//             job.requirements.isNotEmpty
-//                 ? job.requirements
-//                 : 'No requirements added for this job.',
-//           ),
-
-//           const SizedBox(height: 34),
-
-//           Center(
-//             child: SizedBox(
-//               width: 190,
-//               height: 42,
-//               child: ElevatedButton(
-//                 onPressed: job.status == 'Closed'
-//                     ? null
-//                     : controller.goToApplyJob,
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: AppColor.kblue,
-//                   disabledBackgroundColor: AppColor.greyLight,
-//                   elevation: 0,
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(22),
-//                   ),
-//                 ),
-//                 child: Text(
-//                   job.status == 'Closed' ? 'Closed' : 'Apply',
-//                   style: TextStyle(
-//                     color: AppColor.kwhite,
-//                     fontSize: 15,
-//                     fontWeight: FontWeight.w600,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
 //         ],
 //       ),
-//     );
-//   }
-
-//   Widget _buildJobTopInfo() {
-//     final job = controller.job.value!;
-
-//     return Row(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         _logoBox(),
-
-//         const SizedBox(width: 12),
-
-//         Expanded(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text(
-//                 job.title,
-//                 maxLines: 1,
-//                 overflow: TextOverflow.ellipsis,
-//                 style: CustomTextstyle.Poppinssemibold.copyWith(
-//                   fontSize: 16,
-//                   color: AppColor.Eblack,
-//                 ),
-//               ),
-//               const SizedBox(height: 2),
-//               Text(
-//                 job.companyName,
-//                 maxLines: 1,
-//                 overflow: TextOverflow.ellipsis,
-//                 style: TextStyle(
-//                   color: AppColor.greydark,
-//                   fontSize: 11,
-//                   fontWeight: FontWeight.w500,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-
-//         Obx(
-//           () => IconButton(
-//             padding: EdgeInsets.zero,
-//             constraints: const BoxConstraints(),
-//             onPressed: controller.toggleSaveJob,
-//             icon: Icon(
-//               controller.isSaved.value
-//                   ? Icons.bookmark_rounded
-//                   : Icons.bookmark_border_rounded,
-//               color: AppColor.kblue,
-//               size: 26,
-//             ),
-//           ),
-//         ),
-//       ],
 //     );
 //   }
 
@@ -628,79 +216,86 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //     final job = controller.job.value!;
 
 //     return Container(
-//       width: 46,
-//       height: 46,
+//       width: 52,
+//       height: 52,
 //       decoration: BoxDecoration(
-//         color: AppColor.Ewhite,
-//         borderRadius: BorderRadius.circular(8),
+//         color: AppColor.ewhite,
+//         borderRadius: BorderRadius.circular(12),
 //       ),
 //       child: ClipRRect(
-//         borderRadius: BorderRadius.circular(8),
+//         borderRadius: BorderRadius.circular(12),
 //         child: job.logoUrl.isNotEmpty
-//             ? Image.network(
-//                 job.logoUrl,
+//             ? CachedNetworkImage(
+//                 imageUrl: job.logoUrl,
 //                 fit: BoxFit.contain,
-//                 errorBuilder: (context, error, stackTrace) {
-//                   return Icon(
-//                     Icons.business_rounded,
-//                     color: AppColor.kblue,
-//                     size: 28,
-//                   );
-//                 },
+//                 errorWidget: (context, url, error) => Icon(
+//                   Icons.business_rounded,
+//                   color: AppColor.kblue,
+//                   size: 30,
+//                 ),
 //               )
-//             : Icon(Icons.business_rounded, color: AppColor.kblue, size: 28),
+//             : Icon(Icons.business_rounded, color: AppColor.kblue, size: 30),
 //       ),
 //     );
 //   }
 
-//   Widget _buildLocationAndSalary() {
+//   Widget _buildDescriptionCard() {
 //     final job = controller.job.value!;
 
-//     return Padding(
-//       padding: const EdgeInsets.only(left: 58),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             children: [
-//               const Icon(
-//                 Icons.location_on_outlined,
-//                 color: Colors.green,
-//                 size: 15,
-//               ),
-//               const SizedBox(width: 3),
-//               Expanded(
-//                 child: Text(
-//                   job.location.isNotEmpty ? job.location : 'Not specified',
-//                   maxLines: 1,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: TextStyle(color: AppColor.greydark, fontSize: 11),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: 2),
-//           Text(
-//             job.salary.isNotEmpty ? job.salary : 'Salary not specified',
-//             style: TextStyle(
-//               color: AppColor.kblue,
-//               fontSize: 12,
-//               fontWeight: FontWeight.w700,
-//             ),
+//     return _infoCard(
+//       title: 'Job Description',
+//       child: _sectionText(
+//         job.description.isNotEmpty
+//             ? job.description
+//             : 'No job description available.',
+//       ),
+//     );
+//   }
+
+//   Widget _buildRequirementsCard() {
+//     final job = controller.job.value!;
+
+//     final requirementsText = job.requirements.isNotEmpty
+//         ? job.requirements
+//         : 'No requirements added for this job.';
+
+//     return _infoCard(
+//       title: 'Requirements and Skills',
+//       child: _requirementsText(requirementsText),
+//     );
+//   }
+
+//   Widget _infoCard({required String title, required Widget child}) {
+//     return Container(
+//       width: double.infinity,
+//       padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+//       decoration: BoxDecoration(
+//         color: AppColor.kwhite,
+//         borderRadius: BorderRadius.circular(18),
+//         boxShadow: [
+//           BoxShadow(
+//             color: AppColor.eblack.withValues(alpha: 0.045),
+//             blurRadius: 16,
+//             offset: const Offset(0, 7),
 //           ),
 //         ],
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [_sectionTitle(title), const SizedBox(height: 10), child],
 //       ),
 //     );
 //   }
 
 //   Widget _buildBadge(String text, {required bool isPrimary}) {
 //     return Expanded(
-//       child: Container(
-//         height: 34,
+//       child: AnimatedContainer(
+//         duration: const Duration(milliseconds: 180),
+//         height: 36,
 //         alignment: Alignment.center,
 //         decoration: BoxDecoration(
 //           color: isPrimary ? AppColor.kblue : AppColor.kwhite,
-//           borderRadius: BorderRadius.circular(20),
+//           borderRadius: BorderRadius.circular(22),
 //           border: Border.all(color: AppColor.kblue, width: 1),
 //         ),
 //         child: Text(
@@ -708,7 +303,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //           style: TextStyle(
 //             color: isPrimary ? AppColor.kwhite : AppColor.kblue,
 //             fontSize: 12,
-//             fontWeight: FontWeight.w500,
+//             fontWeight: FontWeight.w600,
 //           ),
 //         ),
 //       ),
@@ -719,8 +314,8 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //     return Text(
 //       title,
 //       style: TextStyle(
-//         color: AppColor.Eblack,
-//         fontSize: 14,
+//         color: AppColor.eblack,
+//         fontSize: 15,
 //         fontWeight: FontWeight.w700,
 //       ),
 //     );
@@ -730,7 +325,7 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //     return Text(
 //       text,
 //       style: TextStyle(
-//         color: AppColor.Eblack.withOpacity(0.78),
+//         color: AppColor.eblack.withValues(alpha: 0.78),
 //         fontSize: 13,
 //         height: 1.55,
 //         fontWeight: FontWeight.w400,
@@ -738,42 +333,493 @@ class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
 //     );
 //   }
 
-//   Widget _buildBottomNav() {
-//     return Container(
-//       height: 72,
-//       padding: const EdgeInsets.symmetric(horizontal: 28),
-//       decoration: BoxDecoration(
-//         color: AppColor.kwhite,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.04),
-//             blurRadius: 18,
-//             offset: const Offset(0, -5),
+//   Widget _requirementsText(String text) {
+//     final lines = text
+//         .split('\n')
+//         .map((line) => line.trim())
+//         .where((line) => line.isNotEmpty)
+//         .toList();
+
+//     if (lines.length <= 1) {
+//       return _sectionText(text);
+//     }
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: lines.map((line) {
+//         return Padding(
+//           padding: const EdgeInsets.only(bottom: 7),
+//           child: Row(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text(
+//                 '•',
+//                 style: TextStyle(
+//                   color: AppColor.kblue,
+//                   fontSize: 15,
+//                   fontWeight: FontWeight.w700,
+//                 ),
+//               ),
+//               const SizedBox(width: 8),
+//               Expanded(
+//                 child: Text(
+//                   line,
+//                   style: TextStyle(
+//                     color: AppColor.eblack.withValues(alpha: 0.78),
+//                     fontSize: 13,
+//                     height: 1.45,
+//                     fontWeight: FontWeight.w400,
+//                   ),
+//                 ),
+//               ),
+//             ],
 //           ),
-//         ],
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           _navIcon(Icons.person_outline_rounded),
-//           _navIcon(Icons.chat_bubble_outline_rounded),
-//           Container(
-//             width: 52,
-//             height: 52,
-//             decoration: BoxDecoration(
-//               color: AppColor.kblue,
-//               shape: BoxShape.circle,
-//             ),
-//             child: Icon(Icons.home_outlined, color: AppColor.kwhite, size: 25),
-//           ),
-//           _navIcon(Icons.work_outline_rounded),
-//           _navIcon(Icons.bookmark_border_rounded),
-//         ],
-//       ),
+//         );
+//       }).toList(),
 //     );
 //   }
 
-//   Widget _navIcon(IconData icon) {
-//     return Icon(icon, color: AppColor.kblue, size: 25);
+//   Widget _buildApplyButton() {
+//     final job = controller.job.value!;
+//     final isClosed = job.status == 'Closed';
+
+//     return Center(
+//       child: SizedBox(
+//         width: double.infinity,
+//         height: 52,
+//         child: ElevatedButton(
+//           onPressed: isClosed ? null : controller.goToApplyJob,
+//           style: ElevatedButton.styleFrom(
+//             backgroundColor: AppColor.kblue,
+//             disabledBackgroundColor: AppColor.greyLight,
+//             elevation: 0,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(26),
+//             ),
+//           ),
+//           child: Text(
+//             isClosed ? 'Closed' : 'Apply Now',
+//             style: TextStyle(
+//               color: AppColor.kwhite,
+//               fontSize: 15,
+//               fontWeight: FontWeight.w700,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
 //   }
 // }
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:hire_me/core/utils/app_color.dart';
+import 'package:hire_me/core/utils/app_text_style.dart';
+
+import '../controllers/job_seeker_job_details_controller.dart';
+import '../../jobseeker_main_wrapper/views/main_wrapper_view.dart';
+
+class JobSeekerJobDetailsView extends GetView<JobSeekerJobDetailsController> {
+  const JobSeekerJobDetailsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final job = controller.job.value;
+
+      if (job == null) {
+        return Scaffold(
+          backgroundColor: const Color(0xffF5F7FA),
+          body: Center(child: CircularProgressIndicator(color: AppColor.kblue)),
+        );
+      }
+
+      return Scaffold(
+        backgroundColor: const Color(0xffF5F7FA),
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildJobHeaderCard(),
+                      const SizedBox(height: 16),
+                      _buildDescriptionCard(),
+                      const SizedBox(height: 16),
+                      _buildRequirementsCard(),
+                      const SizedBox(height: 28),
+                      _buildApplyButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: const MainBottomNavBar(navigateToWrapper: true),
+      );
+    });
+  }
+
+  Widget _buildAppBar() {
+    return Container(
+      height: 68,
+      width: double.infinity,
+      color: AppColor.kblue,
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: Get.back,
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColor.kwhite,
+              size: 20,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              'Job Description',
+              textAlign: TextAlign.center,
+              style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
+                fontSize: 18,
+                color: AppColor.kwhite,
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJobHeaderCard() {
+    final job = controller.job.value!;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.eblack.withValues(alpha: 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _logoBox(),
+
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      job.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CustomTextstyle.poppinsSemiBold.copyWith(
+                        fontSize: 16,
+                        color: AppColor.eblack,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      job.companyName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColor.greydark,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 15,
+                          color: Colors.green.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            job.location.isNotEmpty
+                                ? job.location
+                                : 'Not specified',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppColor.greydark,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      job.salary.trim().isNotEmpty
+                          ? job.salary.trim()
+                          : 'Salary not specified',
+                      style: TextStyle(
+                        color: AppColor.kblue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Obx(
+                () => IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: controller.toggleSaveJob,
+                  icon: Icon(
+                    controller.isSaved.value
+                        ? Icons.bookmark_rounded
+                        : Icons.bookmark_border_rounded,
+                    color: AppColor.kblue,
+                    size: 27,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              _buildBadge(
+                controller.formatJobType(job.jobType),
+                isPrimary: false,
+              ),
+              const SizedBox(width: 10),
+              _buildBadge(job.workMode, isPrimary: true),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _logoBox() {
+    final job = controller.job.value!;
+
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: AppColor.ewhite,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: job.logoUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: job.logoUrl,
+                fit: BoxFit.contain,
+                errorWidget: (context, url, error) => Icon(
+                  Icons.business_rounded,
+                  color: AppColor.kblue,
+                  size: 30,
+                ),
+              )
+            : Icon(Icons.business_rounded, color: AppColor.kblue, size: 30),
+      ),
+    );
+  }
+
+  Widget _buildDescriptionCard() {
+    final job = controller.job.value!;
+
+    return _infoCard(
+      title: 'Job Description',
+      child: _sectionText(
+        job.description.isNotEmpty
+            ? job.description
+            : 'No job description available.',
+      ),
+    );
+  }
+
+  Widget _buildRequirementsCard() {
+    final job = controller.job.value!;
+
+    final requirementsText = job.requirements.isNotEmpty
+        ? job.requirements
+        : 'No requirements added for this job.';
+
+    return _infoCard(
+      title: 'Requirements and Skills',
+      child: _requirementsText(requirementsText),
+    );
+  }
+
+  Widget _infoCard({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.eblack.withValues(alpha: 0.045),
+            blurRadius: 16,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [_sectionTitle(title), const SizedBox(height: 10), child],
+      ),
+    );
+  }
+
+  Widget _buildBadge(String text, {required bool isPrimary}) {
+    return Expanded(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        height: 36,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isPrimary ? AppColor.kblue : AppColor.kwhite,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColor.kblue, width: 1),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isPrimary ? AppColor.kwhite : AppColor.kblue,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: AppColor.eblack,
+        fontSize: 15,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  Widget _sectionText(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: AppColor.eblack.withValues(alpha: 0.78),
+        fontSize: 13,
+        height: 1.55,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  Widget _requirementsText(String text) {
+    final lines = text
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+
+    if (lines.length <= 1) {
+      return _sectionText(text);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 7),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '•',
+                style: TextStyle(
+                  color: AppColor.kblue,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  line,
+                  style: TextStyle(
+                    color: AppColor.eblack.withValues(alpha: 0.78),
+                    fontSize: 13,
+                    height: 1.45,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    final job = controller.job.value!;
+    final isClosed = job.status == 'Closed';
+
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton(
+        onPressed: isClosed ? null : controller.goToApplyJob,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColor.kblue,
+          disabledBackgroundColor: AppColor.greyLight,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+        ),
+        child: Text(
+          isClosed ? 'Closed' : 'Apply Now',
+          style: TextStyle(
+            color: AppColor.kwhite,
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}

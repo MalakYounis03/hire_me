@@ -40,7 +40,7 @@ class CompanyJobModel {
     final maxSalary = map['maxSalary'] is num ? map['maxSalary'] as num : null;
 
     String salaryText =
-        map['salaryRange']?.toString() ?? map['salary']?.toString() ?? '';
+        map['salary']?.toString() ?? map['salary']?.toString() ?? '';
 
     if (salaryText.isEmpty && minSalary != null && maxSalary != null) {
       salaryText = '\$${minSalary.toString()}-${maxSalary.toString()}';
