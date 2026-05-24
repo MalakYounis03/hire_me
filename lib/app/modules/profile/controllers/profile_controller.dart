@@ -9,20 +9,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
-  // ── State ─────────────────────────────────────────────
   final userModel = Rxn<UserModel>();
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
   final openToOptions = <String>[].obs;
 
-  // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _supabase = Supabase.instance.client;
   final _picker = ImagePicker();
 
-  // ── Getters ───────────────────────────────────────────
   String get userName => userModel.value?.name ?? '';
   String get userTitle => userModel.value?.title ?? '';
   String get userUniversity => userModel.value?.university ?? '';
@@ -43,7 +40,6 @@ class ProfileController extends GetxController {
     loadProfile();
   }
 
-  // ── Load Profile ──────────────────────────────────────
   Future<void> loadProfile() async {
     isLoading.value = true;
     try {
@@ -83,7 +79,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Open To Work ──────────────────────────────────────
   void showOpenToBottomSheet() {
     final allOptions = ['Open to Work', 'Freelance', 'Internship'];
     final tempSelected = <String>[...openToOptions].obs;
@@ -257,7 +252,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Add Section Bottom Sheet ──────────────────────────
   void showAddSectionBottomSheet() {
     Get.bottomSheet(
       Container(
@@ -380,7 +374,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Languages ─────────────────────────────────────────
   void showAddLanguageDialog() => _openLanguageDialog();
   void showEditLanguageDialog(int index) =>
       _openLanguageDialog(index: index, existing: languages[index]);
@@ -477,7 +470,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Links ─────────────────────────────────────────────
   void showAddLinkDialog() => _openLinkDialog();
   void showEditLinkDialog(int index) =>
       _openLinkDialog(index: index, existing: links[index]);
@@ -574,7 +566,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Upload Profile Image ──────────────────────────────
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -606,7 +597,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── Upload Cover Image ────────────────────────────────
   Future<void> pickAndUploadCover() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -638,7 +628,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // ── About ─────────────────────────────────────────────
   void showEditAboutDialog() {
     final ctrl = TextEditingController(text: userAbout);
     _showEditDialog(
@@ -651,7 +640,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Education ─────────────────────────────────────────
   void showAddEducationDialog() => _openEducationDialog();
   void showEditEducationDialog(int index) =>
       _openEducationDialog(index: index, existing: education[index]);
@@ -695,7 +683,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Experience ────────────────────────────────────────
   void showAddExperienceDialog() => _openExperienceDialog();
   void showEditExperienceDialog(int index) =>
       _openExperienceDialog(index: index, existing: experience[index]);
@@ -742,7 +729,6 @@ class ProfileController extends GetxController {
     );
   }
 
-  // ── Skills ────────────────────────────────────────────
   void showAddSkillDialog() {
     final skillCtrl = TextEditingController();
     _showEditDialog(
@@ -763,13 +749,11 @@ class ProfileController extends GetxController {
     userModel.value = userModel.value?.copyWith(skills: updated);
   }
 
-  // ── Logout ────────────────────────────────────────────
   Future<void> logout() async {
     await _auth.signOut();
     Get.offAllNamed(Routes.splash);
   }
 
-  // ── Shared Dialog Helper ──────────────────────────────
   void _showEditDialog({
     required String title,
     required List<Widget> fields,

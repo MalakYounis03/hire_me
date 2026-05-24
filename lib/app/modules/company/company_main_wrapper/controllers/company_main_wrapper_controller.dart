@@ -37,14 +37,18 @@ class CompanyMainWrapperController extends GetxController {
         .equalTo(uid)
         .onValue
         .map((event) {
-          final data = event.snapshot.value as Map<dynamic, dynamic>?;
-          if (data == null) return 0;
-          return data.entries.where((e) {
-            final chat = e.value as Map<dynamic, dynamic>;
+          final raw = event.snapshot.value;
+          if (raw == null || raw is! Map) return 0;
+          return raw.entries.where((e) {
+            final chat = e.value;
+            if (chat is! Map) return false;
             return ((chat['unreadCompany'] as num?)?.toInt() ?? 0) > 0;
           }).length;
         })
-        .listen((c) => unreadChats.value = c);
+        .listen(
+          (c) => unreadChats.value = c,
+          onError: (e) => unreadChats.value = 0,
+        );
   }
 
   void changePage(int index) {

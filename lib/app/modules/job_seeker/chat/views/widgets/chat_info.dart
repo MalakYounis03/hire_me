@@ -31,13 +31,15 @@ class ChatInfo extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            Text(
-              lastMessageAuthor == currentUserId
-                  ? 'You: $lastMessage'
-                  : '$name: $lastMessage',
-              style: TextStyle(fontSize: 13, color: AppColor.greyLight),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: Text(
+                lastMessageAuthor == currentUserId
+                    ? 'You: $lastMessage'
+                    : '$name: $lastMessage',
+                style: TextStyle(fontSize: 13, color: AppColor.greyLight),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

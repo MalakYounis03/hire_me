@@ -12,8 +12,8 @@ class UserModel {
   final List<EducationModel> education;
   final List<ExperienceModel> experience;
   final List<String> skills;
-  final List<LanguageModel> languages; // ← جديد
-  final List<LinkModel> links; // ← جديد
+  final List<LanguageModel> languages;
+  final List<LinkModel> links;
 
   UserModel({
     required this.uid,
@@ -29,8 +29,8 @@ class UserModel {
     this.education = const [],
     this.experience = const [],
     this.skills = const [],
-    this.languages = const [], // ← جديد
-    this.links = const [], // ← جديد
+    this.languages = const [],
+    this.links = const [],
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -52,14 +52,12 @@ class UserModel {
           .map((e) => ExperienceModel.fromMap(e as Map<String, dynamic>))
           .toList(),
       skills: List<String>.from(map['skills'] ?? []),
-      languages:
-          (map['languages'] as List<dynamic>? ?? []) // ← جديد
-              .map((e) => LanguageModel.fromMap(e as Map<String, dynamic>))
-              .toList(),
-      links:
-          (map['links'] as List<dynamic>? ?? []) // ← جديد
-              .map((e) => LinkModel.fromMap(e as Map<String, dynamic>))
-              .toList(),
+      languages: (map['languages'] as List<dynamic>? ?? [])
+          .map((e) => LanguageModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      links: (map['links'] as List<dynamic>? ?? [])
+          .map((e) => LinkModel.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -78,8 +76,8 @@ class UserModel {
       'education': education.map((e) => e.toMap()).toList(),
       'experience': experience.map((e) => e.toMap()).toList(),
       'skills': skills,
-      'languages': languages.map((e) => e.toMap()).toList(), // ← جديد
-      'links': links.map((e) => e.toMap()).toList(), // ← جديد
+      'languages': languages.map((e) => e.toMap()).toList(),
+      'links': links.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -94,8 +92,8 @@ class UserModel {
     List<EducationModel>? education,
     List<ExperienceModel>? experience,
     List<String>? skills,
-    List<LanguageModel>? languages, // ← جديد
-    List<LinkModel>? links, // ← جديد
+    List<LanguageModel>? languages,
+    List<LinkModel>? links,
   }) {
     return UserModel(
       uid: uid,
@@ -111,13 +109,12 @@ class UserModel {
       education: education ?? this.education,
       experience: experience ?? this.experience,
       skills: skills ?? this.skills,
-      languages: languages ?? this.languages, // ← جديد
-      links: links ?? this.links, // ← جديد
+      languages: languages ?? this.languages,
+      links: links ?? this.links,
     );
   }
 }
 
-// ─── Education Model ──────────────────────────────────────
 class EducationModel {
   final String school;
   final String degree;
@@ -152,7 +149,6 @@ class EducationModel {
   };
 }
 
-// ─── Experience Model ─────────────────────────────────────
 class ExperienceModel {
   final String company;
   final String position;
@@ -187,10 +183,9 @@ class ExperienceModel {
   };
 }
 
-// ─── Language Model ───────────────────────────────────────
 class LanguageModel {
   final String name;
-  final String level; // Beginner / Intermediate / Fluent / Native
+  final String level;
 
   LanguageModel({required this.name, required this.level});
 
@@ -201,9 +196,8 @@ class LanguageModel {
   Map<String, dynamic> toMap() => {'name': name, 'level': level};
 }
 
-// ─── Link Model ───────────────────────────────────────────
 class LinkModel {
-  final String type; // LinkedIn / GitHub / Portfolio / Other
+  final String type;
   final String url;
 
   LinkModel({required this.type, required this.url});

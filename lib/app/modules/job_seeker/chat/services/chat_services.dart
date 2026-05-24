@@ -17,6 +17,15 @@ class ChatService {
     List<ChatModel> seekerChats = [];
     List<ChatModel> companyChats = [];
 
+    List<ChatModel> parseSnapshot(DatabaseEvent event) {
+      final raw = event.snapshot.value;
+      if (raw == null || raw is! Map) return [];
+      return raw
+          .entries
+          .map((e) => ChatModel.fromMap(e.key, e.value))
+          .toList();
+    }
+
     void emit() {
       final result = [...seekerChats, ...companyChats];
       result.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
@@ -29,12 +38,7 @@ class ChatService {
         .equalTo(userId)
         .onValue
         .listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      seekerChats =
-          data?.entries
-              .map((e) => ChatModel.fromMap(e.key, e.value))
-              .toList() ??
-          [];
+      seekerChats = parseSnapshot(event);
       emit();
     });
 
@@ -44,12 +48,7 @@ class ChatService {
         .equalTo(userId)
         .onValue
         .listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?;
-      companyChats =
-          data?.entries
-              .map((e) => ChatModel.fromMap(e.key, e.value))
-              .toList() ??
-          [];
+      companyChats = parseSnapshot(event);
       emit();
     });
 
@@ -88,25 +87,37 @@ class ChatService {
     required String companyId,
     required String currentUserId,
   }) async {
-    // 1. احفظ الرسالة
+    // 1. زد unread عند المستلم — or reset to 0 if they're viewing the chat
+    final isSeeker = currentUserId == seekerId;
+    final receiverActiveField = isSeeker ? 'activeCompany' : 'activeSeeker';
+    final unreadField = isSeeker ? 'unreadCompany' : 'unreadSeeker';
+
+    final activeSnapshot = await _db
+        .child('chats/$chatId/$receiverActiveField')
+        .get();
+    final isReceiverActive = activeSnapshot.value == true;
+
+    if (isReceiverActive) {
+      // Receiver is viewing the chat — reset to 0 (handles any race)
+      await _db.child('chats/$chatId/$unreadField').set(0);
+    } else {
+      // Receiver is not viewing — increment
+      final unreadRef = _db.child('chats/$chatId/$unreadField');
+      await unreadRef.runTransaction((value) {
+        final current = (value as num?)?.toInt() ?? 0;
+        return Transaction.success(current + 1);
+      });
+    }
+
+    // 2. احفظ الرسالة
     final ref = _db.child('chats/$chatId/messages').push();
     await ref.set(message.toMap());
 
-    // 2. حدث الـ lastMessage
+    // 3. حدث الـ lastMessage
     await _db.child('chats/$chatId').update({
       'lastMessage': message.text,
       'lastMessageTime': message.time.millisecondsSinceEpoch,
       'lastMessageAuthor': currentUserId,
-    });
-
-    // 3. زد unread عند المستلم بس ✅
-    final isSeeker = currentUserId == seekerId;
-    final unreadField = isSeeker ? 'unreadCompany' : 'unreadSeeker';
-
-    final unreadRef = _db.child('chats/$chatId/$unreadField');
-    await unreadRef.runTransaction((value) {
-      final current = (value as num?)?.toInt() ?? 0;
-      return Transaction.success(current + 1);
     });
   }
 }

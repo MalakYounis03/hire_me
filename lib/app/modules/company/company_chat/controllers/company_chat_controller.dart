@@ -34,7 +34,8 @@ class CompanyChatController extends GetxController {
             isLoading.value = false;
           },
           onError: (e) {
-            log('Error: $e'); // ✅
+            log('Chat stream error: $e');
+            isLoading.value = false;
           },
         );
   }

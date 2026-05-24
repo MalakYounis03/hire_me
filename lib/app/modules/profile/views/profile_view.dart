@@ -140,8 +140,7 @@ class ProfileView extends GetView<ProfileController> {
                   final showBadge = controller.isOpenToWork;
                   return GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () => controller
-                        .pickAndUploadImage(), // ← tap على الصورة كلها
+                    onTap: () => controller.pickAndUploadImage(),
                     child: SizedBox(
                       width: 88,
                       height: showBadge ? 108 : 88,
