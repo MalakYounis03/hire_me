@@ -68,22 +68,25 @@ class ChatDetailsController extends GetxController {
   }
 
   void _listenToMessages() {
-    _messageSub = _chatService.getMessages(chatId).listen((msgs) {
-      messages.value = msgs;
-      isLoading.value = false;
-      _markSeen();
-      _markChatAsRead();
+    _messageSub = _chatService.getMessages(chatId).listen(
+      (msgs) {
+        messages.value = msgs;
+        isLoading.value = false;
+        _markSeen();
+        _markChatAsRead();
 
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (scrollController.hasClients) {
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    });
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      },
+      onError: (_) => isLoading.value = false,
+    );
   }
 
   Future<void> sendMessage() async {
@@ -153,10 +156,13 @@ class ChatDetailsController extends GetxController {
         .ref()
         .child('chats/$chatId/meta/lastSeenBy/$otherId')
         .onValue
-        .listen((event) {
-          final val = event.snapshot.value;
-          otherLastSeen.value = (val as num?)?.toInt() ?? 0;
-        });
+        .listen(
+          (event) {
+            final val = event.snapshot.value;
+            otherLastSeen.value = (val as num?)?.toInt() ?? 0;
+          },
+          onError: (_) => otherLastSeen.value = 0,
+        );
   }
 
   void toggleMessageTime(String messageId) {

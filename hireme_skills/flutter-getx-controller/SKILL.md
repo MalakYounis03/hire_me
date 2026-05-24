@@ -1,7 +1,12 @@
 ---
 name: flutter-getx-controller
 description: Scaffold a GetX Controller with binding and view structure for HireMe. ALWAYS use this skill before writing any controller or feature screen — including when building a full feature or adding a new module. Triggers on "create controller", "add controller", "new screen", "new feature", or any task that will produce a *_controller.dart file.
-allowed-tools: Read Write Edit Glob Grep
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 ---
 
 # Scaffold a GetX Controller + Binding + View (HireMe)

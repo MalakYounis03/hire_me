@@ -7,7 +7,9 @@ allowed-tools:
   - Glob
   - Bash(git diff)
   - Bash(git status)
+  - Bash(flutter analyze --no-fatal-infos --no-fatal-warnings)
 ---
+
 # Code Completion Self-Review
 
 Run this checklist before marking any task as done. This is a read-only review — do not modify code during this step.
@@ -44,6 +46,7 @@ Run this checklist before marking any task as done. This is a read-only review �
 - [ ] GetX reactive variables use `.obs` where needed.
 - [ ] No unnecessary `update()` calls — prefer reactive `.obs` over manual rebuilds.
 - [ ] Import ordering correct (dart → flutter → packages → project).
+- [ ] `flutter analyze` passes with no new warnings.
 
 ## Output
 

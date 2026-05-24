@@ -102,33 +102,41 @@ class ApplicationReviewController extends GetxController {
 
       if (isClosed) return;
 
-      // 2. Create chat document in REALTIME DATABASE
+      // 2. Create / update chat document in REALTIME DATABASE
       //    (NOT Firestore — the whole chat system lives in RTDB)
       final chatId = '${companyId}_$jobSeekerId';
       final now = DateTime.now();
+      final autoMessage =
+          'You have been accepted for: ${applicant.value.jobTitle}';
 
-      debugPrint('DEBUG jobId passed to chat: ${applicant.value.jobId}');
+      final chatSnapshot = await _db.child('chats/$chatId').get();
+      final chatExists = chatSnapshot.exists;
 
-      await _db.child('chats/$chatId').set({
-        'companyId': companyId,
-        'seekerId': jobSeekerId,
+      final chatData = <String, dynamic>{
         'jobId': applicant.value.jobId,
-        'companyName': resolvedCompanyName,
-        'seekerName': jobSeekerName,
-        'lastMessage': 'You have been accepted for this position.',
+        'lastMessage': autoMessage,
         'lastMessageTime': now.millisecondsSinceEpoch,
         'lastMessageAuthor': companyId,
-        'avatarUrl': applicant.value.avatarUrl,
-        'unreadSeeker': 1,
-        'unreadCompany': 0,
-      });
+        'unreadSeeker': ServerValue.increment(1),
+      };
+
+      if (!chatExists) {
+        chatData['companyId'] = companyId;
+        chatData['seekerId'] = jobSeekerId;
+        chatData['companyName'] = resolvedCompanyName;
+        chatData['seekerName'] = jobSeekerName;
+        chatData['avatarUrl'] = applicant.value.avatarUrl;
+        chatData['unreadCompany'] = 0;
+      }
+
+      await _db.child('chats/$chatId').update(chatData);
 
       if (isClosed) return;
 
-      // 4. Add initial auto-message in RTDB messages sub-node
+      // 4. Add auto-message in RTDB messages sub-node
       final msgRef = _db.child('chats/$chatId/messages').push();
       await msgRef.set({
-        'text': 'You have been accepted for this position.',
+        'text': autoMessage,
         'senderId': companyId,
         'time': now.millisecondsSinceEpoch,
         'isRead': false,
