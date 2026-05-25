@@ -16,7 +16,9 @@ class ProfileController extends GetxController {
   final isLoading = false.obs;
   final isUploadingImage = false.obs;
   final isUploadingCover = false.obs;
-  final openToOptions = <String>[].obs;
+  final selectedOpenTo = Rxn<String>();
+  final imageCacheBust = 0.obs;
+  final coverCacheBust = 0.obs;
 
   // ── Firebase + Supabase ───────────────────────────────
   final _auth = FirebaseAuth.instance;
@@ -37,7 +39,23 @@ class ProfileController extends GetxController {
   List<String> get skills => userModel.value?.skills ?? [];
   List<LanguageModel> get languages => userModel.value?.languages ?? [];
   List<LinkModel> get links => userModel.value?.links ?? [];
-  bool get isOpenToWork => openToOptions.isNotEmpty;
+  bool get isOpenToWork => selectedOpenTo.value != null;
+  String get selectedOpenToText => selectedOpenTo.value ?? '';
+  String get badgeLabel {
+    return selectedOpenTo.value ?? '';
+  }
+  Color get ringColor {
+    switch (selectedOpenTo.value) {
+      case 'Open to Work':
+        return const Color(0xFF4CAF50);
+      case 'Open to Freelance':
+        return const Color(0xFF2196F3);
+      case 'Open to Internship':
+        return const Color(0xFFFF9800);
+      default:
+        return Colors.white;
+    }
+  }
 
   @override
   void onInit() {
@@ -64,8 +82,8 @@ class ProfileController extends GetxController {
           }
         }
 
-        final saved = List<String>.from(doc.data()?['openToOptions'] ?? []);
-        openToOptions.assignAll(saved);
+        final saved = doc.data()?['openTo'] as String?;
+        selectedOpenTo.value = saved;
       } else {
         final userDoc = await _firestore.collection('users').doc(uid).get();
         final name = userDoc.data()?['name'] ?? '';
@@ -87,8 +105,12 @@ class ProfileController extends GetxController {
 
   // ── Open To Work ──────────────────────────────────────
   void showOpenToBottomSheet() {
-    final allOptions = ['Open to Work', 'Freelance', 'Internship'];
-    final tempSelected = <String>[...openToOptions].obs;
+    final allOptions = [
+      'Open to Work',
+      'Open to Freelance',
+      'Open to Internship',
+    ];
+    final tempSelected = Rxn<String>(selectedOpenTo.value);
 
     Get.bottomSheet(
       Obx(
@@ -128,11 +150,10 @@ class ProfileController extends GetxController {
               ),
               const SizedBox(height: 20),
               ...allOptions.map((option) {
-                final isSelected = tempSelected.contains(option);
+                final isSelected = tempSelected.value == option;
                 return GestureDetector(
-                  onTap: () => isSelected
-                      ? tempSelected.remove(option)
-                      : tempSelected.add(option),
+                  onTap: () => tempSelected.value =
+                      isSelected ? null : option,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(bottom: 10),
@@ -214,7 +235,7 @@ class ProfileController extends GetxController {
                 height: 52,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await _saveOpenTo(List<String>.from(tempSelected));
+                    await _saveOpenTo(tempSelected.value);
                     Get.back();
                   },
                   style: ElevatedButton.styleFrom(
@@ -243,18 +264,18 @@ class ProfileController extends GetxController {
     );
   }
 
-  Future<void> _saveOpenTo(List<String> selected) async {
-    openToOptions.assignAll(selected);
-    await _updateField('openToOptions', selected);
+  Future<void> _saveOpenTo(String? selected) async {
+    selectedOpenTo.value = selected;
+    await _updateField('openTo', selected);
   }
 
   IconData _optionIcon(String option) {
     switch (option) {
       case 'Open to Work':
         return Icons.work_outline_rounded;
-      case 'Freelance':
+      case 'Open to Freelance':
         return Icons.laptop_outlined;
-      case 'Internship':
+      case 'Open to Internship':
         return Icons.school_outlined;
       default:
         return Icons.circle_outlined;
@@ -602,6 +623,7 @@ class ProfileController extends GetxController {
           .getPublicUrl(fileName);
       await _updateField('profileImage', imageUrl);
       userModel.value = userModel.value?.copyWith(profileImage: imageUrl);
+      imageCacheBust.value = DateTime.now().millisecondsSinceEpoch;
       _showSuccess('Profile photo updated!');
     } catch (e) {
       _showError('Failed to upload photo: $e');
@@ -634,6 +656,7 @@ class ProfileController extends GetxController {
           .getPublicUrl(fileName);
       await _updateField('coverImage', coverUrl);
       userModel.value = userModel.value?.copyWith(coverImage: coverUrl);
+      coverCacheBust.value = DateTime.now().millisecondsSinceEpoch;
       _showSuccess('Cover photo updated!');
     } catch (e) {
       _showError('Failed to upload cover: $e');

@@ -78,11 +78,13 @@ class JobSeekerSavedJobsController extends GetxController {
               isLoading.value = false;
             } catch (_) {
               isLoading.value = false;
+              if (_auth.currentUser == null) return;
               Get.snackbar('Error', 'Failed to load saved jobs');
             }
           },
           onError: (_) {
             isLoading.value = false;
+            if (_auth.currentUser == null) return;
             Get.snackbar('Error', 'Failed to load saved jobs');
           },
         );

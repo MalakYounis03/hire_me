@@ -62,6 +62,7 @@ class JobSeekerSearchJobsController extends GetxController {
           },
           onError: (_) {
             isLoading.value = false;
+            if (_auth.currentUser == null) return;
             Get.snackbar('Error', 'Failed to load jobs');
           },
         );

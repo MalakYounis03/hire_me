@@ -93,6 +93,7 @@ class JobSeekerDashboardController extends GetxController {
           },
           onError: (_) {
             isMainFieldsLoading.value = false;
+            if (_auth.currentUser == null) return;
             Get.snackbar('Error', 'Failed to load main fields');
           },
         );
@@ -129,6 +130,7 @@ class JobSeekerDashboardController extends GetxController {
           },
           onError: (_) {
             isLoading.value = false;
+            if (_auth.currentUser == null) return;
             Get.snackbar('Error', 'Failed to load jobs');
           },
         );
