@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/job_seeker/profile/models/user_model.dart';
 import 'package:hire_me/core/utils/app_color.dart';
-import 'package:hire_me/core/utils/app_string.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
 import '../controllers/profile_controller.dart';
 
@@ -13,73 +12,74 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FF),
-      appBar: AppBar(
-        backgroundColor: AppColor.kblue,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Icon(Icons.arrow_back, color: AppColor.kwhite),
-        ),
-        title: Text(
-          AppString.profile,
-          style: CustomTextstyle.interSemiBoldWhite,
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: AppColor.kwhite,
-              size: 26,
-            ),
-          ),
-        ],
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: AppColor.kblue),
-          );
-        }
-        return SingleChildScrollView(
-          child: Column(
+      body: SafeArea(
+        child: SizedBox.expand(
+          child: Stack(
             children: [
-              _buildProfileCard(),
-              const SizedBox(height: 10),
-              _buildAboutCard(),
-              const SizedBox(height: 10),
-              _buildExperienceCard(),
-              const SizedBox(height: 10),
-              _buildEducationCard(),
-              const SizedBox(height: 10),
-              _buildSkillsCard(),
-              const SizedBox(height: 10),
-              Obx(
-                () => controller.languages.isNotEmpty
-                    ? Column(
-                        children: [
-                          _buildLanguagesCard(),
-                          const SizedBox(height: 10),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
+              // CurvedAppBar(
+              //   title: '',
+              //   // title: 'Profile',
+              //   // actions: [
+              //   //   IconButton(
+              //   //     icon: const Icon(Icons.logout, color: Colors.white),
+              //   //     onPressed: controller.logout,
+              //   //   ),
+              //   // ],
+              // ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(color: AppColor.kblue),
+                    );
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildProfileCard(),
+                        const SizedBox(height: 10),
+                        _buildAboutCard(),
+                        const SizedBox(height: 10),
+                        _buildExperienceCard(),
+                        const SizedBox(height: 10),
+                        _buildEducationCard(),
+                        const SizedBox(height: 10),
+                        _buildSkillsCard(),
+                        const SizedBox(height: 10),
+                        Obx(
+                          () => controller.languages.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    _buildLanguagesCard(),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        Obx(
+                          () => controller.links.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    _buildLinksCard(),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  );
+                }),
               ),
-              Obx(
-                () => controller.links.isNotEmpty
-                    ? Column(
-                        children: [
-                          _buildLinksCard(),
-                          const SizedBox(height: 10),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
-              const SizedBox(height: 20),
             ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 
@@ -109,7 +109,9 @@ class ProfileView extends GetView<ProfileController> {
                       color: const Color(0xFFB0BEC5),
                       image: controller.coverImage.isNotEmpty
                           ? DecorationImage(
-                              image: NetworkImage(controller.coverImage),
+                              image: NetworkImage(
+                                '${controller.coverImage}?t=${controller.coverCacheBust}',
+                              ),
                               fit: BoxFit.cover,
                             )
                           : null,
@@ -134,33 +136,33 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
               Positioned(
-                bottom: -36,
+                bottom: -60,
                 left: 16,
                 child: Obx(() {
-                  final showBadge = controller.isOpenToWork;
+                  final selected = controller.selectedOpenTo.value;
                   return GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () => controller
                         .pickAndUploadImage(), // ← tap على الصورة كلها
                     child: SizedBox(
-                      width: 88,
-                      height: showBadge ? 108 : 88,
+                      width: 120,
+                      height: 116,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
                           Container(
-                            width: 88,
-                            height: 88,
+                            width: 112,
+                            height: 112,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: showBadge
-                                  ? const Color(0xFF22C55E)
+                              color: selected != null
+                                  ? controller.ringColor
                                   : Colors.white,
                             ),
                             child: Center(
                               child: Container(
-                                width: 80,
-                                height: 80,
+                                width: 100,
+                                height: 100,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.white,
@@ -170,13 +172,15 @@ class ProfileView extends GetView<ProfileController> {
                                         color: AppColor.kblue,
                                       )
                                     : CircleAvatar(
-                                        radius: 38,
+                                        radius: 48,
                                         backgroundColor: const Color(
                                           0xFFE8EDF9,
                                         ),
                                         backgroundImage:
                                             controller.userImage.isNotEmpty
-                                            ? NetworkImage(controller.userImage)
+                                            ? NetworkImage(
+                                                '${controller.userImage}?t=${controller.imageCacheBust}',
+                                              )
                                             : null,
                                         child: controller.userImage.isEmpty
                                             ? Icon(
@@ -190,7 +194,7 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                           Positioned(
-                            bottom: showBadge ? 20 : 0,
+                            bottom: 20,
                             right: 0,
                             child: Container(
                               width: 26,
@@ -210,7 +214,7 @@ class ProfileView extends GetView<ProfileController> {
                               ),
                             ),
                           ),
-                          if (showBadge)
+                          if (selected != null)
                             Positioned(
                               bottom: 0,
                               left: 0,
@@ -222,21 +226,23 @@ class ProfileView extends GetView<ProfileController> {
                                     vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF22C55E),
+                                    color: controller.ringColor,
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
                                       color: Colors.white,
                                       width: 1.5,
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Open to Work',
-                                    style: TextStyle(
+                                  child: Text(
+                                    controller.badgeLabel,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 9,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.3,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
                                 ),
                               ),
@@ -255,13 +261,22 @@ class ProfileView extends GetView<ProfileController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(
-                  () => Text(
-                    controller.userName.isEmpty
-                        ? 'Your Name'
-                        : controller.userName.toUpperCase(),
-                    style: CustomTextstyle.interMedium,
-                  ),
+                Row(
+                  children: [
+                    Obx(
+                      () => Text(
+                        controller.userName.isEmpty
+                            ? 'Your Name'
+                            : controller.userName.toUpperCase(),
+                        style: CustomTextstyle.interMedium,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.logout, color: Color(0xFF8A8A9A)),
+                      onPressed: controller.logout,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Obx(
@@ -298,8 +313,9 @@ class ProfileView extends GetView<ProfileController> {
                         () => ElevatedButton(
                           onPressed: controller.showOpenToBottomSheet,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: controller.isOpenToWork
-                                ? const Color(0xFF22C55E)
+                            backgroundColor:
+                                controller.selectedOpenTo.value != null
+                                ? controller.ringColor
                                 : AppColor.kblue,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -323,8 +339,8 @@ class ProfileView extends GetView<ProfileController> {
                               ],
                               Flexible(
                                 child: Text(
-                                  controller.isOpenToWork
-                                      ? 'Open to Work'
+                                  controller.selectedOpenToText.isNotEmpty
+                                      ? controller.selectedOpenToText
                                       : 'Open to',
                                   style: CustomTextstyle.interRegular500,
                                   overflow: TextOverflow.ellipsis,
