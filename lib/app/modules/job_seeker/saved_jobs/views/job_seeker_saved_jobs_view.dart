@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:hire_me/app/shared/widgets/curved_app_bar.dart';
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/views/widgets/job_card_widget.dart';
@@ -14,48 +15,43 @@ class JobSeekerSavedJobsView extends GetView<JobSeekerSavedJobsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FA),
-      appBar: AppBar(
-        backgroundColor: AppColor.kblue,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Saved Jobs',
-          style: CustomTextstyle.poppinsSemiBoldWhite.copyWith(
-            fontSize: 18,
-            color: AppColor.kwhite,
-          ),
-        ),
-      ),
       body: SafeArea(
-        child: RefreshIndicator(
-          color: AppColor.kblue,
-          onRefresh: controller.refreshSavedJobs,
-          child: Obx(() {
-            if (controller.isLoading.value) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColor.kblue),
-              );
-            }
+        child: Column(
+          children: [
+            const CurvedAppBar(title: 'Saved Jobs'),
+            Expanded(
+              child: RefreshIndicator(
+                color: AppColor.kblue,
+                onRefresh: controller.refreshSavedJobs,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(color: AppColor.kblue),
+                    );
+                  }
 
-            if (controller.savedJobs.isEmpty) {
-              return _emptyState();
-            }
+                  if (controller.savedJobs.isEmpty) {
+                    return _emptyState();
+                  }
 
-            return ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(top: 14, bottom: 24),
-              itemCount: controller.savedJobs.length,
-              itemBuilder: (context, index) {
-                final job = controller.savedJobs[index];
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 14, bottom: 24),
+                    itemCount: controller.savedJobs.length,
+                    itemBuilder: (context, index) {
+                      final job = controller.savedJobs[index];
 
-                return JobCardWidget(
-                  job: job,
-                  isSaved: true,
-                  onSaveTap: () => controller.removeSavedJob(job.id),
-                );
-              },
-            );
-          }),
+                      return JobCardWidget(
+                        job: job,
+                        isSaved: true,
+                        onSaveTap: () => controller.removeSavedJob(job.id),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ),
+          ],
         ),
       ),
     );
