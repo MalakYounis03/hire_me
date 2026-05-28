@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,7 +41,7 @@ class CompanyPostJobController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
-
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _mainFieldsSub;
   static const String _logoBucket = 'logos';
   String companyName = '';
 
@@ -99,28 +100,43 @@ class CompanyPostJobController extends GetxController {
     }
   }
 
-  Future<void> fetchMainFields() async {
+  void fetchMainFields() {
     try {
       isMainFieldsLoading.value = true;
 
-      final snapshot = await _firestore.collection('mainFields').get();
+      _mainFieldsSub?.cancel();
 
-      final fields = snapshot.docs.map((doc) {
-        return CompanyMainField.fromMap(id: doc.id, data: doc.data());
-      }).toList();
+      _mainFieldsSub = _firestore
+          .collection('mainFields')
+          .snapshots()
+          .listen(
+            (snapshot) {
+              final fields = snapshot.docs.map((doc) {
+                return CompanyMainField.fromMap(id: doc.id, data: doc.data());
+              }).toList();
 
-      mainFields.value = fields;
+              fields.sort((a, b) => a.name.compareTo(b.name));
 
-      if (!isEditMode.value &&
-          fields.isNotEmpty &&
-          selectedMainFieldId.value.isEmpty) {
-        selectMainField(fields.first);
-      }
+              mainFields.value = fields;
+
+              if (!isEditMode.value &&
+                  fields.isNotEmpty &&
+                  selectedMainFieldId.value.isEmpty) {
+                selectMainField(fields.first);
+              }
+
+              isMainFieldsLoading.value = false;
+            },
+            onError: (e) {
+              debugPrint('Error listening to main fields: $e');
+              isMainFieldsLoading.value = false;
+              _showError('Failed to load categories');
+            },
+          );
     } catch (e) {
       debugPrint('Error fetching main fields: $e');
-      _showError('Failed to load categories');
-    } finally {
       isMainFieldsLoading.value = false;
+      _showError('Failed to load categories');
     }
   }
 
@@ -392,6 +408,8 @@ class CompanyPostJobController extends GetxController {
 
   @override
   void onClose() {
+    _mainFieldsSub?.cancel();
+
     titleController.dispose();
     locationController.dispose();
     minSalaryController.dispose();
