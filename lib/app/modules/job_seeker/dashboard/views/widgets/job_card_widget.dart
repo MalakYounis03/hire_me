@@ -44,7 +44,7 @@ class JobCardWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _logoBox(),
+                _fieldLogoBox(),
 
                 const SizedBox(width: 12),
 
@@ -105,9 +105,13 @@ class JobCardWidget extends StatelessWidget {
 
             Row(
               children: [
-                _badge(_formatJobType(job.jobType), isPrimary: false),
+                Expanded(
+                  child: _badge(_formatJobType(job.jobType), isPrimary: false),
+                ),
                 const SizedBox(width: 8),
-                _badge(job.workMode, isPrimary: true),
+                Expanded(
+                  child: _badge(_formatWorkMode(job.workMode), isPrimary: true),
+                ),
               ],
             ),
           ],
@@ -116,27 +120,33 @@ class JobCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _logoBox() {
+  Widget _fieldLogoBox() {
+    final iconUrl = job.subFieldIconUrl.isNotEmpty
+        ? job.subFieldIconUrl
+        : job.mainFieldIconUrl;
+
     return Container(
-      width: 50,
-      height: 50,
+      width: 68,
+      height: 68,
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: AppColor.ewhite,
-        borderRadius: BorderRadius.circular(10),
+        color: AppColor.kblue.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColor.kblue.withValues(alpha: 0.10)),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: job.logoUrl.isNotEmpty
+        borderRadius: BorderRadius.circular(13),
+        child: iconUrl.isNotEmpty
             ? CachedNetworkImage(
-                imageUrl: job.logoUrl,
-                fit: BoxFit.contain,
+                imageUrl: iconUrl,
+                fit: BoxFit.cover,
                 errorWidget: (context, url, error) => Icon(
-                  Icons.business_rounded,
+                  Icons.work_outline_rounded,
                   color: AppColor.kblue,
-                  size: 28,
+                  size: 36,
                 ),
               )
-            : Icon(Icons.business_rounded, color: AppColor.kblue, size: 28),
+            : Icon(Icons.work_outline_rounded, color: AppColor.kblue, size: 36),
       ),
     );
   }
@@ -169,7 +179,9 @@ class JobCardWidget extends StatelessWidget {
 
   Widget _badge(String text, {required bool isPrimary}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+      height: 34,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: isPrimary ? AppColor.kblue : AppColor.kwhite,
         borderRadius: BorderRadius.circular(20),
@@ -177,6 +189,8 @@ class JobCardWidget extends StatelessWidget {
       ),
       child: Text(
         text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: isPrimary ? AppColor.kwhite : AppColor.kblue,
           fontSize: 11,
@@ -187,8 +201,15 @@ class JobCardWidget extends StatelessWidget {
   }
 
   String _formatJobType(String value) {
-    if (value == 'FullTime') return 'Full time';
-    if (value == 'PartTime') return 'Part time';
-    return value;
+    if (value == 'FullTime') return 'Full Time';
+    if (value == 'PartTime') return 'Part Time';
+    return value.isEmpty ? 'Not specified' : value;
+  }
+
+  String _formatWorkMode(String value) {
+    if (value == 'OnSite') return 'On Site';
+    if (value == 'Remote') return 'Remote';
+    if (value == 'Hybrid') return 'Hybrid';
+    return value.isEmpty ? 'Not specified' : value;
   }
 }

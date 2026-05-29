@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hire_me/app/modules/job_seeker/dashboard/models/job_model.dart';
-import 'package:hire_me/app/modules/job_seeker/dashboard/models/main_field_model.dart';
 
 class JobSeekerDashboardController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -17,6 +16,8 @@ class JobSeekerDashboardController extends GetxController {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _mainFieldsSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _subFieldsSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _savedJobsSubscription;
   StreamSubscription<int>? _notifBadgeSub;
 
@@ -24,22 +25,28 @@ class JobSeekerDashboardController extends GetxController {
 
   final allJobs = <JobModel>[].obs;
   final filteredJobs = <JobModel>[].obs;
+
   final mainFields = <MainFieldModel>[].obs;
+  final subFields = <SubFieldModel>[].obs;
 
   final savedJobIds = <String>{}.obs;
   final notificationBadgeCount = 0.obs;
 
   final isLoading = true.obs;
   final isMainFieldsLoading = true.obs;
+  final isSubFieldsLoading = false.obs;
 
   final searchQuery = ''.obs;
+
   final selectedMainFieldId = 'all'.obs;
+  final selectedSubFieldId = 'all'.obs;
+
   final selectedJobType = 'all'.obs;
   final selectedWorkMode = 'all'.obs;
 
   final jobTypes = const ['all', 'FullTime', 'PartTime', 'Freelance'];
 
-  final workModes = const ['all', 'Onsite', 'Remote', 'Hybrid'];
+  final workModes = const ['all', 'OnSite', 'Remote', 'Hybrid'];
 
   @override
   void onInit() {
@@ -60,7 +67,13 @@ class JobSeekerDashboardController extends GetxController {
       final userDoc = await _firestore.collection('users').doc(uid).get();
 
       if (userDoc.exists) {
-        userName.value = userDoc.data()?['fullName'] ?? 'User';
+        final data = userDoc.data();
+
+        userName.value =
+            data?['fullName']?.toString() ??
+            data?['name']?.toString() ??
+            'User';
+
         return;
       }
 
@@ -70,7 +83,12 @@ class JobSeekerDashboardController extends GetxController {
           .get();
 
       if (seekerDoc.exists) {
-        userName.value = seekerDoc.data()?['fullName'] ?? 'User';
+        final data = seekerDoc.data();
+
+        userName.value =
+            data?['fullName']?.toString() ??
+            data?['name']?.toString() ??
+            'User';
       }
     } catch (_) {
       userName.value = 'User';
@@ -80,14 +98,20 @@ class JobSeekerDashboardController extends GetxController {
   void listenToMainFields() {
     isMainFieldsLoading.value = true;
 
+    _mainFieldsSubscription?.cancel();
+
     _mainFieldsSubscription = _firestore
         .collection('mainFields')
         .snapshots()
         .listen(
           (snapshot) {
-            mainFields.value = snapshot.docs
-                .map((doc) => MainFieldModel.fromMap(doc.id, doc.data()))
-                .toList();
+            final fields = snapshot.docs.map((doc) {
+              return MainFieldModel.fromMap(doc.id, doc.data());
+            }).toList();
+
+            fields.sort((a, b) => a.name.compareTo(b.name));
+
+            mainFields.value = fields;
 
             isMainFieldsLoading.value = false;
           },
@@ -99,8 +123,49 @@ class JobSeekerDashboardController extends GetxController {
         );
   }
 
+  void listenToSubFields(String mainFieldId) {
+    _subFieldsSubscription?.cancel();
+
+    selectedSubFieldId.value = 'all';
+    subFields.clear();
+
+    if (mainFieldId == 'all' || mainFieldId.isEmpty) {
+      isSubFieldsLoading.value = false;
+      applyFilters();
+      return;
+    }
+
+    isSubFieldsLoading.value = true;
+
+    _subFieldsSubscription = _firestore
+        .collection('mainFields')
+        .doc(mainFieldId)
+        .collection('subFields')
+        .snapshots()
+        .listen(
+          (snapshot) {
+            final fields = snapshot.docs.map((doc) {
+              return SubFieldModel.fromMap(doc.id, doc.data());
+            }).toList();
+
+            fields.sort((a, b) => a.name.compareTo(b.name));
+
+            subFields.value = fields;
+
+            isSubFieldsLoading.value = false;
+          },
+          onError: (_) {
+            isSubFieldsLoading.value = false;
+            if (_auth.currentUser == null) return;
+            Get.snackbar('Error', 'Failed to load specializations');
+          },
+        );
+  }
+
   void listenToOpenJobs() {
     isLoading.value = true;
+
+    _jobsSubscription?.cancel();
 
     _jobsSubscription = _firestore
         .collection('jobs')
@@ -110,6 +175,7 @@ class JobSeekerDashboardController extends GetxController {
           (snapshot) {
             final jobs = snapshot.docs
                 .map((doc) => JobModel.fromMap(doc.id, doc.data()))
+                .where((job) => !job.isDeleted)
                 .toList();
 
             jobs.sort((a, b) {
@@ -141,6 +207,8 @@ class JobSeekerDashboardController extends GetxController {
 
     if (uid == null) return;
 
+    _savedJobsSubscription?.cancel();
+
     _savedJobsSubscription = _firestore
         .collection('savedJobs')
         .where('seekerId', isEqualTo: uid)
@@ -163,6 +231,14 @@ class JobSeekerDashboardController extends GetxController {
 
   void selectMainField(String fieldId) {
     selectedMainFieldId.value = fieldId;
+    selectedSubFieldId.value = 'all';
+
+    listenToSubFields(fieldId);
+    applyFilters();
+  }
+
+  void selectSubField(String fieldId) {
+    selectedSubFieldId.value = fieldId;
     applyFilters();
   }
 
@@ -178,9 +254,14 @@ class JobSeekerDashboardController extends GetxController {
 
   void clearFilters() {
     selectedMainFieldId.value = 'all';
+    selectedSubFieldId.value = 'all';
     selectedJobType.value = 'all';
     selectedWorkMode.value = 'all';
     searchQuery.value = '';
+
+    subFields.clear();
+    _subFieldsSubscription?.cancel();
+
     searchTextController.clear();
     applyFilters();
   }
@@ -191,6 +272,12 @@ class JobSeekerDashboardController extends GetxController {
     if (selectedMainFieldId.value != 'all') {
       results = results.where(
         (job) => job.mainFieldId == selectedMainFieldId.value,
+      );
+    }
+
+    if (selectedSubFieldId.value != 'all') {
+      results = results.where(
+        (job) => job.subFieldId == selectedSubFieldId.value,
       );
     }
 
@@ -209,6 +296,7 @@ class JobSeekerDashboardController extends GetxController {
         return job.title.toLowerCase().contains(query) ||
             job.companyName.toLowerCase().contains(query) ||
             job.mainFieldName.toLowerCase().contains(query) ||
+            job.subFieldName.toLowerCase().contains(query) ||
             job.location.toLowerCase().contains(query) ||
             job.description.toLowerCase().contains(query);
       });
@@ -250,6 +338,7 @@ class JobSeekerDashboardController extends GetxController {
 
   void listenToNotificationBadge() {
     final uid = _auth.currentUser?.uid;
+
     if (uid == null) return;
 
     _notifBadgeSub = _firestore
@@ -273,9 +362,12 @@ class JobSeekerDashboardController extends GetxController {
   void onClose() {
     _jobsSubscription?.cancel();
     _mainFieldsSubscription?.cancel();
+    _subFieldsSubscription?.cancel();
     _savedJobsSubscription?.cancel();
     _notifBadgeSub?.cancel();
+
     searchTextController.dispose();
+
     super.onClose();
   }
 }

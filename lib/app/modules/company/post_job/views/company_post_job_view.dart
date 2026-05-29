@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hire_me/app/modules/company/company_profile/widgets/job_category_selector_sheet.dart';
 
 import 'package:hire_me/core/utils/app_color.dart';
 import 'package:hire_me/core/utils/app_text_style.dart';
@@ -39,7 +38,7 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                       const SizedBox(height: 8),
                       _textField(
                         controller: controller.titleController,
-                        hint: 'e.g UI/UX Designer',
+                        hint: 'e.g Flutter Developer',
                         validatorText: 'Please enter job title',
                       ),
 
@@ -48,6 +47,15 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                       _label(icon: Icons.category_outlined, text: 'Category'),
                       const SizedBox(height: 8),
                       _buildCategoryDropdown(),
+
+                      const SizedBox(height: 18),
+
+                      _label(
+                        icon: Icons.account_tree_outlined,
+                        text: 'Specialization',
+                      ),
+                      const SizedBox(height: 8),
+                      _buildSubFieldDropdown(),
 
                       const SizedBox(height: 18),
 
@@ -306,38 +314,11 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
   Widget _buildCategoryDropdown() {
     return Obx(() {
       if (controller.isMainFieldsLoading.value) {
-        return Container(
-          height: 52,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AppColor.kwhite,
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(
-              color: AppColor.kblue,
-              strokeWidth: 2,
-            ),
-          ),
-        );
+        return _loadingField();
       }
 
       if (controller.mainFields.isEmpty) {
-        return Container(
-          height: 52,
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: AppColor.kwhite,
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: Text(
-            'No categories found',
-            style: TextStyle(color: AppColor.greyLight, fontSize: 13),
-          ),
-        );
+        return _emptyField('No categories found');
       }
 
       final selectedName = controller.selectedMainFieldName.value.isEmpty
@@ -345,47 +326,215 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
           : controller.selectedMainFieldName.value;
 
       return GestureDetector(
-        onTap: () {
-          JobCategorySelectorSheet.show(
-            categories: controller.mainFields,
-            selectedCategoryId: controller.selectedMainFieldId.value,
-            onSelect: controller.selectMainField,
-          );
-        },
-        child: Container(
-          height: 52,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: AppColor.kwhite,
-            borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: AppColor.eblack.withValues(alpha: 0.04)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  selectedName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: controller.selectedMainFieldName.value.isEmpty
-                        ? AppColor.greyLight
-                        : AppColor.eblack,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AppColor.greyLight,
-                size: 24,
-              ),
-            ],
-          ),
+        onTap: _showMainFieldSheet,
+        child: _selectorBox(
+          text: selectedName,
+          iconUrl: controller.selectedMainFieldIconUrl.value,
+          isPlaceholder: controller.selectedMainFieldName.value.isEmpty,
         ),
       );
     });
+  }
+
+  Widget _buildSubFieldDropdown() {
+    return Obx(() {
+      if (controller.selectedMainFieldId.value.isEmpty) {
+        return _emptyField('Select category first');
+      }
+
+      if (controller.isSubFieldsLoading.value) {
+        return _loadingField();
+      }
+
+      if (controller.subFields.isEmpty) {
+        return _emptyField('No specializations found');
+      }
+
+      final selectedName = controller.selectedSubFieldName.value.isEmpty
+          ? 'Select specialization'
+          : controller.selectedSubFieldName.value;
+
+      return GestureDetector(
+        onTap: _showSubFieldSheet,
+        child: _selectorBox(
+          text: selectedName,
+          iconUrl: controller.selectedSubFieldIconUrl.value,
+          isPlaceholder: controller.selectedSubFieldName.value.isEmpty,
+        ),
+      );
+    });
+  }
+
+  Widget _loadingField() {
+    return Container(
+      height: 52,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: SizedBox(
+        width: 22,
+        height: 22,
+        child: CircularProgressIndicator(color: AppColor.kblue, strokeWidth: 2),
+      ),
+    );
+  }
+
+  Widget _emptyField(String text) {
+    return Container(
+      height: 52,
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: AppColor.eblack.withValues(alpha: 0.04)),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: AppColor.greyLight, fontSize: 13),
+      ),
+    );
+  }
+
+  Widget _selectorBox({
+    required String text,
+    required String iconUrl,
+    required bool isPlaceholder,
+  }) {
+    return Container(
+      height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: AppColor.eblack.withValues(alpha: 0.04)),
+      ),
+      child: Row(
+        children: [
+          _fieldIcon(iconUrl),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: isPlaceholder ? AppColor.greyLight : AppColor.eblack,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: AppColor.greyLight,
+            size: 24,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _fieldIcon(String iconUrl) {
+    return Container(
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        color: AppColor.kblue.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: iconUrl.isNotEmpty
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: CachedNetworkImage(
+                imageUrl: iconUrl,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => Icon(
+                  Icons.work_outline_rounded,
+                  color: AppColor.kblue,
+                  size: 17,
+                ),
+              ),
+            )
+          : Icon(Icons.work_outline_rounded, color: AppColor.kblue, size: 17),
+    );
+  }
+
+  void _showMainFieldSheet() {
+    Get.bottomSheet(
+      _BottomSheetContainer(
+        title: 'Select Category',
+        icon: Icons.category_outlined,
+        child: Obx(
+          () => ListView.separated(
+            shrinkWrap: true,
+            itemCount: controller.mainFields.length,
+            separatorBuilder: (_, _) => _sheetDivider(),
+            itemBuilder: (context, index) {
+              final field = controller.mainFields[index];
+              final isSelected =
+                  field.id == controller.selectedMainFieldId.value;
+
+              return _SheetTile(
+                title: field.name,
+                iconUrl: field.iconUrl,
+                isSelected: isSelected,
+                onTap: () {
+                  Get.back();
+                  controller.selectMainField(field);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  void _showSubFieldSheet() {
+    Get.bottomSheet(
+      _BottomSheetContainer(
+        title: 'Select Specialization',
+        icon: Icons.account_tree_outlined,
+        child: Obx(
+          () => ListView.separated(
+            shrinkWrap: true,
+            itemCount: controller.subFields.length,
+            separatorBuilder: (_, _) => _sheetDivider(),
+            itemBuilder: (context, index) {
+              final field = controller.subFields[index];
+              final isSelected =
+                  field.id == controller.selectedSubFieldId.value;
+
+              return _SheetTile(
+                title: field.name,
+                iconUrl: field.iconUrl,
+                isSelected: isSelected,
+                onTap: () {
+                  Get.back();
+                  controller.selectSubField(field);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _sheetDivider() {
+    return Divider(
+      height: 1,
+      thickness: 0.8,
+      color: AppColor.kblack.withValues(alpha: 0.05),
+      indent: 54,
+    );
   }
 
   Widget _buildJobTypeSelector() {
@@ -513,6 +662,157 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
                     ),
                   ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomSheetContainer extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Widget child;
+
+  const _BottomSheetContainer({
+    required this.title,
+    required this.icon,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 22),
+      decoration: BoxDecoration(
+        color: AppColor.kwhite,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.kblack.withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, -8),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 42,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColor.greyLight.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColor.kblue.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: AppColor.kblue, size: 23),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: AppColor.kblack,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Flexible(child: child),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetTile extends StatelessWidget {
+  final String title;
+  final String iconUrl;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SheetTile({
+    required this.title,
+    required this.iconUrl,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColor.kblue
+                    : AppColor.kblue.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: iconUrl.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: iconUrl,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.work_outline_rounded,
+                          color: isSelected ? AppColor.kwhite : AppColor.kblue,
+                          size: 21,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      Icons.work_outline_rounded,
+                      color: isSelected ? AppColor.kwhite : AppColor.kblue,
+                      size: 21,
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColor.kblack,
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle_rounded, color: AppColor.kblue, size: 22)
+            else
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColor.greyLight,
+                size: 15,
+              ),
+          ],
         ),
       ),
     );

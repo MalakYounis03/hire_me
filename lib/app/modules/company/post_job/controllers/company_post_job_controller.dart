@@ -24,6 +24,7 @@ class CompanyPostJobController extends GetxController {
   final isLoading = false.obs;
   final isUploadingLogo = false.obs;
   final isMainFieldsLoading = false.obs;
+  final isSubFieldsLoading = false.obs;
 
   final isEditMode = false.obs;
   final editingJobId = ''.obs;
@@ -31,9 +32,15 @@ class CompanyPostJobController extends GetxController {
   final companyLogoUrl = ''.obs;
 
   final mainFields = <CompanyMainField>[].obs;
+  final subFields = <CompanySubField>[].obs;
 
   final selectedMainFieldId = ''.obs;
   final selectedMainFieldName = ''.obs;
+  final selectedMainFieldIconUrl = ''.obs;
+
+  final selectedSubFieldId = ''.obs;
+  final selectedSubFieldName = ''.obs;
+  final selectedSubFieldIconUrl = ''.obs;
 
   final selectedJobType = 'FullTime'.obs;
   final selectedWorkMode = 'Remote'.obs;
@@ -41,14 +48,17 @@ class CompanyPostJobController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _mainFieldsSub;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subFieldsSub;
+
   static const String _logoBucket = 'logos';
+
   String companyName = '';
 
   @override
   void onInit() {
     super.onInit();
-
     loadCompanyData();
     fetchMainFields();
   }
@@ -74,7 +84,6 @@ class CompanyPostJobController extends GetxController {
             'Company';
 
         companyLogoUrl.value = data['logoUrl'] ?? data['companyLogoUrl'] ?? '';
-
         return;
       }
 
@@ -90,7 +99,6 @@ class CompanyPostJobController extends GetxController {
             'Company';
 
         companyLogoUrl.value = data['logoUrl'] ?? data['companyLogoUrl'] ?? '';
-
         return;
       }
 
@@ -140,6 +148,67 @@ class CompanyPostJobController extends GetxController {
     }
   }
 
+  void fetchSubFields(String mainFieldId, {String initialSubFieldId = ''}) {
+    try {
+      isSubFieldsLoading.value = true;
+
+      _subFieldsSub?.cancel();
+
+      if (mainFieldId.isEmpty) {
+        subFields.clear();
+        isSubFieldsLoading.value = false;
+        return;
+      }
+
+      _subFieldsSub = _firestore
+          .collection('mainFields')
+          .doc(mainFieldId)
+          .collection('subFields')
+          .snapshots()
+          .listen(
+            (snapshot) {
+              final fields = snapshot.docs.map((doc) {
+                return CompanySubField.fromMap(id: doc.id, data: doc.data());
+              }).toList();
+
+              fields.sort((a, b) => a.name.compareTo(b.name));
+
+              subFields.value = fields;
+
+              if (fields.isNotEmpty) {
+                if (initialSubFieldId.isNotEmpty) {
+                  final exists = fields.any(
+                    (field) => field.id == initialSubFieldId,
+                  );
+
+                  if (exists) {
+                    final selected = fields.firstWhere(
+                      (field) => field.id == initialSubFieldId,
+                    );
+                    selectSubField(selected);
+                  } else if (selectedSubFieldId.value.isEmpty) {
+                    selectSubField(fields.first);
+                  }
+                } else if (selectedSubFieldId.value.isEmpty) {
+                  selectSubField(fields.first);
+                }
+              }
+
+              isSubFieldsLoading.value = false;
+            },
+            onError: (e) {
+              debugPrint('Error listening to sub fields: $e');
+              isSubFieldsLoading.value = false;
+              _showError('Failed to load specializations');
+            },
+          );
+    } catch (e) {
+      debugPrint('Error fetching sub fields: $e');
+      isSubFieldsLoading.value = false;
+      _showError('Failed to load specializations');
+    }
+  }
+
   void loadJobForEdit(CompanyJobModel job) {
     isEditMode.value = true;
     editingJobId.value = job.id;
@@ -156,6 +225,33 @@ class CompanyPostJobController extends GetxController {
 
     selectedJobType.value = job.jobType.isEmpty ? 'FullTime' : job.jobType;
     selectedWorkMode.value = job.workMode.isEmpty ? 'Remote' : job.workMode;
+
+    final dynamic editJob = job;
+
+    selectedMainFieldIconUrl.value = _safeDynamicString(
+      () => editJob.mainFieldIconUrl,
+    );
+
+    selectedSubFieldId.value = _safeDynamicString(() => editJob.subFieldId);
+
+    selectedSubFieldName.value = _safeDynamicString(() => editJob.subFieldName);
+
+    selectedSubFieldIconUrl.value = _safeDynamicString(
+      () => editJob.subFieldIconUrl,
+    );
+
+    fetchSubFields(
+      job.mainFieldId,
+      initialSubFieldId: selectedSubFieldId.value,
+    );
+  }
+
+  String _safeDynamicString(String Function() read) {
+    try {
+      return read().toString();
+    } catch (_) {
+      return '';
+    }
   }
 
   void resetCreateMode() {
@@ -167,6 +263,20 @@ class CompanyPostJobController extends GetxController {
   void selectMainField(CompanyMainField field) {
     selectedMainFieldId.value = field.id;
     selectedMainFieldName.value = field.name;
+    selectedMainFieldIconUrl.value = field.iconUrl;
+
+    selectedSubFieldId.value = '';
+    selectedSubFieldName.value = '';
+    selectedSubFieldIconUrl.value = '';
+    subFields.clear();
+
+    fetchSubFields(field.id);
+  }
+
+  void selectSubField(CompanySubField field) {
+    selectedSubFieldId.value = field.id;
+    selectedSubFieldName.value = field.name;
+    selectedSubFieldIconUrl.value = field.iconUrl;
   }
 
   void selectJobType(String value) {
@@ -223,6 +333,8 @@ class CompanyPostJobController extends GetxController {
         'companyLogoUrl': imageUrl,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      Get.snackbar('Success', 'Company logo uploaded successfully');
     } catch (e) {
       debugPrint('Logo upload error: $e');
       _showError('Failed to upload company logo');
@@ -255,6 +367,12 @@ class CompanyPostJobController extends GetxController {
       return;
     }
 
+    if (selectedSubFieldId.value.isEmpty ||
+        selectedSubFieldName.value.isEmpty) {
+      _showError('Please select specialization');
+      return;
+    }
+
     final minSalary = num.tryParse(minSalaryController.text.trim());
     final maxSalary = num.tryParse(maxSalaryController.text.trim());
 
@@ -280,21 +398,34 @@ class CompanyPostJobController extends GetxController {
         'companyName': companyName.trim().isEmpty ? 'Company' : companyName,
         'companyLogoUrl': companyLogoUrl.value,
         'logoUrl': companyLogoUrl.value,
+
         'title': titleController.text.trim(),
+
         'mainFieldId': selectedMainFieldId.value,
         'mainFieldName': selectedMainFieldName.value,
+        'mainFieldIconUrl': selectedMainFieldIconUrl.value,
         'category': selectedMainFieldName.value,
+
+        'subFieldId': selectedSubFieldId.value,
+        'subFieldName': selectedSubFieldName.value,
+        'subFieldIconUrl': selectedSubFieldIconUrl.value,
+        'specialization': selectedSubFieldName.value,
+
         'jobType': selectedJobType.value,
         'workMode': selectedWorkMode.value,
         'location': locationController.text.trim(),
+
         'minSalary': minSalary,
         'maxSalary': maxSalary,
         'salary': '\$${minSalary.toString()}-${maxSalary.toString()}',
+
         'description': descriptionController.text.trim(),
         'requirements': requirementsController.text.trim(),
+
         'status': 'Open',
         'isActive': true,
         'isDeleted': false,
+
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -328,6 +459,12 @@ class CompanyPostJobController extends GetxController {
       return;
     }
 
+    if (selectedSubFieldId.value.isEmpty ||
+        selectedSubFieldName.value.isEmpty) {
+      _showError('Please select specialization');
+      return;
+    }
+
     final minSalary = num.tryParse(minSalaryController.text.trim());
     final maxSalary = num.tryParse(maxSalaryController.text.trim());
 
@@ -346,17 +483,28 @@ class CompanyPostJobController extends GetxController {
     try {
       await _firestore.collection('jobs').doc(editingJobId.value).update({
         'title': titleController.text.trim(),
+
         'mainFieldId': selectedMainFieldId.value,
         'mainFieldName': selectedMainFieldName.value,
+        'mainFieldIconUrl': selectedMainFieldIconUrl.value,
         'category': selectedMainFieldName.value,
+
+        'subFieldId': selectedSubFieldId.value,
+        'subFieldName': selectedSubFieldName.value,
+        'subFieldIconUrl': selectedSubFieldIconUrl.value,
+        'specialization': selectedSubFieldName.value,
+
         'jobType': selectedJobType.value,
         'workMode': selectedWorkMode.value,
         'location': locationController.text.trim(),
+
         'minSalary': minSalary,
         'maxSalary': maxSalary,
         'salary': '\$${minSalary.toString()}-${maxSalary.toString()}',
+
         'description': descriptionController.text.trim(),
         'requirements': requirementsController.text.trim(),
+
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
@@ -389,8 +537,17 @@ class CompanyPostJobController extends GetxController {
     selectedJobType.value = 'FullTime';
     selectedWorkMode.value = 'Remote';
 
+    selectedSubFieldId.value = '';
+    selectedSubFieldName.value = '';
+    selectedSubFieldIconUrl.value = '';
+    subFields.clear();
+
     if (mainFields.isNotEmpty) {
       selectMainField(mainFields.first);
+    } else {
+      selectedMainFieldId.value = '';
+      selectedMainFieldName.value = '';
+      selectedMainFieldIconUrl.value = '';
     }
   }
 
@@ -409,6 +566,7 @@ class CompanyPostJobController extends GetxController {
   @override
   void onClose() {
     _mainFieldsSub?.cancel();
+    _subFieldsSub?.cancel();
 
     titleController.dispose();
     locationController.dispose();
@@ -416,6 +574,7 @@ class CompanyPostJobController extends GetxController {
     maxSalaryController.dispose();
     descriptionController.dispose();
     requirementsController.dispose();
+
     super.onClose();
   }
 }
@@ -437,8 +596,33 @@ class CompanyMainField {
   }) {
     return CompanyMainField(
       id: id,
-      name: data['name'] ?? data['title'] ?? 'Unknown',
-      iconUrl: data['iconUrl'] ?? data['imageUrl'] ?? '',
+      name: data['name']?.toString() ?? data['title']?.toString() ?? 'Unknown',
+      iconUrl:
+          data['iconUrl']?.toString() ?? data['imageUrl']?.toString() ?? '',
+    );
+  }
+}
+
+class CompanySubField {
+  final String id;
+  final String name;
+  final String iconUrl;
+
+  CompanySubField({
+    required this.id,
+    required this.name,
+    required this.iconUrl,
+  });
+
+  factory CompanySubField.fromMap({
+    required String id,
+    required Map<String, dynamic> data,
+  }) {
+    return CompanySubField(
+      id: id,
+      name: data['name']?.toString() ?? data['title']?.toString() ?? 'Unknown',
+      iconUrl:
+          data['iconUrl']?.toString() ?? data['imageUrl']?.toString() ?? '',
     );
   }
 }
