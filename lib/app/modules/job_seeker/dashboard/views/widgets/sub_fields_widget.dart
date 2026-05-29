@@ -69,7 +69,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
         ],
       );
     });
@@ -133,7 +133,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
 
     return SizedBox(
       width: 22,
-      height: 22,
+      height: 30,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(6),
         child: CachedNetworkImage(

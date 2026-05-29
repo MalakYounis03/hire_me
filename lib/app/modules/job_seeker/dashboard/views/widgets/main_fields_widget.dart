@@ -41,7 +41,7 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
           }
 
           return SizedBox(
-            height: 136,
+            height: 125,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
