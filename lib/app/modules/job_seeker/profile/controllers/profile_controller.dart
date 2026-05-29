@@ -44,6 +44,7 @@ class ProfileController extends GetxController {
   String get badgeLabel {
     return selectedOpenTo.value ?? '';
   }
+
   Color get ringColor {
     switch (selectedOpenTo.value) {
       case 'Open to Work':
@@ -152,8 +153,7 @@ class ProfileController extends GetxController {
               ...allOptions.map((option) {
                 final isSelected = tempSelected.value == option;
                 return GestureDetector(
-                  onTap: () => tempSelected.value =
-                      isSelected ? null : option,
+                  onTap: () => tempSelected.value = isSelected ? null : option,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(bottom: 10),
@@ -840,9 +840,79 @@ class ProfileController extends GetxController {
     );
   }
 
+  Future<void> _syncProfileWithApplications(Map<String, dynamic> data) async {
+    final uid = _auth.currentUser?.uid;
+
+    if (uid == null) return;
+
+    final snapshot = await _firestore
+        .collection('applications')
+        .where('seekerId', isEqualTo: uid)
+        .get();
+
+    final batch = _firestore.batch();
+
+    for (final doc in snapshot.docs) {
+      batch.set(doc.reference, data, SetOptions(merge: true));
+    }
+
+    await batch.commit();
+  }
+
   Future<void> _updateField(String field, dynamic value) async {
-    final uid = _auth.currentUser!.uid;
-    await _firestore.collection('jobSeekers').doc(uid).update({field: value});
+    final uid = _auth.currentUser?.uid;
+
+    if (uid == null) {
+      _showError('Please login first');
+      return;
+    }
+
+    await _firestore.collection('jobSeekers').doc(uid).set({
+      field: value,
+    }, SetOptions(merge: true));
+
+    await _firestore.collection('users').doc(uid).set({
+      field: value,
+    }, SetOptions(merge: true));
+
+    final fieldsToSync = {'name', 'title', 'location', 'profileImage', 'about'};
+
+    if (fieldsToSync.contains(field)) {
+      final appField = <String, dynamic>{};
+
+      if (field == 'name') {
+        appField['applicantName'] = value;
+        appField['seekerName'] = value;
+        appField['name'] = value;
+      }
+
+      if (field == 'title') {
+        appField['applicantTitle'] = value;
+        appField['title'] = value;
+      }
+
+      if (field == 'location') {
+        appField['applicantLocation'] = value;
+        appField['location'] = value;
+      }
+
+      if (field == 'profileImage') {
+        appField['applicantImage'] = value;
+        appField['profileImage'] = value;
+        appField['imageUrl'] = value;
+        appField['avatarUrl'] = value;
+      }
+
+      if (field == 'about') {
+        appField['applicantAbout'] = value;
+        appField['about'] = value;
+      }
+
+      if (appField.isNotEmpty) {
+        appField['applicantUpdatedAt'] = FieldValue.serverTimestamp();
+        await _syncProfileWithApplications(appField);
+      }
+    }
   }
 
   Widget _dialogField(

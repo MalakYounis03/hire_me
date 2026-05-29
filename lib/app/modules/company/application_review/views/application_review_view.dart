@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../../../core/utils/app_color.dart';
-import '../model/application_review_model.dart';
 import '../controllers/application_review_controller.dart';
-import 'widgets/review_app_bar.dart';
+import '../model/application_review_model.dart';
 import 'widgets/profile_card.dart';
+import 'widgets/review_app_bar.dart';
 
 class ApplicationReviewView extends GetView<ApplicationReviewController> {
   const ApplicationReviewView({super.key});
@@ -25,12 +26,19 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProfileCard(
-                    name: applicant.name,
-                    jobTitle: applicant.jobTitle,
-                    location: applicant.location,
+                    name: _valueOrFallback(applicant.name, 'Unknown'),
+                    jobTitle: _valueOrFallback(
+                      applicant.jobTitle,
+                      'Unknown Job',
+                    ),
+                    location: _valueOrFallback(
+                      applicant.location,
+                      'Location not added',
+                    ),
                     avatarUrl: applicant.avatarUrl,
                   ),
-                  if (controller.readOnly.value && applicant.updatedAt.isNotEmpty) ...[
+                  if (controller.readOnly.value &&
+                      applicant.updatedAt.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     _buildStatusBadge(applicant.status, applicant.updatedAt),
                   ],
@@ -48,6 +56,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
                   decoration: BoxDecoration(
+                    color: AppColor.kwhite,
                     border: Border(
                       top: BorderSide(color: AppColor.greyVeryLight),
                     ),
@@ -68,9 +77,9 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                             onPressed: controller.isProcessing.value
                                 ? null
                                 : () => controller.rejectApplication(
-                                    applicant.id),
-                            icon:
-                                const Icon(Icons.cancel_outlined, size: 18),
+                                    applicant.id,
+                                  ),
+                            icon: const Icon(Icons.cancel_outlined, size: 18),
                             label: const Text(
                               'Reject',
                               style: TextStyle(
@@ -84,8 +93,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                                 color: AppColor.kdanger,
                                 width: 1.4,
                               ),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
@@ -118,8 +126,7 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColor.kblue,
                               foregroundColor: AppColor.kwhite,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
@@ -138,18 +145,31 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
     );
   }
 
+  static String _valueOrFallback(String value, String fallback) {
+    final text = value.trim();
+
+    if (text.isEmpty) {
+      return fallback;
+    }
+
+    return text;
+  }
+
   Widget _buildStatusBadge(String status, String date) {
     final isAccepted = status == 'Accepted';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger)
-            .withValues(alpha: 0.08),
+        color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger).withValues(
+          alpha: 0.08,
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger)
-              .withValues(alpha: 0.25),
+          color: (isAccepted ? AppColor.ksuccess : AppColor.kdanger).withValues(
+            alpha: 0.25,
+          ),
         ),
       ),
       child: Row(
@@ -217,19 +237,22 @@ class ApplicationReviewView extends GetView<ApplicationReviewController> {
         children: [
           _buildCompactInfoRow(
             title: 'Email',
-            content: applicant.email,
+            content: _valueOrFallback(applicant.email, 'Email not added'),
             icon: Icons.email_outlined,
           ),
           _buildRowDivider(),
           _buildCompactInfoRow(
             title: 'Skills',
-            content: applicant.skills,
+            content: _valueOrFallback(applicant.skills, 'No skills added'),
             icon: Icons.school_outlined,
           ),
           _buildRowDivider(),
           _buildCompactInfoRow(
             title: 'Experience',
-            content: applicant.experience,
+            content: _valueOrFallback(
+              applicant.experience,
+              'No experience added',
+            ),
             icon: Icons.calendar_today_outlined,
           ),
           _buildRowDivider(),

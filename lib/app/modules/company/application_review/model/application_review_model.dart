@@ -28,7 +28,7 @@ class ApplicationReviewModel {
     required this.education,
     required this.cvUrl,
     this.avatarUrl = '',
-    this.status = 'pending',
+    this.status = 'Pending',
     required this.appliedAt,
     this.updatedAt = '',
     this.applicantFcmToken = '',
