@@ -15,6 +15,10 @@ class JobSeekerMyApplicationsView
       appBar: AppBar(
         backgroundColor: _primaryBlue,
         elevation: 0,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
         title: const Text(
           'Status',
           style: TextStyle(
@@ -24,6 +28,16 @@ class JobSeekerMyApplicationsView
           ),
         ),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -75,6 +89,8 @@ class _ApplicationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = app['status'] as String? ?? 'pending';
     final statusColor = controller.statusColor(status);
+    final jobTitle = app['jobTitle'] as String? ?? 'Job Title';
+    final companyName = app['companyName'] as String? ?? 'Company';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -84,7 +100,7 @@ class _ApplicationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -100,12 +116,12 @@ class _ApplicationCard extends StatelessWidget {
               color: const Color(0xFF1A3A5C),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                'Ps',
-                style: TextStyle(
+                companyName.isNotEmpty ? companyName[0].toUpperCase() : 'C',
+                style: const TextStyle(
                   color: Colors.lightBlueAccent,
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -120,7 +136,7 @@ class _ApplicationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  app['jobTitle'] as String? ?? 'Job Title',
+                  jobTitle,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -129,7 +145,7 @@ class _ApplicationCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  app['companyName'] as String? ?? 'Company',
+                  companyName,
                   style: const TextStyle(
                     fontSize: 13,
                     color: Color(0xFF8A8A9A),
@@ -137,7 +153,7 @@ class _ApplicationCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
-                // Status Badge — محاذاة لليمين
+                // Status Badge
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(

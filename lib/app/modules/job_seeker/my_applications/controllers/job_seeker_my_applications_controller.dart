@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,20 +31,23 @@ class JobSeekerMyApplicationsController extends GetxController {
 
     _appSub = _firestore
         .collection('applications')
-        .where('seekerId', isEqualTo: uid)
+        .where('applicantId', isEqualTo: uid)
         .snapshots()
-        .listen((snapshot) {
-          final map = <String, Map<String, dynamic>>{};
-          for (final doc in snapshot.docs) {
-            final data = doc.data();
-            data['id'] = doc.id;
-            map[doc.id] = data;
-          }
-          applications.value = map;
-          isLoading.value = false;
-        }, onError: (_) {
-          isLoading.value = false;
-        });
+        .listen(
+          (snapshot) {
+            final map = <String, Map<String, dynamic>>{};
+            for (final doc in snapshot.docs) {
+              final data = doc.data();
+              data['id'] = doc.id;
+              map[doc.id] = data;
+            }
+            applications.value = map;
+            isLoading.value = false;
+          },
+          onError: (_) {
+            isLoading.value = false;
+          },
+        );
   }
 
   List<Map<String, dynamic>> get filteredApplications {
@@ -63,10 +65,13 @@ class JobSeekerMyApplicationsController extends GetxController {
   Color statusColor(String status) {
     switch (status.toLowerCase()) {
       case 'accepted':
+      case 'acceptable':
         return const Color(0xFF22C55E);
       case 'rejected':
+      case 'unacceptable':
         return const Color(0xFFEF4444);
       case 'pending':
+      case 'on hold':
         return const Color(0xFFF59E0B);
       default:
         return const Color(0xFF8A8A9A);
