@@ -40,6 +40,21 @@ class ApplicationReviewController extends GetxController {
     }
   }
 
+  Future<String> _getCompanyLogoUrl() async {
+    try {
+      final doc = await _firestore.collection('companies').doc(companyId).get();
+      if (doc.exists) {
+        final data = doc.data();
+        return data?['logoUrl']?.toString() ??
+            data?['companyLogoUrl']?.toString() ??
+            '';
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch company logo: $e');
+    }
+    return '';
+  }
+
   void _initializeApplicant() {
     if (Get.arguments != null) {
       if (Get.arguments is Map<String, dynamic>) {
@@ -126,6 +141,7 @@ class ApplicationReviewController extends GetxController {
         chatData['companyName'] = resolvedCompanyName;
         chatData['seekerName'] = jobSeekerName;
         chatData['avatarUrl'] = applicant.value.avatarUrl;
+        chatData['companyAvatarUrl'] = await _getCompanyLogoUrl();
         chatData['unreadCompany'] = 0;
       }
 
