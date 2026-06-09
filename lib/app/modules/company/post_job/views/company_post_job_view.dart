@@ -16,142 +16,128 @@ class CompanyPostJobView extends GetView<CompanyPostJobController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F7FA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 110),
-                child: Form(
-                  key: controller.formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildCompanyLogo(),
-                      const SizedBox(height: 22),
+      body: Column(
+        children: [
+          _buildAppBar(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 110),
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCompanyLogo(),
+                    const SizedBox(height: 22),
 
-                      _label(
-                        icon: Icons.work_outline_rounded,
-                        text: 'Job Title',
-                      ),
-                      const SizedBox(height: 8),
-                      _textField(
-                        controller: controller.titleController,
-                        hint: 'e.g Flutter Developer',
-                        validatorText: 'Please enter job title',
-                      ),
+                    _label(icon: Icons.work_outline_rounded, text: 'Job Title'),
+                    const SizedBox(height: 8),
+                    _textField(
+                      controller: controller.titleController,
+                      hint: 'e.g Flutter Developer',
+                      validatorText: 'Please enter job title',
+                    ),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(icon: Icons.category_outlined, text: 'Category'),
-                      const SizedBox(height: 8),
-                      _buildCategoryDropdown(),
+                    _label(icon: Icons.category_outlined, text: 'Category'),
+                    const SizedBox(height: 8),
+                    _buildCategoryDropdown(),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.account_tree_outlined,
-                        text: 'Specialization',
-                      ),
-                      const SizedBox(height: 8),
-                      _buildSubFieldDropdown(),
+                    _label(
+                      icon: Icons.account_tree_outlined,
+                      text: 'Specialization',
+                    ),
+                    const SizedBox(height: 8),
+                    _buildSubFieldDropdown(),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.work_history_outlined,
-                        text: 'Job Type',
-                      ),
-                      const SizedBox(height: 10),
-                      _buildJobTypeSelector(),
+                    _label(icon: Icons.work_history_outlined, text: 'Job Type'),
+                    const SizedBox(height: 10),
+                    _buildJobTypeSelector(),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(icon: Icons.computer_rounded, text: 'Work Mode'),
-                      const SizedBox(height: 10),
-                      _buildWorkModeSelector(),
+                    _label(icon: Icons.computer_rounded, text: 'Work Mode'),
+                    const SizedBox(height: 10),
+                    _buildWorkModeSelector(),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.location_on_outlined,
-                        text: 'Location',
-                      ),
-                      const SizedBox(height: 8),
-                      _textField(
-                        controller: controller.locationController,
-                        hint: 'Gaza, Palestine',
-                        validatorText: 'Please enter location',
-                      ),
+                    _label(icon: Icons.location_on_outlined, text: 'Location'),
+                    const SizedBox(height: 8),
+                    _textField(
+                      controller: controller.locationController,
+                      hint: 'Gaza, Palestine',
+                      validatorText: 'Please enter location',
+                    ),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.attach_money_rounded,
-                        text: 'Salary Range',
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _textField(
-                              controller: controller.minSalaryController,
-                              hint: 'Min Salary',
-                              keyboardType: TextInputType.number,
-                              validatorText: 'Required',
-                            ),
+                    _label(
+                      icon: Icons.attach_money_rounded,
+                      text: 'Salary Range',
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _textField(
+                            controller: controller.minSalaryController,
+                            hint: 'Min Salary',
+                            keyboardType: TextInputType.number,
+                            validatorText: 'Required',
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _textField(
-                              controller: controller.maxSalaryController,
-                              hint: 'Max Salary',
-                              keyboardType: TextInputType.number,
-                              validatorText: 'Required',
-                            ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _textField(
+                            controller: controller.maxSalaryController,
+                            hint: 'Max Salary',
+                            keyboardType: TextInputType.number,
+                            validatorText: 'Required',
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.description_outlined,
-                        text: 'Job Description',
-                      ),
-                      const SizedBox(height: 8),
-                      _textField(
-                        controller: controller.descriptionController,
-                        hint: 'Describe the role, responsibilities and more',
-                        maxLines: 5,
-                        validatorText: 'Please enter job description',
-                      ),
+                    _label(
+                      icon: Icons.description_outlined,
+                      text: 'Job Description',
+                    ),
+                    const SizedBox(height: 8),
+                    _textField(
+                      controller: controller.descriptionController,
+                      hint: 'Describe the role, responsibilities and more',
+                      maxLines: 5,
+                      validatorText: 'Please enter job description',
+                    ),
 
-                      const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                      _label(
-                        icon: Icons.list_alt_rounded,
-                        text: 'Requirements',
-                      ),
-                      const SizedBox(height: 8),
-                      _textField(
-                        controller: controller.requirementsController,
-                        hint: 'Add requirements or skills',
-                        maxLines: 3,
-                        validatorText: 'Please enter requirements',
-                      ),
+                    _label(icon: Icons.list_alt_rounded, text: 'Requirements'),
+                    const SizedBox(height: 8),
+                    _textField(
+                      controller: controller.requirementsController,
+                      hint: 'Add requirements or skills',
+                      maxLines: 3,
+                      validatorText: 'Please enter requirements',
+                    ),
 
-                      const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                      _publishButton(),
-                    ],
-                  ),
+                    _publishButton(),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
