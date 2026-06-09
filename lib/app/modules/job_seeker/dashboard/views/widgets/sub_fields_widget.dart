@@ -125,11 +125,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
 
   Widget _icon(String iconUrl, bool isSelected) {
     if (iconUrl.isEmpty) {
-      return Icon(
-        Icons.work_outline_rounded,
-        size: 26,
-        color: AppColor.kblue,
-      );
+      return Icon(Icons.work_outline_rounded, size: 26, color: AppColor.kblue);
     }
 
     return SizedBox(
@@ -140,11 +136,8 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
         child: CachedNetworkImage(
           imageUrl: iconUrl,
           fit: BoxFit.cover,
-          errorWidget: (context, url, error) => Icon(
-            Icons.work_outline_rounded,
-            size: 26,
-            color: AppColor.kblue,
-          ),
+          errorWidget: (context, url, error) =>
+              Icon(Icons.work_outline_rounded, size: 26, color: AppColor.kblue),
         ),
       ),
     );
