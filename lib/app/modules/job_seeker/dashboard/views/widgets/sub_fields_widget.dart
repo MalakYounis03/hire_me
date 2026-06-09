@@ -11,6 +11,8 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final selectedSubId = controller.selectedSubFieldId.value;
+
       if (controller.selectedMainFieldId.value == 'all') {
         return const SizedBox.shrink();
       }
@@ -52,7 +54,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
                   return _subFieldChip(
                     title: 'All',
                     iconUrl: '',
-                    isSelected: controller.selectedSubFieldId.value == 'all',
+                    isSelected: selectedSubId == 'all',
                     onTap: () => controller.selectSubField('all'),
                   );
                 }
@@ -62,7 +64,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
                 return _subFieldChip(
                   title: field.name,
                   iconUrl: field.iconUrl,
-                  isSelected: controller.selectedSubFieldId.value == field.id,
+                  isSelected: selectedSubId == field.id,
                   onTap: () => controller.selectSubField(field.id),
                 );
               },
@@ -88,12 +90,11 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
         margin: const EdgeInsets.only(right: 10),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColor.kblue : AppColor.kwhite,
+          color: isSelected ? const Color(0xFFDEE8F8) : AppColor.kwhite,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected
-                ? AppColor.kblue
-                : AppColor.eblack.withValues(alpha: 0.06),
+            color: isSelected ? AppColor.kblue : Colors.grey.shade100,
+            width: isSelected ? 1.5 : 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -113,7 +114,7 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? AppColor.kwhite : AppColor.eblack,
+                color: isSelected ? AppColor.kblue : Colors.black54,
               ),
             ),
           ],
@@ -126,14 +127,14 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
     if (iconUrl.isEmpty) {
       return Icon(
         Icons.work_outline_rounded,
-        size: 17,
-        color: isSelected ? AppColor.kwhite : AppColor.kblue,
+        size: 26,
+        color: AppColor.kblue,
       );
     }
 
     return SizedBox(
-      width: 22,
-      height: 30,
+      width: 32,
+      height: 38,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(6),
         child: CachedNetworkImage(
@@ -141,8 +142,8 @@ class SubFieldsWidget extends GetView<JobSeekerDashboardController> {
           fit: BoxFit.cover,
           errorWidget: (context, url, error) => Icon(
             Icons.work_outline_rounded,
-            size: 17,
-            color: isSelected ? AppColor.kwhite : AppColor.kblue,
+            size: 26,
+            color: AppColor.kblue,
           ),
         ),
       ),
