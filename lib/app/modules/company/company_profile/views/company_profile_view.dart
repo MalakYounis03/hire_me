@@ -24,14 +24,6 @@ class CompanyProfileView extends GetView<CompanyProfileController> {
             fontWeight: FontWeight.w800,
           ),
         ),
-        actions: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: AppColor.kwhite,
-            size: 26,
-          ),
-          const SizedBox(width: 18),
-        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
