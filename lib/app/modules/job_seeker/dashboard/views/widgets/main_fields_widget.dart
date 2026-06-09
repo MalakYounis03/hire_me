@@ -40,6 +40,8 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
             );
           }
 
+          final selectedId = controller.selectedMainFieldId.value;
+
           return SizedBox(
             height: 125,
             child: ListView.builder(
@@ -51,7 +53,7 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
                   return _fieldItem(
                     title: 'All',
                     iconUrl: '',
-                    isSelected: controller.selectedMainFieldId.value == 'all',
+                    isSelected: selectedId == 'all',
                     onTap: () => controller.selectMainField('all'),
                   );
                 }
@@ -61,7 +63,7 @@ class MainFieldsWidget extends GetView<JobSeekerDashboardController> {
                 return _fieldItem(
                   title: field.name,
                   iconUrl: field.iconUrl,
-                  isSelected: controller.selectedMainFieldId.value == field.id,
+                  isSelected: selectedId == field.id,
                   onTap: () => controller.selectMainField(field.id),
                 );
               },
