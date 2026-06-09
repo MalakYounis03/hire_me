@@ -8,6 +8,7 @@ class ChatModel {
   final String lastMessage;
   final DateTime lastMessageTime;
   final String avatarUrl;
+  final String companyAvatarUrl;
   final String lastMessageAuthor;
   final int unreadSeeker;
   final int unreadCompany;
@@ -22,6 +23,7 @@ class ChatModel {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.avatarUrl,
+    this.companyAvatarUrl = '',
     this.lastMessageAuthor = '',
     this.unreadSeeker = 0,
     this.unreadCompany = 0,
@@ -40,6 +42,7 @@ class ChatModel {
         map['lastMessageTime'] ?? 0,
       ),
       avatarUrl: map['avatarUrl'] ?? '',
+      companyAvatarUrl: map['companyAvatarUrl'] ?? '',
       lastMessageAuthor: map['lastMessageAuthor'] ?? '',
       unreadSeeker: map['unreadSeeker'] ?? 0,
       unreadCompany: map['unreadCompany'] ?? 0,
@@ -48,6 +51,10 @@ class ChatModel {
 
   String otherName(String currentUserId) {
     return currentUserId == seekerId ? companyName : seekerName;
+  }
+
+  String otherAvatarUrl(String currentUserId) {
+    return currentUserId == seekerId ? companyAvatarUrl : avatarUrl;
   }
 
   int unreadFor(String userId) {

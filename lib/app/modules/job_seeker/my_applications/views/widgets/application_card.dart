@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_me/app/modules/job_seeker/my_applications/controllers/job_seeker_my_applications_controller.dart';
+import 'package:hire_me/core/utils/app_color.dart';
 
 class ApplicationCard extends StatelessWidget {
   final Map<String, dynamic> app;
@@ -78,27 +80,32 @@ class ApplicationCard extends StatelessWidget {
   }
 
   Widget _buildLogo() {
-    final companyName = app['companyName'] as String? ?? 'Company';
-    final initials = companyName.trim().isNotEmpty
-        ? companyName.trim().characters.first.toUpperCase()
-        : 'C';
+    final iconUrl = (app['subFieldIconUrl'] as String? ?? '').isNotEmpty
+        ? app['subFieldIconUrl'] as String
+        : app['mainFieldIconUrl'] as String? ?? '';
 
     return Container(
       width: 60,
       height: 60,
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: const Color(0xFF123456),
+        color: AppColor.kblue.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColor.kblue.withValues(alpha: 0.10)),
       ),
-      child: Center(
-        child: Text(
-          initials,
-          style: const TextStyle(
-            color: Colors.lightBlueAccent,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: iconUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: iconUrl,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) => Icon(
+                  Icons.work_outline_rounded,
+                  color: AppColor.kblue,
+                  size: 28,
+                ),
+              )
+            : Icon(Icons.work_outline_rounded, color: AppColor.kblue, size: 28),
       ),
     );
   }

@@ -160,6 +160,8 @@ class JobSeekerApplyJobController extends GetxController {
       'jobTitle': job.title,
       'companyId': job.companyId,
       'companyName': job.companyName,
+      'mainFieldIconUrl': job.mainFieldIconUrl,
+      'subFieldIconUrl': job.subFieldIconUrl,
       'seekerId': uid,
       'seekerName': nameController.text.trim(),
       'email': emailController.text.trim(),

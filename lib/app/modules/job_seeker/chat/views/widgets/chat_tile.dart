@@ -25,7 +25,7 @@ class ChatTile extends StatelessWidget {
               arguments: {
                 'chatId': chat.id,
                 'chatName': chat.otherName(currentUserId),
-                'avatarUrl': chat.avatarUrl,
+                'avatarUrl': chat.otherAvatarUrl(currentUserId),
                 'seekerId': chat.seekerId,
                 'companyId': chat.companyId,
               },
@@ -38,7 +38,7 @@ class ChatTile extends StatelessWidget {
               children: [
                 Avatar(
                   name: chat.otherName(currentUserId),
-                  avatarUrl: chat.avatarUrl,
+                  avatarUrl: chat.otherAvatarUrl(currentUserId),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
